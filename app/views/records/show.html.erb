@@ -1,0 +1,24 @@
+<h1>Record Details</h1>
+
+<p>
+  <strong>Name:</strong>
+  <%= @record.name %>
+</p>
+
+<p>
+  <strong>In Time:</strong>
+  <%= @record.in_time.strftime("%Y-%m-%d %H:%M") if @record.in_time %>
+</p>
+
+<p>
+  <strong>Out Time:</strong>
+  <%= @record.out_time.strftime("%Y-%m-%d %H:%M") if @record.out_time %>
+</p>
+
+<p>
+  <strong>Created By:</strong>
+  <%= @record.user.email %>
+</p>
+
+<%= link_to "Back to Records", records_path %>
+<%= link_to "Delete Record", record_path(@record), method: :delete, data: { confirm: "Are you sure?" } %>

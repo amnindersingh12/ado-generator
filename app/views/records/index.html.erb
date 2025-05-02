@@ -1,0 +1,32 @@
+<h1>Records</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>In Time</th>
+      <th>Out Time</th>
+      <th>Created By</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @records.each do |record| %>
+      <tr>
+        <td><%= link_to record.name, record %></td>
+        <td><%= record.in_time.strftime("%Y-%m-%d %H:%M") if record.in_time %></td>
+        <td><%= record.out_time.strftime("%Y-%m-%d %H:%M") if record.out_time %></td>
+        <td><%= record.user.email %></td>
+        <td>
+          <% if current_user.admin? %>
+            <%= link_to "Delete", record_path(record), method: :delete, data: { confirm: "Are you sure?" } %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Back", root_path %>
+<%= link_to "New Record", new_record_path %>
