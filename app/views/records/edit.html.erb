@@ -2,7 +2,6 @@
   <div class="card-header">
     <h2>Check Out: <%= @record.name %></h2>
   </div>
-  
   <div class="card-body">
     <%= form_with(model: @record, local: true) do |form| %>
       <% if @record.errors.any? %>
@@ -15,7 +14,6 @@
           </ul>
         </div>
       <% end %>
-      
       <div class="row">
         <div class="col-md-6">
           <div class="card mb-4">
@@ -24,7 +22,6 @@
             </div>
             <div class="card-body">
               <p><strong>Time:</strong> <%= @record.in_time&.strftime('%B %d, %Y %I:%M %p') %></p>
-              
               <% if @record.in_photo.attached? %>
                 <div class="mt-3 text-center">
                   <%= image_tag @record.in_photo, class: "img-fluid rounded border", style: "max-height: 300px;" %>
@@ -33,7 +30,6 @@
             </div>
           </div>
         </div>
-        
         <div class="col-md-6">
           <div class="card mb-4">
             <div class="card-header bg-success text-white">
@@ -41,7 +37,6 @@
             </div>
             <div class="card-body">
               <p>Current time: <%= Time.current.strftime('%B %d, %Y %I:%M %p') %></p>
-              
               <div class="mb-3">
                 <%= form.label :out_photo, "Upload Check Out Photo", class: "form-label" %>
                 <%= form.file_field :out_photo, class: "form-control", accept: "image/*", capture: "camera" %>
@@ -51,7 +46,6 @@
           </div>
         </div>
       </div>
-      
       <div class="d-grid gap-2 d-md-flex justify-content-md-end">
         <%= link_to 'Cancel', @record, class: "btn btn-secondary me-md-2" %>
         <%= form.submit "Complete Check Out", class: "btn btn-success" %>
