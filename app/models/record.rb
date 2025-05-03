@@ -1,7 +1,6 @@
 class Record < ApplicationRecord
   belongs_to :user
-
+  has_one_attached :in_photo 
+  has_one_attached :out_photo 
   validates :name, presence: true
-  validates :in_time, presence: true
-  validates :out_time, presence: true
 end

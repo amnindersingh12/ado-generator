@@ -1,24 +1,24 @@
-# README
+# paths
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
+Index:
+   <%= link_to "Index", posts_path %>
 
-* Ruby version
+Create:
+   <%= link_to "Create", posts_path, method: 'POST' %>
 
-* System dependencies
+New:
+   <%= link_to "New", new_post_path %>
 
-* Configuration
+Edit:
+   <%= link_to "Edit", edit_post_path(post_id) %>
 
-* Database creation
+Show:
+   <%= link_to "Show", post_path(post_id) %>
 
-* Database initialization
+Update:
+   <%= link_to "Update", post_path(post_id), method: 'POST' %>
+   <%= link_to "Update", post_path(post_id), method: 'PATCH' %>
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Destroy:
+   <%= link_to "Destroy", post_path(post_id), method: 'DELETE' %>

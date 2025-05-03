@@ -1,0 +1,21 @@
+<% if current_user %>
+  <h1>Hello <%= current_user.email %>!</h1>
+  <p>Your role is <%= current_user.role %></p>
+  <%=link_to  "Check In", new_record_path %>
+  <%if @records.present?%>
+  <p>Number of Records:  <%= link_to @records.count, records_path %></p>
+  
+  <br>
+  
+<% else %>
+  <%# pending - check out functionality pending................. %>
+  
+  <p>No records found.</p>
+<% end %>
+  <br>
+  <%= button_to  "Sign Out", destroy_user_session_path, method: :delete %>
+<% else %>
+  <br>
+  <%= link_to  "Sign Up", new_user_registration_path %>
+  <%= link_to  "Sign In", new_user_session_path %>
+<% end %>

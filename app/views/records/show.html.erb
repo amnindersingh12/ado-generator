@@ -1,24 +1,53 @@
-<h1>Record Details</h1>
-
-<p>
-  <strong>Name:</strong>
-  <%= @record.name %>
-</p>
-
-<p>
-  <strong>In Time:</strong>
-  <%= @record.in_time.strftime("%Y-%m-%d %H:%M") if @record.in_time %>
-</p>
-
-<p>
-  <strong>Out Time:</strong>
-  <%= @record.out_time.strftime("%Y-%m-%d %H:%M") if @record.out_time %>
-</p>
-
-<p>
-  <strong>Created By:</strong>
-  <%= @record.user.email %>
-</p>
-
-<%= link_to "Back to Records", records_path %>
-<%= link_to "Delete Record", record_path(@record), method: :delete, data: { confirm: "Are you sure?" } %>
+<div class="card">
+  <div class="card-header">
+    <h2><%= @record.name %></h2>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <h3>Check In</h3>
+        <p>
+          <strong>Time:</strong>
+          <%= @record.in_time&.strftime('%B %d, %Y %I:%M %p') %>
+        </p>
+        
+        <div class="photo-container mb-4">
+          <strong>In Photo:</strong><br>
+          <% if @record.in_photo.attached? %>
+            <%= image_tag @record.in_photo, class: "img-fluid mt-2 border rounded" %>
+          <% else %>
+            <p class="text-muted">No check-in photo available</p>
+          <% end %>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <h3>Check Out</h3>
+        <% if @record.out_time.present? %>
+          <p>
+            <strong>Time:</strong>
+            <%= @record.out_time.strftime('%B %d, %Y %I:%M %p') %>
+          </p>
+          
+          <div class="photo-container mb-4">
+            <strong>Photo:</strong><br>
+            <% if @record.out_photo.attached? %>
+              <%= image_tag @record.out_photo, class: "img-fluid mt-2 border rounded" %>
+            <% else %>
+              <p class="text-muted">No check-out photo available</p>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-warning">Not checked out yet</p>
+          
+          <%= link_to 'Check Out Now', edit_record_path(@record), class: "btn btn-success" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card-footer">
+    <%= link_to 'Back to Records', records_path, class: "btn btn-secondary" %>
+    <%= link_to 'Delete Record', @record, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger float-right" %>
+  </div>
+</div>

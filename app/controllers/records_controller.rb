@@ -1,19 +1,19 @@
 class RecordsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_record, only: [ :show, :destroy ]
-  before_action :authorize_admin!, only: [:destroy]
-
-  def authorize_admin!
-    redirect_to records_path, alert: "You are not authorized to delete records." unless current_user.admin?
-  end
-  # Only admin can destroy
+  before_action :set_record, only: [ :show, :edit, :update, :destroy ]
   before_action :authorize_admin!, only: [ :destroy ]
 
   def index
-    @records = Record.all.order(created_at: :desc)
+  @records = Record.all.order(created_at: :desc)
   end
+def home
+  @records = Record.all.order(created_at: :desc)
 
-  def show
+end
+
+  def show 
+  end
+  def edit  
   end
 
   def new
@@ -22,24 +22,42 @@ class RecordsController < ApplicationController
 
   def create
     @record = current_user.records.build(record_params)
-    if @record.save
-      redirect_to @record, notice: "Record was successfully created."
-    else
-      render :new
+    @record.in_time = Time.now
+    respond_to do |format|
+      if @record.save
+        format.html { redirect_to @record, notice: "Record was successfully created with check-in details." }
+        format.json { render :show, status: :created, location: @record }
+      else
+        format.html { render :new }
+        format.json { render json: @record.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  def update
+    # Only update out_time and out_photo
+    update_params = { out_time: Time.current }
+    # Add out_photo to update_params if it's provided
+    update_params[:out_photo] = params[:record][:out_photo] if params[:record] && params[:record][:out_photo]
+
+    respond_to do |format|
+      if @record.update(update_params)
+        format.html { redirect_to @record, notice: "Record was successfully updated with check-out details." }
+        format.json { render :show, status: :ok, location: @record }
+      else
+        format.html { render :edit }
+        format.json { render json: @record.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   # Remove edit and update actions (no editing allowed)
 
   def destroy
-      @record = Record.find_by(id: params[:id])
-      if @record
-        @record.destroy
-        flash[:success] = "Record deleted"
-      else
-        flash[:alert] = "Record not found"
-      end
-      redirect_to records_path
+    @record.destroy
+    respond_to do |format|
+      format.html { redirect_to records_url, notice: "Record was successfully destroyed." }
+      format.json { head :no_content }
+    end
   end
 
   private
@@ -49,7 +67,7 @@ class RecordsController < ApplicationController
   end
 
   def record_params
-    params.require(:record).permit(:name, :in_time, :out_time)
+    params.require(:record).permit(:name, :in_time, :out_time, :in_photo, :out_photo, :user_id)
   end
 
   def authorize_admin!
