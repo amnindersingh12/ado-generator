@@ -1,0 +1,15 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title"><%= record.name %></h5>
+    <p class="card-text">
+      <strong>User:</strong> <%= record.user.email if record.user %>
+    </p>
+    <p class="card-text">
+      <strong>Check-in time:</strong> <%= record.in_time&.strftime("%Y-%m-%d %H:%M:%S") %>
+    </p>
+    <p class="card-text">
+      <strong>Check-out time:</strong> <%= record.out_time&.strftime("%Y-%m-%d %H:%M:%S") %>
+    </p>
+    <%= link_to "View Details", record, class: "btn btn-primary", data: { turbo_frame: "_top" } %>
+  </div>
+</div>

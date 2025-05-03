@@ -8,12 +8,12 @@ class RecordsController < ApplicationController
   end
 def home
   @records = Record.all.order(created_at: :desc)
-
+  @searched_record = Record.search(params[:search])
 end
 
-  def show 
+  def show
   end
-  def edit  
+  def edit
   end
 
   def new
@@ -59,6 +59,22 @@ end
       format.json { head :no_content }
     end
   end
+  def search
+    if params[:search].present?
+      @records = Record.search(params[:search])
+      if @records.empty?
+        @record_not_found = true
+      end
+    else
+      @records = Record.none
+    end
+    
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
+  end
+  
 
   private
 
@@ -67,7 +83,7 @@ end
   end
 
   def record_params
-    params.require(:record).permit(:name, :in_time, :out_time, :in_photo, :out_photo, :user_id)
+    params.require(:record).permit(:name, :in_time, :out_time, :in_photo, :out_photo, :user_id, :search)
   end
 
   def authorize_admin!

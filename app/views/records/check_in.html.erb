@@ -1,6 +1,0 @@
-<!-- app/views/records/_search.html.erb -->
-<%= form_with url: search_records_path, method: :get, data: { turbo_frame: "search_results" } do |f| %>
-  <%= f.text_field :query, placeholder: "Search records..." %>
-  <%= f.submit "Search" %>
-<% end %>
-<turbo-frame id="search_results"></turbo-frame>

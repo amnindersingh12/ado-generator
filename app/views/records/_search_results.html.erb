@@ -1,0 +1,14 @@
+<div id="search_results">
+  <% if @record_not_found %>
+    <div class="alert alert-warning">
+      Record not found. Would you like to 
+      <%= link_to "check in", new_record_path, class: "alert-link", data: { turbo_frame: "_top" } %>?
+    </div>
+  <% elsif @records.present? %>
+    <div class="search-results">
+      <% @records.each do |record| %>
+        <%= render 'user_search', record: record %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
