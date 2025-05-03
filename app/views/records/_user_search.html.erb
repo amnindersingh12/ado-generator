@@ -11,5 +11,14 @@
       <strong>Check-out time:</strong> <%= record.out_time&.strftime("%Y-%m-%d %H:%M:%S") %>
     </p>
     <%= link_to "View Details", record, class: "btn btn-primary", data: { turbo_frame: "_top" } %>
+    <p>
+       <% unless  record.out_time.present? %>
+       <%# update the record witht the check out time as current time  %>
+       <%= link_to  "Check Out", record_path(record), method: :patch, class: "btn btn-primary" , data: { turbo_frame: "_top" }%>
+          
+        <% else %>
+          
+        <% end %> 
+    </p>
   </div>
 </div>
