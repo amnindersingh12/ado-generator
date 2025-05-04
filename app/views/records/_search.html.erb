@@ -1,8 +1,12 @@
 <%= form_with url: search_records_path, method: :get, data: { turbo_frame: "search_results" } do |form| %>
-  <div class="input-group mb-3">
-    <%= form.text_field :search, class: "form-control", placeholder: "Search by name",required: true, value: params[:search] %>
-    <div class="input-group-append">
-      <%= form.submit "Search", class: "btn btn-primary" %>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="input-group mb-4">
+        <%= form.text_field :search, class: "form-control", placeholder: "Search by name", required: true, value: params[:search] %>
+        <div class="input-group-append">
+          <%= form.submit "Search", class: "btn btn-primary" %>
+        </div>
+      </div>
     </div>
   </div>
 <% end %>

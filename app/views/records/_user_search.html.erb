@@ -1,24 +1,21 @@
-<div class="card mb-3">
-  <div class="card-body">
-    <h5 class="card-title"><%= record.name %></h5>
-    <p class="card-text">
-      <strong>User:</strong> <%= record.user.email if record.user %>
-    </p>
-    <p class="card-text">
-      <strong>Check-in time:</strong> <%= record.in_time&.strftime("%Y-%m-%d %H:%M:%S") %>
-    </p>
-    <p class="card-text">
-      <strong>Check-out time:</strong> <%= record.out_time&.strftime("%Y-%m-%d %H:%M:%S") %>
-    </p>
-    <%= link_to "View Details", record, class: "btn btn-primary", data: { turbo_frame: "_top" } %>
-    <p>
-       <% unless  record.out_time.present? %>
-       <%# update the record witht the check out time as current time  %>
-       <%= link_to  "Check Out", record_path(record), method: :patch, class: "btn btn-primary" , data: { turbo_frame: "_top" }%>
-          
-        <% else %>
-          
-        <% end %> 
-    </p>
+<div class="card mb-3 shadow-sm">
+  <div class="row g-0">
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title"><%= record.name %></h5>
+        <p class="card-text mb-1"><strong>User:</strong> <%= record.user&.email || "—" %></p>
+        <p class="card-text mb-1"><strong>Check-In:</strong> <%= record.in_time&.strftime("%b %-d, %Y %l:%M %p") || "—" %></p>
+        <p class="card-text"><strong>Check-Out:</strong> <%= record.out_time&.strftime("%b %-d, %Y %l:%M %p") || "Pending" %></p>
+      </div>
+    </div>
+    <div class="col-md-4 d-flex flex-column justify-content-center align-items-center p-3">
+      <% if record.in_photo.attached? %>
+        <%= image_tag record.in_photo, class: "img-fluid rounded mb-2", style: "max-height: 120px;" %>
+      <% end %>
+      <%= link_to "Details", record_path(record), class: "btn btn-sm btn-outline-primary w-100 mb-1", data: { turbo_frame: "_top" } %>
+      <% if record.out_time.nil? %>
+        <%= link_to "Check Out", edit_record_path(record), class: "btn btn-sm btn-success w-100", data: { turbo_frame: "_top" } %>
+      <% end %>
+    </div>
   </div>
 </div>

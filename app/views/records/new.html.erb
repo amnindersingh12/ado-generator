@@ -1,23 +1,31 @@
-<h1>New Record</h1>
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">New Record</h2>
+    </div>
 
-<%= form_with(model: @record, local: true) do |form| %>
-  <div>
-    <%= form.label :name %><br>
-    <%= form.text_field :name %>
-  </div>
+    <div class="card-body">
+      <%= form_with(model: @record, local: true) do |form| %>
+        <div class="mb-3">
+          <%= form.label :name, class: "form-label" %>
+          <%= form.text_field :name, class: "form-control" %>
+        </div>
 
-  <div>
-    <%= form.label :in_time %><br>
-    <%= form.datetime_select :in_time %>
-  </div>
+        <div class="mb-3">
+          <%= form.label :in_time, class: "form-label" %>
+          <%= form.datetime_select :in_time, {}, class: "form-select" %>
+        </div>
 
-  <div>
-    <%= form.label :out_time %><br>
-    <%= form.datetime_select :out_time %>
-  </div>
+        <div class="mb-3">
+          <%= form.label :out_time, class: "form-label" %>
+          <%= form.datetime_select :out_time, {}, class: "form-select" %>
+        </div>
 
-  <div>
-    <%= form.submit "Create Record" %>
+        <div class="d-flex justify-content-between">
+          <%= form.submit "Create Record", class: "btn btn-success" %>
+          <%= link_to "Back", root_path, class: "btn btn-secondary" %>
+        </div>
+      <% end %>
+    </div>
   </div>
-<%= link_to  "Back", root_path %>
-<% end %>
+</div>

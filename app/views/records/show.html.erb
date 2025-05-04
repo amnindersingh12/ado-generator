@@ -1,53 +1,31 @@
-<div class="card">
-  <div class="card-header">
-    <h2><%= @record.name %></h2>
-  </div>
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-6">
-        <h3>Check In</h3>
-        <p>
-          <strong>Time:</strong>
-          <%= @record.in_time&.strftime('%B %d, %Y %I:%M %p') %>
-        </p>
-        
-        <div class="photo-container mb-4">
-          <strong>In Photo:</strong><br>
-          <% if @record.in_photo.attached? %>
-            <%= image_tag @record.in_photo, class: "img-fluid mt-2 border rounded" %>
-          <% else %>
-            <p class="text-muted">No check-in photo available</p>
-          <% end %>
-        </div>
-      </div>
-      
-      <div class="col-md-6">
-        <h3>Check Out</h3>
-        <% if @record.out_time.present? %>
-          <p>
-            <strong>Time:</strong>
-            <%= @record.out_time.strftime('%B %d, %Y %I:%M %p') %>
-          </p>
-          
-          <div class="photo-container mb-4">
-            <strong>Photo:</strong><br>
-            <% if @record.out_photo.attached? %>
-              <%= image_tag @record.out_photo, class: "img-fluid mt-2 border rounded" %>
-            <% else %>
-              <p class="text-muted">No check-out photo available</p>
-            <% end %>
-          </div>
-        <% else %>
-          <p class="text-warning">Not checked out yet</p>
-          
-          <%= link_to 'Check Out Now', edit_record_path(@record), class: "btn btn-success" %>
-        <% end %>
-      </div>
+<div class="container mt-5">
+  <div class="card shadow-lg">
+    <div class="card-header bg-info text-white">
+      <h3 class="mb-0">Record Details</h3>
     </div>
-  </div>
-  
-  <div class="card-footer">
-    <%= link_to 'Back to Records', records_path, class: "btn btn-secondary" %>
-    <%= button_to 'Delete Record', @record, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger float-right" %>
+
+    <div class="card-body">
+      <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9"><%= @record.name %></dd>
+
+        <dt class="col-sm-3">In Time</dt>
+        <dd class="col-sm-9"><%= @record.in_time %></dd>
+
+        <dt class="col-sm-3">Out Time</dt>
+        <dd class="col-sm-9"><%= @record.out_time %></dd>
+
+        <dt class="col-sm-3">Created At</dt>
+        <dd class="col-sm-9"><%= @record.created_at %></dd>
+
+        <dt class="col-sm-3">Updated At</dt>
+        <dd class="col-sm-9"><%= @record.updated_at %></dd>
+      </dl>
+    </div>
+
+    <div class="card-footer d-flex justify-content-between">
+      <%= link_to "Edit", edit_record_path(@record), class: "btn btn-warning" %>
+      <%= link_to "Back", records_path, class: "btn btn-secondary" %>
+    </div>
   </div>
 </div>
