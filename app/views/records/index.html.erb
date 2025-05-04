@@ -1,51 +1,49 @@
-<h1>Records</h1>
-<%= link_to 'Back', root_path %>
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>In Time</th>
-      <th>In Photo</th>
-      <th>Out Time</th>
-      <th>Out Photo</th>
-      <th colspan="3">Actions</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @records.each do |record| %>
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>All Records</h2>
+    <%= link_to "New Record", new_record_path, class: "btn btn-primary" %>
+    <%= link_to "Back to Records", root_path, class: "btn btn-primary" %>  
+  </div>
+  <table class="table table-striped table-hover shadow-sm">
+    <thead class="table-dark">
       <tr>
-        <td><%= record.name %></td>
-        <td><%= record.in_time&.strftime('%B %d, %Y %I:%M %p') %></td>
-        <td>
-          <% if record.in_photo.attached? %>
-          <%= image_tag(record.in_photo)%>
-          <% else %>
-            <span class="text-muted">No photo</span>
-          <% end %>
-        </td>
-        <td><%= record.out_time&.strftime('%B %d, %Y %I:%M %p') %></td>
-        <td>
-          <% if record.out_photo.attached? %>
-          <%= image_tag(record.out_photo)%>
-
-          <% else %>
-            <span class="text-muted">No photo</span>
-          <% end %>
-        </td>
-        <td><%= link_to 'Show', record, class: "btn btn-sm btn-info" %></td>
-        <td>
-          <% if record.out_time.nil? %>
-            <%= link_to 'Check Out', edit_record_path(record), class: "btn btn-sm btn-success" %>
-          <% end %>
-        </td>
-        <td><%= link_to 'Delete', record, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-sm btn-danger" %></td>
+        <th>Name</th>
+        <th>Check In Time</th>
+        <th>Check Out Time</th>
+        <th>Check In Photo</th>
+        <th>Check Out Photo</th>
+        <th>Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @records.each do |record| %>
+        <tr>
+          <td><%= record.name %></td>
+          <td><%= record.in_time %></td>
+          <td><%= record.out_time %></td>
+          <td>
+             <% if record.in_photo.attached? %>
+              <%= link_to image_tag(record.in_photo.variant(:thumb)), record.in_photo, target: :_blank %>
+            <% else %>
+              <p class="text-muted">No check-out photo available</p>
+            <% end %>
+          </td>
+          <td>
+             <% if record.out_photo.attached? %>
+              <%= link_to image_tag(record.out_photo.variant(:thumb)), record.out_photo, target: :_blank %>
+            <% else %>
+              <p class="text-muted">No check-out photo available</p>
+            <% end %>
+          </td>
 
-<br>
-
-<%= link_to 'New Record', new_record_path, class: "btn btn-primary" %>
+          <td>
+            <%= link_to "Show", record_path(record), class: "btn btn-sm btn-outline-info me-1" %>
+            <% if current_user && current_user.role == "admin" %>
+              <%= link_to "Destroy", record, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-outline-danger" %>
+          <%end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

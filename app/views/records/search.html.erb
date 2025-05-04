@@ -1,7 +1,16 @@
-<h1>Search Records</h1>
+<div class="container mt-5">
+  <div class="text-center mb-4">
+    <h2>Search Results</h2>
+  </div>
 
-<%= render 'records/search' %>
+  <div id="results">
+    <turbo-frame id="search_results">
+      <%= render 'search_results' %>
+    </turbo-frame>
+  </div>
 
-<turbo-frame id="search_results">
-  <%= render 'search_results' %>
-</turbo-frame>
+  <div class="mt-4">
+    <%= link_to "Back to Home", root_path, class: "btn btn-outline-secondary" %>
+  </div>
+</div>
+
