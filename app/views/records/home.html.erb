@@ -43,6 +43,9 @@
                 <%= record.name %> 
                 <div>
                   <%= link_to 'View', record_path(record), class: 'btn btn-sm btn-info me-2' %>
+                  <% if current_user && current_user.role == 'admin' %>
+                <%= link_to "Destroy", record_path(record), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } , class: 'btn btn-sm btn-danger' %> 
+                  <%end %>
                 </div>
               </li>
             <% end %>

@@ -15,7 +15,8 @@ FileUtils.chdir APP_ROOT do
   puts "== Installing dependencies =="
   system("bundle check") || system!("bundle install")
   puts "== Installing vips for image processing"
-  system!("sudo apt install libvips-dev")
+  system!("sudo apt update --fix-missing")
+  system!("sudo apt install libvips-dev  -y")
 
   # puts "\n== Copying sample files =="
   # unless File.exist?("config/database.yml")

@@ -55,9 +55,9 @@ end
   def destroy
     @record.destroy
     respond_to do |format|
-      format.html { redirect_to records_url, notice: "Record was successfully destroyed." }
+      format.html { redirect_to root_path, notice: "Record was successfully destroyed." }
       format.json { head :no_content }
-    end
+    end  
   end
   def search
     if params[:search].present?

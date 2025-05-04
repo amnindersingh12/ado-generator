@@ -23,14 +23,14 @@
           <td><%= record.out_time %></td>
           <td>
              <% if record.in_photo.attached? %>
-              <%= link_to image_tag(record.in_photo.variant(:thumb)), record.in_photo %>
+              <%= link_to image_tag(record.in_photo.variant(:thumb)), record.in_photo, target: :_blank %>
             <% else %>
               <p class="text-muted">No check-out photo available</p>
             <% end %>
           </td>
           <td>
              <% if record.out_photo.attached? %>
-              <%= link_to image_tag(record.out_photo.variant(:thumb)), record.out_photo %>
+              <%= link_to image_tag(record.out_photo.variant(:thumb)), record.out_photo, target: :_blank %>
             <% else %>
               <p class="text-muted">No check-out photo available</p>
             <% end %>
@@ -38,8 +38,9 @@
 
           <td>
             <%= link_to "Show", record_path(record), class: "btn btn-sm btn-outline-info me-1" %>
-            
-              <%= button_to "Destroy", record, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-outline-danger" %>
+            <% if current_user && current_user.role == "admin" %>
+              <%= link_to "Destroy", record, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-outline-danger" %>
+          <%end %>
           </td>
         </tr>
       <% end %>
