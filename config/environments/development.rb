@@ -2,8 +2,7 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-    config.hosts << "3000-amnindersin-adogenerato-uokhx93qwyh.ws-us118.gitpod.io"
-    config.hosts << "3000-amnindersin-adogenerato-uokhx93qwyh.ws-us118.gitpod.io"
+    config.hosts << /[a-z0-9-.]+\.gitpod\.io/
   # Make code changes take effect immediately without server restart.
   config.enable_reloading = true
 
