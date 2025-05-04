@@ -8,18 +8,14 @@
       <%= form_with(model: @record, local: true) do |form| %>
         <div class="mb-3">
           <%= form.label :name, class: "form-label" %>
-          <%= form.text_field :name, class: "form-control" %>
+          <%= form.text_field :name, class: "form-control", required: true %>
         </div>
-
+        
         <div class="mb-3">
-          <%= form.label :in_time, class: "form-label" %>
-          <%= form.datetime_select :in_time, {}, class: "form-select" %>
-        </div>
-
-        <div class="mb-3">
-          <%= form.label :out_time, class: "form-label" %>
-          <%= form.datetime_select :out_time, {}, class: "form-select" %>
-        </div>
+            <%= form.label :in_photo, "Upload Check in Photo", class: "form-label" %>
+            <%= form.file_field :in_photo, class: "form-control", accept: "image/*", capture: "camera" %>
+            <div class="form-text">Take a photo or upload an image for check out verification.</div>
+          </div>
 
         <div class="d-flex justify-content-between">
           <%= form.submit "Create Record", class: "btn btn-success" %>

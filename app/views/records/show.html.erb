@@ -9,23 +9,46 @@
         <dt class="col-sm-3">Name</dt>
         <dd class="col-sm-9"><%= @record.name %></dd>
 
-        <dt class="col-sm-3">In Time</dt>
+        <dt class="col-sm-3">Check In Time</dt>
         <dd class="col-sm-9"><%= @record.in_time %></dd>
 
-        <dt class="col-sm-3">Out Time</dt>
-        <dd class="col-sm-9"><%= @record.out_time %></dd>
 
-        <dt class="col-sm-3">Created At</dt>
-        <dd class="col-sm-9"><%= @record.created_at %></dd>
+        <dt class="col-sm-3">Check In Photo</dt>
+        <dd class="col-sm-8  mt-2 rounded ">
+         <% if @record.in_photo.attached? %>
+              <%= link_to image_tag(@record.in_photo.variant(:thumb)), @record.in_photo %>
+            <% else %>
+              <p class="text-muted">No check-out photo available</p>
+            <% end %>
+        </dd>
 
-        <dt class="col-sm-3">Updated At</dt>
-        <dd class="col-sm-9"><%= @record.updated_at %></dd>
+        <dt class="col-sm-3">Check Out Time</dt>
+       <dd class="col-sm-9"> 
+        <% if @record.out_time.present? %>
+        <%= @record.out_time %>
+            <% else %>
+              <p class="text-muted">Haven't Checked Out Yet</p>
+            <% end %></dd>
+
+       <dt class="col-sm-3">Check Out Photo</dt>
+        <dd class="col-sm-8  mt-2 rounded ">
+         <% if @record.out_photo.attached? %>
+              <%= link_to image_tag(@record.out_photo.variant(:thumb)), @record.out_photo %>
+            <% else %>
+              <p class="text-muted">No check-out photo available</p>
+            <% end %>
+        </dd>
+
+      
       </dl>
     </div>
 
     <div class="card-footer d-flex justify-content-between">
-      <%= link_to "Edit", edit_record_path(@record), class: "btn btn-warning" %>
+      <% unless @record.out_time.present? %>
+      <%= link_to "Check Out Now", edit_record_path(@record), class: "btn btn-warning" %>
+      <% end %>
       <%= link_to "Back", records_path, class: "btn btn-secondary" %>
+      <%#debugger %>
     </div>
   </div>
 </div>
