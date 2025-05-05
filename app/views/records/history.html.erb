@@ -4,9 +4,9 @@
     </div>
     <div class="container mt-5 text-center">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <%= month_calendar(events: @records, attribute: :in_time) do |date| %>
+        <%= month_calendar(events: @records, attribute: :in_time, ) do |date| %>
           <div class="day">
-            <%= link_to date.day %>
+            <%= link_to date.day, records_path  %>
             <div class="container-fluid ">
               <p>Total:
                 <%=@records.select{ |m| m.created_at.strftime("%Y-%m-%d") == date.strftime("%Y-%m-%d")}.count%>
@@ -22,4 +22,3 @@
       </div>
     </div>
   </div>
-</div>

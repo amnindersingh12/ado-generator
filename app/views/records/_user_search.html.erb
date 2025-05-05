@@ -14,8 +14,7 @@
           <% end %>
           <%= link_to "Details", record_path(record), class: "btn btn-sm btn-outline-primary w-100 mb-1", data: { turbo_frame: "_top" } %>
           <% if record.out_time.nil? %>
-            <%= link_to  "Check Out", record_path(record), method: :patch, class: "btn btn-sm btn-success w-100" , data: { turbo_frame: "_top" }%>
-            <%# link_to "Check Out", edit_record_path(record), class: "", data: { turbo_frame: "_top" } %>
+            <%= link_to  "Check Out", edit_record_path(record), method: :patch, class: "btn btn-sm btn-success w-100" , data: { turbo_frame: "_top" }%>
           <% end %>
         </div>
       </div>
