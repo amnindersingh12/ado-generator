@@ -1,15 +1,9 @@
-
 tasks:
   - init: bin/setup
     command: bin/rails server
-
-
-
 vscode:
   extensions:
     - copilot-arena.copilot-arenaod.io/docs/introduction/learn-gitpod/gitpod-yaml)
     - aliariff.vscode-erb-beautify# and commit this file to your remote git repository to share the goodness with others.
     - Vense.rails-snippets# Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
     - vortizhe.simple-ruby-erbtasks:
-  - init: bin/setup
-    command: bin/rails server
