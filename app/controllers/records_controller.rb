@@ -1,18 +1,26 @@
 class RecordsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_record, only: [ :show, :edit, :update, :destroy ]
-  before_action :authorize_admin!, only: [ :destroy ]
+  before_action :set_record, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_admin!, only: [:destroy]
 
   def index
-  @records = Record.all.order(created_at: :desc)
+    @records = Record.all.order(created_at: :desc)
   end
-def home
-  @records = Record.all.order(created_at: :desc)
-  @searched_record = Record.search(params[:search])
-end
+
+  def home
+    @records = Record.all.order(created_at: :desc)
+    @searched_record = Record.search(params[:search])
+  end
+
+  def history
+    @records = Record.all
+    
+  end 
+    
 
   def show
   end
+
   def edit
   end
 
@@ -33,6 +41,7 @@ end
       end
     end
   end
+
   def update
     # Only update out_time and out_photo
     update_params = { out_time: Time.current }
@@ -57,8 +66,9 @@ end
     respond_to do |format|
       format.html { redirect_to root_path, notice: "Record was successfully destroyed." }
       format.json { head :no_content }
-    end  
+    end
   end
+
   def search
     if params[:search].present?
       @records = Record.search(params[:search])
@@ -68,13 +78,12 @@ end
     else
       @records = Record.none
     end
-    
+
     respond_to do |format|
       format.html
       format.turbo_stream
     end
   end
-  
 
   private
 

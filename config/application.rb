@@ -22,7 +22,7 @@ module AdoGenerator
     # in config/environments, which are processed later.
     #
     # updating time zone to indian standard time
-    config.time_zone = "New Delhi"
+    config.time_zone = "Asia/Kolkata"
     config.active_record.default_timezone = :local
     # config.eager_load_paths << Rails.root.join("extras")
   end

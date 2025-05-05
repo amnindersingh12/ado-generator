@@ -1,60 +1,48 @@
-<div class="container mt-5">
-  <div class="card shadow-lg">
-    <div class="card-header bg-info text-white">
-      <h3 class="mb-0">Record Details</h3>
+    <div class="container mt-5">
+      <div class="card shadow-lg">
+        <div class="card-header bg-info text-white">
+          <h3 class="mb-0">Record Details</h3>
+        </div>
+        <div class="card-body">
+          <dl class="row">
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9"><%= @record.name %></dd>
+            <dt class="col-sm-3">Check In Time</dt>
+            <dd class="col-sm-9"><%= format_datetime(@record.in_time) %></dd>
+            <dt class="col-sm-3">Check In Photo</dt>
+            <dd class="col-sm-8  mt-2 rounded ">
+              <% if @record.in_photo.attached? %>
+                <%= link_to image_tag(@record.in_photo.variant(:thumb)), @record.in_photo , target: :_blank%>
+              <% else %>
+                <p class="text-muted">No check-out photo available</p>
+              <% end %>
+            </dd>
+            <dt class="col-sm-3">Check Out Time</dt>
+            <dd class="col-sm-9">
+              <% if @record.out_time.present? %>
+                <%= format_datetime(@record.out_time) %>
+              <% else %>
+                <p class="text-muted">Haven't Checked Out Yet</p>
+              <% end %></dd>
+            <dt class="col-sm-3">Check Out Photo</dt>
+            <dd class="col-sm-8  mt-2 rounded ">
+              <% if @record.out_photo.attached? %>
+                <%= link_to image_tag(@record.out_photo.variant(:thumb)), @record.out_photo , target: :_blank%>
+              <% else %>
+                <p class="text-muted">No check-out photo available</p>
+              <% end %>
+            </dd>
+          </dl>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+          <% unless @record.out_time.present? %>
+            <%= link_to "Check Out Now", edit_record_path(@record), class: "btn btn-warning" %>
+          <% end %>
+          <%= link_to "Back", records_path, class: "btn btn-secondary" %>
+          <% if current_user && current_user.role == 'admin' %>
+            <%= link_to "Destroy", record_path(@record), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger" %>
+          <%end %>
+          <%#debugger %>
+        </div>
+      </div>
     </div>
-
-    <div class="card-body">
-      <dl class="row">
-        <dt class="col-sm-3">Name</dt>
-        <dd class="col-sm-9"><%= @record.name %></dd>
-
-        <dt class="col-sm-3">Check In Time</dt>
-        <dd class="col-sm-9"><%= @record.in_time %></dd>
-
-
-        <dt class="col-sm-3">Check In Photo</dt>
-        <dd class="col-sm-8  mt-2 rounded ">
-         <% if @record.in_photo.attached? %>
-              <%= link_to image_tag(@record.in_photo.variant(:thumb)), @record.in_photo , target: :_blank%>
-            <% else %>
-              <p class="text-muted">No check-out photo available</p>
-            <% end %>
-        </dd>
-
-        <dt class="col-sm-3">Check Out Time</dt>
-       <dd class="col-sm-9"> 
-        <% if @record.out_time.present? %>
-        <%= @record.out_time %>
-            <% else %>
-              <p class="text-muted">Haven't Checked Out Yet</p>
-            <% end %></dd>
-
-       <dt class="col-sm-3">Check Out Photo</dt>
-        <dd class="col-sm-8  mt-2 rounded ">
-         <% if @record.out_photo.attached? %>
-              <%= link_to image_tag(@record.out_photo.variant(:thumb)), @record.out_photo , target: :_blank%>
-            <% else %>
-              <p class="text-muted">No check-out photo available</p>
-            <% end %>
-        </dd>
-
-      
-      </dl>
-    </div>
-
-    <div class="card-footer d-flex justify-content-between">
-      <% unless @record.out_time.present? %>
-      <%= link_to "Check Out Now", edit_record_path(@record), class: "btn btn-warning" %>
-      <% end %>
-      <%= link_to "Back", records_path, class: "btn btn-secondary" %>
-      <% if current_user && current_user.role == 'admin' %>
-<%= link_to "Destroy", record_path(@record), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger" %>     
-
-<%end %>
- <%#debugger %>
-    </div>
-  </div>
-</div>
-
-
