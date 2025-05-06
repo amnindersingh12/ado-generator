@@ -1,6 +1,6 @@
 class RecordsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_record, only: [:show, :edit, :update, :destroy]
+  before_action :set_record, only: [:show, :edit, :update, :destroy, :history]
   before_action :authorize_admin!, only: [:destroy]
 
   def index
@@ -12,13 +12,11 @@ class RecordsController < ApplicationController
     @searched_record = Record.search(params[:search])
   end
 
-  def history
-    @records = Record.all
-    
-  end 
-    
+
+
 
   def show
+    @attendances = @record.attendances.order(created_at: :desc)
   end
 
   def edit
@@ -30,32 +28,19 @@ class RecordsController < ApplicationController
 
   def create
     @record = current_user.records.build(record_params)
-    @record.in_time = Time.now
-    respond_to do |format|
-      if @record.save
-        format.html { redirect_to @record, notice: "Record was successfully created with check-in details." }
-        format.json { render :show, status: :created, location: @record }
-      else
-        format.html { render :new }
-        format.json { render json: @record.errors, status: :unprocessable_entity }
-      end
+    @record.user = current_user
+    if @record.save
+      redirect_to records_path, notice: 'Record created successfully'
+    else
+      render :new
     end
   end
 
   def update
-    # Only update out_time and out_photo
-    update_params = { out_time: Time.current }
-    # Add out_photo to update_params if it's provided
-    update_params[:out_photo] = params[:record][:out_photo] if params[:record] && params[:record][:out_photo]
-
-    respond_to do |format|
-      if @record.update(update_params)
-        format.html { redirect_to @record, notice: "Record was successfully updated with check-out details." }
-        format.json { render :show, status: :ok, location: @record }
-      else
-        format.html { render :edit }
-        format.json { render json: @record.errors, status: :unprocessable_entity }
-      end
+    if @record.update(record_params)
+      redirect_to records_path, notice: 'Record updated successfully'
+    else
+      render :edit
     end
   end
 
@@ -63,10 +48,25 @@ class RecordsController < ApplicationController
 
   def destroy
     @record.destroy
-    respond_to do |format|
-      format.html { redirect_to root_path, notice: "Record was successfully destroyed." }
-      format.json { head :no_content }
+    redirect_to records_path, notice: 'Record deleted successfully'
+  end
+  def check_in
+    @attendance = @record.attendances.create(in_time: Time.current)
+    redirect_to @record, notice: 'Checked in successfully'
+  end
+
+  def check_out
+    @attendance = @record.attendances.last
+    if @attendance && @attendance.out_time.nil?
+      @attendance.update(out_time: Time.current)
+      redirect_to @record, notice: 'Checked out successfully'
+    else
+      redirect_to @record, alert: 'No active check-in found'
     end
+  end
+
+  def history
+    @attendances = @record.attendances.order(created_at: :desc)
   end
 
   def search
@@ -79,10 +79,7 @@ class RecordsController < ApplicationController
       @records = Record.none
     end
 
-    respond_to do |format|
-      format.html
-      format.turbo_stream
-    end
+    render :index
   end
 
   private

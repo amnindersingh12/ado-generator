@@ -1,11 +1,6 @@
 class Record < ApplicationRecord
   belongs_to :user
-  has_one_attached :in_photo do |attachable|
-    attachable.variant :thumb, resize_to_limit: [200, 200]
-  end
-  has_one_attached :out_photo do |attachable|
-    attachable.variant :thumb, resize_to_limit: [200, 200]
-  end
+  has_one_attached :in_photo
   validates :name, presence: true
 
   def self.search(search)
@@ -16,3 +11,4 @@ class Record < ApplicationRecord
     end
     end
 end
+# https://grok.com/share/c2hhcmQtMg%3D%3D_c452595e-824e-4b77-af5b-e04e5e1dfa0e
