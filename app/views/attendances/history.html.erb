@@ -1,0 +1,42 @@
+<h1>Attendance History for <%= @record.name %></h1>
+<% if @attendances.any? %>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>In Time</th>
+        <th>In Photo</th>
+        <th>Out Time</th>
+        <th>Out Photo</th>
+        <th>Created By</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @attendances.each do |attendance| %>
+        <tr>
+          <td><%= attendance.in_time&.strftime("%Y-%m-%d %H:%M:%S") || "N/A" %></td>
+          <td>
+            <% if attendance.in_photo.attached? %>
+              <%= image_tag attendance.in_photo, style: "max-width: 100px;" %>
+            <% else %>
+              N/A
+            <% end %>
+          </td>
+          <td><%= attendance.out_time&.strftime("%Y-%m-%d %H:%M:%S") || "N/A" %></td>
+          <td>
+            <% if attendance.out_photo.attached? %>
+              <%= image_tag attendance.out_photo, style: "max-width: 100px;" %>
+            <% else %>
+              N/A
+            <% end %>
+          </td>
+          <td>
+            <%=@created_by  %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No attendance records found.</p>
+<% end %>
+<%= link_to "Back", record_path(@record), class: "btn btn-secondary mt-3" %>

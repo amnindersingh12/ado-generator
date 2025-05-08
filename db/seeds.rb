@@ -7,7 +7,7 @@ Record.destroy_all
 # Helper method to get the mikey.png image path
 def get_mikey_image_path
   path = Rails.root.join("app", "assets",  "mikey.png")
-  
+
   # Check if the image exists and is valid
   unless File.exist?(path)
     puts "Error: mikey.png not found at #{path}"
@@ -67,10 +67,10 @@ if mikey_image_path
       )
 
       # Add check-out details for some records (e.g., 70% chance)
-      record.in_photo.attach(io: File.open(File.join(Rails.root,'app/assets/images/mikey.png')), filename: 'mikey.png')
+      record.in_photo.attach(io: File.open(File.join(Rails.root, 'app/assets/images/mikey.png')), filename: 'mikey.png')
 
-     
-      
+
+
       record.save!
       puts "Created record for #{name} associated with user ID #{user.id}"
 

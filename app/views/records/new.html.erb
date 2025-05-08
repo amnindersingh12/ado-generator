@@ -1,24 +1,18 @@
-    <div class="container mt-5">
-      <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">New Record</h2>
-        </div>
-        <div class="card-body">
-          <%= form_with(model: @record, local: true) do |form| %>
-            <div class="mb-3">
-              <%= form.label :name, class: "form-label" %>
-              <%= form.text_field :name, class: "form-control", required: true %>
-            </div>
-            <div class="mb-3">
-              <%= form.label :in_photo, "Upload Check in Photo", class: "form-label" %>
-              <%= form.file_field :in_photo, class: "form-control", accept: "image/*", capture: "camera" %>
-              <div class="form-text">Take a photo or upload an image for check out verification.</div>
-            </div>
-            <div class="d-flex justify-content-between">
-              <%= form.submit "Create Record", class: "btn btn-success" %>
-              <%= link_to "Back", root_path, class: "btn btn-secondary" %>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
+<h1>New Record</h1>
+<%= form_with model: @record, local: true do |form| %>
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control" %>
+    <% if @record.errors[:name].any? %>
+      <div class="text-danger"><%= @record.errors[:name].join(", ") %></div>
+    <% end %>
+  </div>
+  <div class="mb-3">
+    <%= webcam_capture(form, :photo) %>
+    <% if @record.errors[:photo].any? %>
+      <div class="text-danger"><%= @record.errors[:photo].join(", ") %></div>
+    <% end %>
+  </div>
+  <%= form.submit "Create Record", class: "btn btn-primary" %>
+<% end %>
+<%= link_to "Back", records_path, class: "btn btn-secondary mt-3" %>

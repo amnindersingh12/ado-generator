@@ -1,0 +1,34 @@
+<h1>Check-Out for <%= @record.name %></h1>
+<video id="video" autoplay class="mb-3" style="max-width: 100%;"></video>
+<canvas id="canvas" style="display:none;"></canvas>
+<%= form_with model: @attendance, url: record_attendance_path(@record, @attendance), method: :patch, local: true do |form| %>
+  <div class="mb-3">
+    <%= form.label :out_photo, "Capture Photo", class: "form-label" %>
+    <%= form.file_field :out_photo, id: "out_photo", class: "form-control" %>
+    <button type="button" onclick="capturePhoto()" class: "btn btn-secondary mt-2">Take Photo</button>
+  </div>
+  <%= form.submit "Check Out", class: "btn btn-success" %>
+<% end %>
+<%= link_to "Back", record_path(@record), class: "btn btn-secondary mt-3" %>
+<script>
+  navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+    document.getElementById('video').srcObject = stream;
+  }).catch(err => {
+    console.error("Error accessing camera: ", err);
+  });
+
+  function capturePhoto() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    canvas.toBlob(blob => {
+      const file = new File([blob], "out_photo.jpg", { type: "image/jpeg" });
+      const input = document.getElementById('out_photo');
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      input.files = dataTransfer.files;
+    });
+  }
+</script>

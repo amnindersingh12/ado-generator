@@ -1,15 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
   resources :records do
-    member do
-      post 'check_in'
-      post 'check_out'
-    end
-    get 'history', on: :member
-    collection do
-      get :search
+    get :search, on: :collection
+    resources :attendances do
+      get :history, on: :collection
     end
   end
-  get "history", to: "records#history"
-  root "records#home"
+  root to: "records#index"
 end

@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Authentication</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <title>Authentication</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="turbo-visit-control" content="reload">
-
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
-  
-  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
-  
-  <!-- You can add additional stylesheets for auth pages -->
-  <%= stylesheet_link_tag "authentication", "data-turbo-track": "reload" %>
-</head>
-<body class="auth-page">
-  <div class="auth-container">
-    <div class="auth-box">
-      <div class="auth-logo">
-        <!-- Your logo here -->
-        <h1>Ado Generator</h1>
-      </div>
-      
-      <% if notice %><div class="alert alert-info"><%= notice %></div><% end %>
-      <% if alert %><div class="alert alert-warning"><%= alert %></div><% end %>
-      
-      <%= yield %>
-      
-      <div class="auth-footer">
-        <p>&copy; <%= Date.today.year %> Ado Generator</p>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <!-- You can add additional stylesheets for auth pages -->
+    <%= stylesheet_link_tag "authentication", "data-turbo-track": "reload" %>
+  </head>
+  <body class="auth-page">
+    <div class="auth-container">
+      <div class="auth-box">
+        <div class="auth-logo">
+          <!-- Your logo here -->
+          <h1>Ado Generator</h1>
+        </div>
+        <div class="container mt-4">
+          <% if notice %>
+            <div class="alert alert-success"><%= notice %></div>
+          <% end %>
+          <% if alert %>
+            <div class="alert alert-danger"><%= alert %></div>
+          <% end %>
+          <%= yield %>
+        </div>
+        <%= yield %>
+        <div class="auth-footer">
+          <p>&copy; <%= Date.today.year %> Ado Generator</p>
+        </div>
       </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

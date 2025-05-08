@@ -1,9 +1,0 @@
-class Attandance < ApplicationRecord
-  belongs_to :record
-  has_one_attached :in_photo do |attachable|
-    attachable.variant :thumb, resize_to_limit: [200, 200]
-  end
-  has_one_attached :out_photo do |attachable|
-    attachable.variant :thumb, resize_to_limit: [200, 200]
-  end
-end

@@ -1,0 +1,13 @@
+<h1>Check-In for <%= @record.name %></h1>
+<%= form_with model: [@record,@attendance], local: true do |form| %>
+  <div class="mb-3">
+    <div class="mb-3">
+      <%= webcam_capture(form, :in_photo) %>
+      <% if @record.errors[:in_photo].any? %>
+        <div class="text-danger"><%= @record.errors[:in_photo].join(", ") %></div>
+      <% end %>
+    </div>
+  </div>
+  <%= form.submit "Check In", class: "btn btn-success" %>
+<% end %>
+<%= link_to "Back", record_path(@record), class: "btn btn-secondary mt-3" %>
