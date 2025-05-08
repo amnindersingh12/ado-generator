@@ -4,41 +4,30 @@
       <h2 class="mb-0">Check Out</h2>
     </div>
     <div class="card-body">
-      <% if @attendance %>
-        <%= form_with model: [@record,@attendance], local: true do |form| %>
+      <%= form_with model: [@record,@attendance], local: true do |form| %>
+        <div class="mb-3">
           <div class="mb-3">
-            <div class="mb-3">
-              <%= webcam_capture(form, :in_photo) %>
-              <% if @record.errors[:in_photo].any? %>
-                <div class="text-danger"><%= @record.errors[:in_photo].join(", ") %></div>
-              <% end %>
-            </div>
-          </div>
-          <div class="mb-3">
-            <% if @record.photo.attached? %>
-              <div class="mt-3 text-center">
-                <%= image_tag @record.photo, class: "img-fluid rounded border", style: "max-height: 300px;" %>
-              </div>
+          <p>Current time: <%= Time.current.strftime('%B %d, %Y %I:%M %p') %></p>
+            <%= webcam_capture(form, :out_photo) %>
+            <% if @record.errors[:out_photo].any? %>
+              <div class="text-danger"><%= @record.errors[:out_photo].join(", ") %></div>
             <% end %>
           </div>
-          <div class="mb-3">
-            <div class="card-body">
-              <p>Current time: <%= Time.current.strftime('%B %d, %Y %I:%M %p') %></p>
-              <div class="mb-3">
-                <%= webcam_capture(form, :out_photo) %>
-                <% if @record.errors[:out_photo].any? %>
-                  <div class="text-danger"><%= @record.errors[:out_photo].join(", ") %></div>
-                <% end %>
-              </div>
-            </div>
-            <div class="d-flex justify-content-between">
-              <%= form.submit "Check Out", class: "btn btn-success" %>
-              <%= link_to "Back", record_path(@record), class: "btn btn-secondary" %>
+        </div>
+        <div class="mb-3">
+        <p>Original Photo (during registration)</p>
+          <% if @record.photo.attached? %>
+            <div class="mt-3 text-center">
+              <%= image_tag @record.photo, class: "img-fluid rounded border", style: "max-height: 300px;" %>
             </div>
           <% end %>
         </div>
+
+          <div class="d-flex justify-content-between">
+            <%= form.submit "Check Out", class: "btn btn-success" %>
+            <%= link_to "Back", record_path(@record), class: "btn btn-secondary" %>
+          </div>
+        <% end %>
       </div>
-    <% else %>
-      <p class="text-danger">No active attendance found for check-out.</p>
-    <% end %>
+    </div>
   </div>

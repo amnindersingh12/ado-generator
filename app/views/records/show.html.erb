@@ -1,11 +1,15 @@
+<% open_attendance = @record.attendances.where(user: current_user, out_time: nil).last %>
 <h1><%= @record.name %></h1>
 <% if @record.photo.attached? %>
   <%= image_tag @record.photo, class: "img-fluid mb-3", style: "max-width: 300px;" %>
 <% end %>
 <p><strong>Created by:</strong> <%= @record.user.email %></p>
 <div class="mb-3">
-  <%= link_to "New Check-In", new_record_attendance_path(@record), class: "btn btn-success" %>
-  <%= link_to "View History", history_record_attendances_path(@record), class: "btn btn-info" %>
+  <% if open_attendance %>
+    <p class="text-danger">You must check out before starting a new check-in.</p>
+  <% else %>
+    <%= link_to "New Check-In", new_record_attendance_path(@record), class: "btn btn-success" %>
+  <% end %>  <%= link_to "View History", history_record_attendances_path(@record), class: "btn btn-info" %>
   <% if current_user && current_user.role == 'admin' %>
     <%= button_to "Destroy", record_path(@record), method: :delete, class: "btn btn-danger" %>
   <% end %>

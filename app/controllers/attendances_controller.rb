@@ -1,5 +1,7 @@
 class AttendancesController < ApplicationController
   before_action :set_record
+  before_action :ensure_same_user_checking_out, only: [ :edit, :update ]
+
 
   def new
     unless all_previous_attendances_checked_out?(@record)
@@ -7,10 +9,6 @@ class AttendancesController < ApplicationController
       return
     end
     @attendance = @record.attendances.build(user: current_user)
-  end
-
-  def index
-  @record_history = @record.attendance.order(created_at: :desc)
   end
 
   def create
@@ -25,6 +23,10 @@ class AttendancesController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def edit
+    @attendance = @record.attendances.find(params[:id])
   end
 
   def update
@@ -42,6 +44,13 @@ class AttendancesController < ApplicationController
   end
 
   private
+
+  def ensure_same_user_checking_out
+    @attendance = Attendance.find(params[:id])
+    unless @attendance.user_id == current_user.id
+      redirect_to record_path(@attendance.record), alert: "You are not authorized to check out this attendance."
+    end
+  end
 
   def all_previous_attendances_checked_out?(record)
     record.attendances.where(out_time: nil).none?

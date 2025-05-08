@@ -13,24 +13,26 @@
     <tbody>
       <% @attendances.each do |attendance| %>
         <tr>
-          <td><%= attendance.in_time&.strftime("%Y-%m-%d %H:%M:%S") || "N/A" %></td>
+          <td><%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "N/A" %></td>
           <td>
             <% if attendance.in_photo.attached? %>
-              <%= image_tag attendance.in_photo, style: "max-width: 100px;" %>
+              <%= enlargeable_image_tag attendance.in_photo, id: "in#{attendance.id}", label: "Check In Photo" %>
             <% else %>
               N/A
             <% end %>
           </td>
-          <td><%= attendance.out_time&.strftime("%Y-%m-%d %H:%M:%S") || "N/A" %></td>
+          <td><%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || "N/A" %></td>
           <td>
-            <% if attendance.out_photo.attached? %>
-              <%= image_tag attendance.out_photo, style: "max-width: 100px;" %>
+            <% unless attendance.out_photo.attached? %>
+              <% if attendance.user_id == current_user.id && attendance.out_time.nil? %>
+                <%= link_to "Check Out", edit_record_attendance_path(@record, attendance), class: "btn btn-warning" %>
+              <% end %>
             <% else %>
-              N/A
+              <%= enlargeable_image_tag attendance.out_photo, id: "out#{attendance.id}", label: "Check Out Photo" %>
             <% end %>
           </td>
           <td>
-            <%=@created_by  %>
+            <%= attendance.user&.email || "Unknown" %>
           </td>
         </tr>
       <% end %>

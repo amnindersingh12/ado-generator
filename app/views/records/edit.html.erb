@@ -1,4 +1,3 @@
-
 <div class="container mt-5">
   <div class="card shadow">
     <div class="card-header bg-warning text-dark">
@@ -21,10 +20,10 @@
           <div class="card-body">
             <p>Current time: <%= Time.current.strftime('%B %d, %Y %I:%M %p') %></p>
             <div class="mb-3">
-          <%= webcam_capture(form, :out_photo) %>
-    <% if @record.errors[:out_photo].any? %>
-      <div class="text-danger"><%= @record.errors[:out_photo].join(", ") %></div>
-    <% end %>
+              <%= webcam_capture(form, :out_photo) %>
+              <% if @record.errors[:out_photo].any? %>
+                <div class="text-danger"><%= @record.errors[:out_photo].join(", ") %></div>
+              <% end %>
             </div>
           </div>
           <div class="d-flex justify-content-between">
