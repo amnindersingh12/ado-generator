@@ -9,7 +9,10 @@ class RecordsController < ApplicationController
   end
 
   def show
+
     @record = Record.find(params[:id])
+
+    @has_pending_checkout =  @record.attendances.count { |a| a.out_time.nil? } > 0
   end
 
   def new

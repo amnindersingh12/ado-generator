@@ -8,7 +8,8 @@
   <%= link_to "View History", history_record_attendances_path(@record), class: "btn btn-info" %>
   <% if current_user && current_user.role == 'admin' %>
     <%= button_to "Destroy", record_path(@record), method: :delete, class: "btn btn-danger" %>
-  <% else %>
-    <%= debugger%>  <!-- For debugging to check current user if the condition is wrong -->
+  <% end %>
+  <% if @has_pending_checkout %>
+    <%= link_to "Check Out", history_record_attendances_path(@record), class: "btn btn-warning" %>
   <% end %>
 </div>

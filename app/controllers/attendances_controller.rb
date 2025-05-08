@@ -2,16 +2,26 @@ class AttendancesController < ApplicationController
   before_action :set_record
 
   def new
+    unless all_previous_attendances_checked_out?(@record)
+      redirect_to record_path(@record), alert: "Check-out required for previous entries before a new check-in."
+      return
+    end
     @attendance = @record.attendances.build(user: current_user)
   end
+
   def index
   @record_history = @record.attendance.order(created_at: :desc)
   end
 
   def create
+    unless all_previous_attendances_checked_out?(@record)
+      redirect_to record_path(@record), alert: "Check-out required for previous entries before a new check-in."
+      return
+    end
+
     @attendance = @record.attendances.build(attendance_params.merge(user: current_user, in_time: Time.current))
     if @attendance.save
-      redirect_to @record, notice: "Check-in recorded."
+      redirect_to @record, notice: "Checked in successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -33,11 +43,15 @@ class AttendancesController < ApplicationController
 
   private
 
+  def all_previous_attendances_checked_out?(record)
+    record.attendances.where(out_time: nil).none?
+  end
+
   def set_record
     @record = Record.find(params[:record_id])
   end
 
   def attendance_params
-    params.require(:attendance).permit(:in_photo, :out_photo, :in_time, :out_time)
+    params.require(:attendance).permit(:in_photo, :out_photo, :in_time, :photo, :out_time)
   end
 end
