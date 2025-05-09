@@ -1,0 +1,40 @@
+<div class="tooltip-content">
+  <h5>Details for <%= date.strftime('%B %d, %Y') %></h5>
+
+  <ul>
+    <li><strong>Total Check Ins:</strong> <%= total_in %></li>
+    <li><strong>Total Check Outs:</strong> <%= total_out %></li>
+    <li><strong>Pending Records:</strong> <%= pending_records %></li>
+    <li><strong>Unique Users:</strong> <%= unique_users %></li>
+  </ul>
+
+  <div class="mt-3">
+    <h6>Users:</h6>
+    <ul>
+      <% if attendances.empty? %>
+        <li>No users found.</li>
+      <% else %>
+        <% attendances.map(&:user).uniq.each do |user| %>
+          <li><%= user.email %></li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="mt-3">
+    <h6>Records:</h6>
+    <ul>
+      <% if attendances.empty? %>
+        <li>No Record found.</li>
+      <% else %>
+        <% attendances.each do |attendance| %>
+          <li>
+            <%= attendance.record.name %> -
+            <%= attendance.in_time&.strftime('%I:%M %p') %> to
+            <%= attendance.out_time&.strftime('%I:%M %p') || "N/A" %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+</div>

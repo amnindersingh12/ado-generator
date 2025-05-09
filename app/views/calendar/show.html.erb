@@ -1,0 +1,39 @@
+<h3 class="mb-3">Attendances on <%= @date.strftime('%B %d, %Y') %></h3>
+
+<!-- Report Section -->
+<div class="mb-4">
+  <h5>Attendance Summary for <%= @date&.strftime('%B %d, %Y') %></h5>
+  <ul>
+    <li><strong>Total Records:</strong> <%= @total_records %></li>
+    <li><strong>Total Check Ins:</strong> <%= @total_in %></li>
+    <li><strong>Total Check Outs:</strong> <%= @total_out %></li>
+    <li><strong>Unique Users:</strong> <%= @unique_users %></li>
+  </ul>
+</div>
+
+<%= link_to "Back to Calendar", history_calendar_path(year: @date.year, month: @date.month), class: "btn btn-secondary mb-3" %>
+
+<% if @attendances.any? %>
+  <div class="record-list" style="max-height: 500px; overflow-y: auto;">
+    <% @attendances.each do |attendance| %>
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <strong>Record:</strong> <%= attendance.record.name %> | <strong>User:</strong> <%= attendance.user.email %>
+        </div>
+        <div class="card-body">
+          <p><strong>Check In:</strong> <%= attendance.in_time&.strftime('%I:%M %p') || "N/A" %></p>
+          <% if attendance.in_photo.attached? %>
+            <%= image_tag attendance.in_photo, style: "max-width: 100px;", class: "img-thumbnail" %>
+          <% end %>
+
+          <p><strong>Check Out:</strong> <%= attendance.out_time&.strftime('%I:%M %p') || "N/A" %></p>
+          <% if attendance.out_photo.attached? %>
+            <%= image_tag attendance.out_photo, style: "max-width: 100px;", class: "img-thumbnail" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p>No records found for this day.</p>
+<% end %>
