@@ -30,8 +30,8 @@
         <% attendances.each do |attendance| %>
           <li>
             <%= attendance.record.name %> -
-            <%= attendance.in_time&.strftime('%I:%M %p') %> to
-            <%= attendance.out_time&.strftime('%I:%M %p') || "N/A" %>
+            <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "Haven't Checked in Yet !!" %>to
+            <%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || "Checked Out Pending !!" %>
           </li>
         <% end %>
       <% end %>

@@ -13,7 +13,7 @@
     <tbody>
       <% @attendances.each do |attendance| %>
         <tr>
-          <td><%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "N/A" %></td>
+          <td><%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "Haven't Checked in Yet !!" %></td>
           <td>
             <% if attendance.in_photo.attached? %>
               <%= enlargeable_image_tag attendance.in_photo, id: "in#{attendance.id}", label: "Check In Photo" %>
@@ -21,7 +21,7 @@
               N/A
             <% end %>
           </td>
-          <td><%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || "N/A" %></td>
+          <td><%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || "Check Out Pending" %></td>
           <td>
             <% unless attendance.out_photo.attached? %>
               <% if attendance.user_id == current_user.id && attendance.out_time.nil? %>

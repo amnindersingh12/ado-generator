@@ -1,7 +1,7 @@
 class RecordsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_record, only: [ :edit, :update, :destroy ]
-  before_action :authorize_admin!, only: [ :destroy ]
+  before_action :authorize_admin!, only: [ :new, :destroy ]
 
   def index
     @q = Record.ransack(params[:q])
@@ -9,7 +9,6 @@ class RecordsController < ApplicationController
   end
 
   def show
-
     @record = Record.find(params[:id])
 
     @has_pending_checkout =  @record.attendances.count { |a| a.out_time.nil? } > 0

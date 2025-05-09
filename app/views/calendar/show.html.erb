@@ -21,15 +21,15 @@
           <strong>Record:</strong> <%= attendance.record.name %> | <strong>User:</strong> <%= attendance.user.email %>
         </div>
         <div class="card-body">
-          <p><strong>Check In:</strong> <%= attendance.in_time&.strftime('%I:%M %p') || "N/A" %></p>
-          <% if attendance.in_photo.attached? %>
-            <%= image_tag attendance.in_photo, style: "max-width: 100px;", class: "img-thumbnail" %>
-          <% end %>
+          <p><strong>Check In:</strong> <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "Haven't Checked in Yet !!" %></p>
+            <% if attendance.in_photo.attached? %>
+              <%= enlargeable_image_tag attendance.in_photo, id: "in#{attendance.id}", label: "Check In Photo" %>
+            <% end %>
 
-          <p><strong>Check Out:</strong> <%= attendance.out_time&.strftime('%I:%M %p') || "N/A" %></p>
-          <% if attendance.out_photo.attached? %>
-            <%= image_tag attendance.out_photo, style: "max-width: 100px;", class: "img-thumbnail" %>
-          <% end %>
+          <p><strong>Check Out:</strong> <%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || "Check Out Pending" %></p>
+            <% if attendance.out_photo.attached? %>
+              <%= enlargeable_image_tag attendance.out_photo, id: "out#{attendance.id}", label: "Check Out Photo" %>
+            <% end %>
         </div>
       </div>
     <% end %>
