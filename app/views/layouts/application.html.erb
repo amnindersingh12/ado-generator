@@ -11,10 +11,25 @@
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
       });
+
+      // Encrypt and Submit function
+      function encryptAndSubmit() {
+        var catchphrase = document.getElementById("catchphrase-input").value;
+
+        // Encrypt the value before submitting (Optional, Base64 example)
+        var encryptedCatchphrase = btoa(catchphrase);
+
+        // Set the encrypted value to the hidden field
+        document.getElementById("encrypted-catchphrase").value = encryptedCatchphrase;
+
+        // Submit the form
+        document.getElementById("admin-form").submit();
+      }
     </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </head>
+
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
@@ -41,15 +56,30 @@
               <li class="nav-item d-flex align-items-center">
                 <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "btn btn-primary btn-sm ms-2" %>
               </li>
-            <% else %>
-              <li class="nav-item">
-                <a class="nav-link btn btn-outline-secondary btn-sm" href="<%= new_user_session_path %>">Sign in</a>
+              <li class="nav-item d-flex align-items-center ms-3">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleAdminForm()">
+                  🔒
+                </button>
+                <div id="admin-form" class="d-none ms-2">
+                  <%= form_with url: admin_role_path, method: :put, local: true, class: "d-flex", id: "admin-form" do |f| %>
+                    <%= f.password_field :catchphrase, id: "catchphrase-input", placeholder: "Admin Code", class: "form-control form-control-sm me-2", style: "width: 150px;" %>
+                    <%= f.hidden_field :encrypted_catchphrase, id: "encrypted-catchphrase" %>
+                    <%= f.submit "Apply", class: "btn btn-outline-dark btn-sm", onclick: "encryptAndSubmit(); return false;" %>
+                  <% end %>
+                </div>
               </li>
             <% end %>
+            <script>
+              function toggleAdminForm() {
+                var form = document.getElementById('admin-form');
+                form.classList.toggle('d-none');
+              }
+            </script>
           </ul>
         </div>
       </div>
     </nav>
+
     <div class="container mt-4">
       <% if notice %>
         <div class="alert alert-success"><%= notice %></div>
