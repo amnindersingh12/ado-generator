@@ -39,7 +39,9 @@
           <% if record.photo.attached? %>
             <%= image_tag record.photo, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
           <% else %>
-            <%= image_tag "placeholder.jpg", class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+            <div class="card-img-top" style="height: 200px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+              <span class="text-muted">No Image</span>
+            </div>
           <% end %>
 
           <div class="card-body">

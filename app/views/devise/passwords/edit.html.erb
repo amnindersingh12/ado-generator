@@ -1,25 +1,43 @@
-<h2>Change your password</h2>
+<h2 class="mb-4 text-center">Change Your Password</h2>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "needs-validation" }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
   <%= f.hidden_field :reset_password_token %>
 
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
+  <div class="mb-3">
+    <%= f.label :password, "New password", class: "form-label" %>
     <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
+      <small class="text-muted d-block mb-1">(<%= @minimum_password_length %> characters minimum)</small>
     <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+    <div class="input-group">
+      <%= f.password_field :password, class: "form-control", id: "new_password", autocomplete: "new-password", required: true %>
+      <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">👁️</button>
+    </div>
   </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  <div class="mb-3">
+    <%= f.label :password_confirmation, "Confirm new password", class: "form-label" %>
+    <%= f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password", required: true %>
   </div>
 
-  <div class="actions">
-    <%= f.submit "Change my password" %>
+  <div class="d-grid">
+    <%= f.submit "Change my password", class: "btn btn-primary" %>
   </div>
 <% end %>
 
-<%= render "devise/shared/links" %>
+<div class="mt-3 text-center">
+  <%= render "devise/shared/links" %>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("toggleNewPassword");
+    const password = document.getElementById("new_password");
+
+    toggle.addEventListener("click", function () {
+      const type = password.getAttribute("type") === "password" ? "text" : "password";
+      password.setAttribute("type", type);
+      this.textContent = type === "password" ? "👁️" : "🙈";
+    });
+  });
+</script>
