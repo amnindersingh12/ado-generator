@@ -1,33 +1,50 @@
-<div class="container mt-5">
-  <div class="card shadow">
-    <div class="card-header bg-warning text-dark">
-      <h2 class="mb-0">Check Out</h2>
+<div class="container my-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-warning text-dark text-center">
+      <h2 class="mb-0">
+        <i class="bi bi-box-arrow-right me-2"></i> Check Out
+      </h2>
     </div>
     <div class="card-body">
-      <%= form_with model: [@record,@attendance], local: true do |form| %>
-        <div class="mb-3">
-          <div class="mb-3">
-          <p>Current time: <%= Time.current.strftime('%B %d, %Y %I:%M %p') %></p>
-            <%= webcam_capture(form, :out_photo) %>
-            <% if @record.errors[:out_photo].any? %>
-              <div class="text-danger"><%= @record.errors[:out_photo].join(", ") %></div>
-            <% end %>
-          </div>
-        </div>
-        <div class="mb-3">
-        <p>Original Photo (during registration)</p>
-          <% if @record.photo.attached? %>
-            <div class="mt-3 text-center">
-              <%= image_tag @record.photo, class: "img-fluid rounded border", style: "max-height: 300px;" %>
+      <%= form_with model: [@record, @attendance], local: true, html: { class: "needs-validation" } do |form| %>
+
+        <!-- Current time and Capture Check-Out Photo Section -->
+        <div class="mb-4">
+          <p class="fw-semibold">
+            <i class="bi bi-calendar-check me-2"></i> Current Time:
+            <%= Time.current.strftime('%B %d, %Y %I:%M %p') %>
+          </p>
+
+          <%= form.label :out_photo, "Capture Check-Out Photo", class: "form-label" %>
+          <%= webcam_capture(form, :out_photo) %>
+
+          <% if @attendance.errors[:out_photo].any? %>
+            <div class="text-danger small mt-2">
+              <i class="bi bi-exclamation-circle-fill me-2"></i>
+              <%= @attendance.errors[:out_photo].join(", ") %>
             </div>
           <% end %>
         </div>
 
-          <div class="d-flex justify-content-between">
-            <%= form.submit "Check Out", class: "btn btn-success" %>
-            <%= link_to "Back", record_path(@record), class: "btn btn-secondary" %>
+        <!-- Display Original Photo Section -->
+        <% if @record.photo.attached? %>
+          <div class="mb-4">
+            <p class="fw-semibold">
+              <i class="bi bi-person-fill me-2"></i> Original Photo (during registration):
+            </p>
+            <div class="text-center">
+              <%= image_tag @record.photo, class: "img-fluid rounded border", style: "max-height: 300px;" %>
+            </div>
           </div>
         <% end %>
-      </div>
+
+        <!-- Form Buttons: Check Out and Back -->
+        <div class="d-flex justify-content-between">
+          <%= form.submit "Check Out", class: "btn btn-success px-4" %>
+          <%= link_to "Back", record_path(@record), class: "btn btn-secondary px-4" %>
+        </div>
+
+      <% end %>
     </div>
   </div>
+</div>

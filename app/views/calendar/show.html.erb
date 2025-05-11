@@ -1,39 +1,70 @@
-<h3 class="mb-3">Attendances on <%= @date.strftime('%B %d, %Y') %></h3>
+<div class="container my-4">
+  <h3 class="text-center mb-4">Attendances on <%= @date.strftime('%B %d, %Y') %></h3>
 
-<!-- Report Section -->
-<div class="mb-4">
-  <h5>Attendance Summary for <%= @date&.strftime('%B %d, %Y') %></h5>
-  <ul>
-    <li><strong>Total Records:</strong> <%= @total_records %></li>
-    <li><strong>Total Check Ins:</strong> <%= @total_in %></li>
-    <li><strong>Total Check Outs:</strong> <%= @total_out %></li>
-    <li><strong>Unique Users:</strong> <%= @unique_users %></li>
-  </ul>
-</div>
-
-<%= link_to "Back to Calendar", history_calendar_path(year: @date.year, month: @date.month), class: "btn btn-secondary mb-3" %>
-
-<% if @attendances.any? %>
-  <div class="record-list" style="max-height: 500px; overflow-y: auto;">
-    <% @attendances.each do |attendance| %>
-      <div class="card mb-3">
-        <div class="card-header bg-light">
-          <strong>Record:</strong> <%= attendance.record.name %> | <strong>User:</strong> <%= attendance.user.email %>
-        </div>
-        <div class="card-body">
-          <p><strong>Check In:</strong> <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "Haven't Checked in Yet !!" %></p>
-            <% if attendance.in_photo.attached? %>
-              <%= enlargeable_image_tag attendance.in_photo, id: "in#{attendance.id}", label: "Check In Photo" %>
-            <% end %>
-
-          <p><strong>Check Out:</strong> <%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || "Check Out Pending" %></p>
-            <% if attendance.out_photo.attached? %>
-              <%= enlargeable_image_tag attendance.out_photo, id: "out#{attendance.id}", label: "Check Out Photo" %>
-            <% end %>
-        </div>
-      </div>
-    <% end %>
+  <!-- Summary Section -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Summary</h5>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <strong>Total Records:</strong> <span class="badge bg-primary rounded-pill"><%= @total_records %></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <strong>Total Check Ins:</strong> <span class="badge bg-success rounded-pill"><%= @total_in %></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <strong>Total Check Outs:</strong> <span class="badge bg-danger rounded-pill"><%= @total_out %></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <strong>Unique Users:</strong> <span class="badge bg-warning text-dark rounded-pill"><%= @unique_users %></span>
+        </li>
+      </ul>
+    </div>
   </div>
-<% else %>
-  <p>No records found for this day.</p>
-<% end %>
+
+  <!-- Back Button -->
+  <div class="mb-3">
+    <%= link_to "← Back to Calendar", history_calendar_path(year: @date.year, month: @date.month), class: "btn btn-secondary" %>
+  </div>
+
+  <!-- Attendance Records -->
+  <% if @attendances.any? %>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <% @attendances.each_with_index do |attendance, index| %>
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-header bg-light">
+              <strong>Record #<%= index + 1 %>:</strong> <%= attendance.record.name %><br>
+              <strong>User:</strong> <%= attendance.user.email %>
+            </div>
+            <div class="card-body">
+              <p><strong>Check In:</strong>
+                <%= attendance.in_time&.strftime('%I:%M %p') || "<span class='badge bg-warning text-dark'>Not Checked In</span>" %>
+              </p>
+              <% if attendance.in_photo.attached? %>
+                <%= enlargeable_image_tag(attendance.in_photo, id: "in#{attendance.id}", label: "Check In Photo", thumb_size: "80px") %>
+              <% end %>
+
+              <hr>
+
+              <p><strong>Check Out:</strong>
+                <% if attendance.out_time.nil? %>
+                  <span class="badge bg-warning text-dark">Checkout Pending</span>
+                <% else %>
+                  <%= attendance.out_time&.strftime('%I:%M %p') %>
+                <% end %>
+              </p>
+              <% if attendance.out_photo.attached? %>
+                <%= enlargeable_image_tag(attendance.out_photo, id: "out#{attendance.id}", label: "Check Out Photo", thumb_size: "80px") %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-warning text-center">
+      No records found for <strong><%= @date.strftime('%B %d, %Y') %></strong>.
+    </div>
+  <% end %>
+</div>

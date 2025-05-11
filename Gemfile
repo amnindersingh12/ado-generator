@@ -65,7 +65,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "ruby-vips", "~> 2.2"
+#gem "ruby-vips", "~> 2.2"
 
 gem "rubocop", "~> 1.75"
 

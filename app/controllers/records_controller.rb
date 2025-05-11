@@ -5,8 +5,17 @@ class RecordsController < ApplicationController
 
   def index
     @q = Record.ransack(params[:q])
-    @records = @q.result.includes(:user)
+
+    # Apply date filtering
+    filter_by_date(params[:created_at]) if params[:created_at].present?
+
+    # Final filtered result
+    @records = @q.result(distinct: true).includes(:photo_attachment, :government_id_photo_attachment, attendances: [:in_photo_attachment, :out_photo_attachment]).order(created_at: :desc)
+
+    # Compute stats based on those records
+    calculate_attendance_statistics
   end
+
 
   def show
     @record = Record.find(params[:id])
@@ -68,10 +77,37 @@ end
   end
 
   def record_params
-    params.require(:record).permit(:name, :id, :photo, :contact_number, :address, :pincode, :city, :state, :date_of_birth, :father_name, :government_id_number, :created_at, :updated_at, :in_time, :out_time, :in_photo, :out_photo, :user_id, :search)
+    params.require(:record).permit(:government_id_photo, :name, :id, :photo, :contact_number, :address, :pincode, :city, :state, :date_of_birth, :father_name, :government_id_number, :created_at, :updated_at, :in_time, :out_time, :in_photo, :out_photo, :user_id, :search)
   end
 
   def authorize_admin!
     redirect_to records_path, alert: "Access denied." unless current_user.admin?
+  end
+
+  def filter_by_date(filter)
+    case filter
+    when "today"
+      @q = @q.where(created_at: Date.today.all_day)
+    when "week"
+      start_of_week = Date.today.beginning_of_week(:sunday)
+      end_of_week = Date.today.end_of_week(:sunday)
+      @q = @q.where(created_at: start_of_week..end_of_week)
+    when "month"
+      start_of_month = Date.today.beginning_of_month
+      end_of_month = Date.today.end_of_month
+      @q = @q.where(created_at: start_of_month..end_of_month)
+    when "all"
+      # No filtering for all time
+    else
+      # Default: No date filtering applied
+    end
+  end
+
+  def calculate_attendance_statistics
+    @attendances = Attendance.where(record_id: @records.pluck(:id))  # Assuming there's a record_id association
+    @total_in = @attendances.where.not(in_time: nil).count
+    @total_out = @attendances.where.not(out_time: nil).count
+    @pending_records = @attendances.where(out_time: nil).count
+    @total_records = @records.count
   end
 end

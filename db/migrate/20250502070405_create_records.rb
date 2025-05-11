@@ -2,7 +2,7 @@ class CreateRecords < ActiveRecord::Migration[8.0]
   def change
     create_table :records do |t|
       t.string :name
-      t.integer :contact_number
+      t.string :contact_number
       t.string :address
       t.integer :pincode
       t.string :city

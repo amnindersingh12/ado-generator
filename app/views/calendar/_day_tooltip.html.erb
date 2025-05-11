@@ -1,40 +1,68 @@
-<div class="tooltip-content">
-  <h5>Details for <%= date.strftime('%B %d, %Y') %></h5>
+<div class="tooltip-content p-3 rounded bg-light shadow-sm">
+  <h5 class="text-center mb-4 text-primary">Details for <%= date.strftime('%B %d, %Y') %></h5>
 
-  <ul>
-    <li><strong>Total Check Ins:</strong> <%= total_in %></li>
-    <li><strong>Total Check Outs:</strong> <%= total_out %></li>
-    <li><strong>Pending Records:</strong> <%= pending_records %></li>
-    <li><strong>Unique Users:</strong> <%= unique_users %></li>
-  </ul>
+  <!-- Summary Section -->
+  <div class="d-flex flex-column mb-3">
+    <div class="d-flex justify-content-between">
+      <span><strong>Total Check In:</strong> <%= total_in %></span>
+      <span class="badge bg-info rounded-pill align-self-center"><%= total_in %></span>
+    </div>
+    <div class="d-flex justify-content-between">
+      <span><strong>Total Check Out:</strong> <%= total_out %></span>
+      <span class="badge bg-success rounded-pill align-self-center"><%= total_out %></span>
+    </div>
+    <div class="d-flex justify-content-between">
+      <span><strong>Pending Records:</strong> <%= pending_records %></span>
+      <span class="badge bg-warning rounded-pill align-self-center"><%= pending_records %></span>
+    </div>
+    <div class="d-flex justify-content-between">
+      <span><strong>Unique Users:</strong> <%= unique_users %></span>
+      <span class="badge bg-secondary rounded-pill align-self-center"><%= unique_users %></span>
+    </div>
+  </div>
 
-  <div class="mt-3">
-    <h6>Users:</h6>
-    <ul>
+  <!-- Users Section -->
+  <div class="mt-4">
+    <h6 class="text-info">Users:</h6>
+    <ul class="list-group">
       <% if attendances.empty? %>
-        <li>No users found.</li>
+        <li class="list-group-item text-muted">No users found.</li>
       <% else %>
-        <% attendances.map(&:user).uniq.each do |user| %>
-          <li><%= user.email %></li>
+        <% attendances.map(&:user).uniq.each_with_index do |user, index| %>
+          <li class="list-group-item">
+            <strong>User <%= index + 1 %>:</strong> <%= user.email %>
+          </li>
         <% end %>
       <% end %>
     </ul>
   </div>
 
-  <div class="mt-3">
-    <h6>Records:</h6>
-    <ul>
+  <!-- Records Section -->
+  <div class="mt-4">
+    <h6 class="text-info">Records:</h6>
+    <ul class="list-group">
       <% if attendances.empty? %>
-        <li>No Record found.</li>
+        <li class="list-group-item text-muted">No records found for this date.</li>
       <% else %>
-        <% attendances.each do |attendance| %>
-          <li>
-            <%= attendance.record.name %> -
-            <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "Haven't Checked in Yet !!" %>to
-            <%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || "Checked Out Pending !!" %>
+        <% attendances.each_with_index do |attendance, index| %>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>
+              <strong>Record <%= index + 1 %>:</strong> <%= attendance.record.name %>
+            </span>
+            <span class="badge bg-primary">
+              <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "Haven't Checked In Yet!" %>
+            </span>
+            <span class="badge bg-danger">
+              <%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || "Check Out Pending" %>
+            </span>
           </li>
         <% end %>
       <% end %>
     </ul>
+  </div>
+
+  <!-- Tooltip Footer Section -->
+  <div class="mt-3 text-center">
+    <p class="text-muted small">This information is dynamically generated for the selected date. Check in and out times are updated automatically.</p>
   </div>
 </div>

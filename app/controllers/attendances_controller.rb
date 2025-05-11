@@ -18,7 +18,8 @@ class AttendancesController < ApplicationController
     end
 
     @attendance = @record.attendances.build(attendance_params.merge(user: current_user, in_time: Time.current))
-    if @attendance.save
+
+    if @attendance.save!
       redirect_to @record, notice: "Checked in successfully."
     else
       render :new, status: :unprocessable_entity

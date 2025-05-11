@@ -440,7 +440,6 @@ DEPENDENCIES
   ransack (~> 4.3)
   rubocop (~> 1.75)
   rubocop-rails-omakase
-  ruby-vips (~> 2.2)
   rufo (~> 0.18.1)
   selenium-webdriver
   simple_calendar (~> 3.1)

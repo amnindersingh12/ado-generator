@@ -52,8 +52,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_131312) do
 
   create_table "records", force: :cascade do |t|
     t.string "name"
-    t.datetime "in_time"
-    t.datetime "out_time"
+    t.string "contact_number"
+    t.string "address"
+    t.integer "pincode"
+    t.string "city"
+    t.string "state"
+    t.datetime "date_of_birth"
+    t.string "father_name"
+    t.integer "government_id_number"
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
