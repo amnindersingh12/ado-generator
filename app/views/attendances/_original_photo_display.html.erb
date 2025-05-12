@@ -1,0 +1,10 @@
+<% if record.photo.attached? %>
+  <div class="mb-4">
+    <p class="fw-semibold">
+      <i class="bi bi-person-fill me-2"></i> Original Photo (during registration):
+    </p>
+    <div class="text-center">
+      <%= image_tag record.photo, class: "img-fluid rounded border", style: "max-height: 300px;" %>
+    </div>
+  </div>
+<% end %>

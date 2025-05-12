@@ -1,0 +1,80 @@
+<!-- Webcam video preview -->
+<video id="video" autoplay class="mb-3" style="max-width: 100%;"></video>
+<!-- Hidden canvas used for capturing photo from video -->
+<canvas id="canvas" style="display: none;"></canvas>
+<!-- File input and capture button -->
+<div class="mb-3">
+<%= form.label field, "Capture Photo", class: "form-label" %>
+<%= form.file_field field, id: field, class: "form-control" %>
+<!-- Take Photo button -->
+<button type="button" id="takePhotoBtn" onclick="capturePhoto('<%= field %>')" class="btn btn-secondary mt-2">
+  Take Photo
+</button>
+<!-- Retake Photo button (hidden initially) -->
+<button type="button" id="retakePhotoBtn" onclick="retakePhoto()" class="btn btn-warning mt-2" style="display: none;">
+  Retake Photo
+</button>
+</div>
+<!-- Captured photo preview -->
+<img id="photoPreview" alt="Captured photo" class="img-thumbnail mt-3" style="max-width: 100%; display: none;" />
+<script>
+// Initialize webcam stream once
+if (!window.hasInitializedWebcam) {
+  navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+    document.getElementById('video').srcObject = stream;
+  }).catch(err => {
+    console.error("Error accessing camera: ", err);
+  });
+
+  /**
+    * Capture photo from video stream and show preview.
+    */
+  window.capturePhoto = function(inputId) {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const photoPreview = document.getElementById('photoPreview');
+
+    // Capture current frame
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+
+    // Show preview image
+    photoPreview.src = canvas.toDataURL("image/jpeg");
+    photoPreview.style.display = 'block';
+
+    // Hide video feed and toggle buttons
+    video.style.display = 'none';
+    document.getElementById('takePhotoBtn').style.display = 'none';
+    document.getElementById('retakePhotoBtn').style.display = 'inline-block';
+
+    // Assign the captured image to the file input
+    canvas.toBlob(blob => {
+      const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+      const input = document.getElementById(inputId);
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      input.files = dataTransfer.files;
+    });
+  };
+
+  /**
+    * Reset UI and allow user to retake photo.
+    */
+  window.retakePhoto = function() {
+    const video = document.getElementById('video');
+    const photoPreview = document.getElementById('photoPreview');
+
+    // Show video feed again
+    video.style.display = 'block';
+    photoPreview.style.display = 'none';
+
+    // Toggle buttons
+    document.getElementById('takePhotoBtn').style.display = 'inline-block';
+    document.getElementById('retakePhotoBtn').style.display = 'none';
+  };
+
+  // Prevent re-initializing
+  window.hasInitializedWebcam = true;
+}
+</script>

@@ -1,36 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Authentication</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <title>Authentication</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="turbo-visit-control" content="reload">
-
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
-  
-  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
-  
-  <!-- You can add additional stylesheets for auth pages -->
-  <%= stylesheet_link_tag "authentication", "data-turbo-track": "reload" %>
-</head>
-<body class="auth-page">
-  <div class="auth-container">
-    <div class="auth-box">
-      <div class="auth-logo">
-        <!-- Your logo here -->
-        <h1>Ado Generator</h1>
-      </div>
-      
-      <% if notice %><div class="alert alert-info"><%= notice %></div><% end %>
-      <% if alert %><div class="alert alert-warning"><%= alert %></div><% end %>
-      
-      <%= yield %>
-      
-      <div class="auth-footer">
-        <p>&copy; <%= Date.today.year %> Ado Generator</p>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <%= stylesheet_link_tag "authentication", "data-turbo-track": "reload" %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body class="auth-page bg-light d-flex align-items-center justify-content-center min-vh-100">
+    <div class="auth-container w-100" style="max-width: 420px;">
+      <div class="card shadow-lg rounded-4 p-4">
+        <div class="text-center mb-4">
+          <h1 class="h3 mb-3 fw-bold">Ado Generator</h1>
+        </div>
+        <% if notice %>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= notice %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %>
+        <% if alert %>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= alert %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %>
+        <%= yield %>
+        <div class="text-center mt-4 small text-muted">
+          &copy; <%= Date.today.year %> Ado Generator
+        </div>
       </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

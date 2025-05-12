@@ -1,0 +1,12 @@
+.tooltip-content {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .tooltip {
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    padding: 10px;
+    display: none;
+  }

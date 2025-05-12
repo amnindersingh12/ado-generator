@@ -1,87 +1,80 @@
-# db/seeds.rb
+require 'open-uri'
+require 'faker'
 
-# Clear existing records to avoid duplication during development
-puts "Clearing existing records..."
-Record.destroy_all
+# Uncomment if you want to reset the database
 
-# Helper method to get the mikey.png image path
-def get_mikey_image_path
-  path = Rails.root.join("app", "assets",  "mikey.png")
-  
-  # Check if the image exists and is valid
-  unless File.exist?(path)
-    puts "Error: mikey.png not found at #{path}"
-    return nil
-  end
+puts "🌱 Starting seed..."
 
-  unless File.size(path) > 0
-    puts "Error: mikey.png is empty at #{path}"
-    return nil
-  end
-
-  path
-end
-
-# Create sample records
-puts "Creating sample records..."
-
-# Sample employee names
-names = [
-  "John Smith",
-  "Emma Johnson",
-  "Michael Williams",
-  "Sophia Brown",
-  "James Jones",
-  "Olivia Davis",
-  "Robert Miller",
-  "Ava Wilson",
-  "William Moore",
-  "Isabella Taylor"
-]
-
-# Check if user with ID 1 exists, create one if not
-user = User.find_by(id: 1)
-unless user
-  puts "Warning: No user found with ID 1. Creating a default user..."
+# Create Users
+users = 2.times.map do
   user = User.create!(
-    id: 1,
-    email: "default@example.com",
-    password: "password123",
-    name: "Default User"
+    email: Faker::Internet.unique.email,
+    password: 'password123',
+    role: %w[user admin].sample
   )
-  puts "Created default user with ID 1: #{user.email}"
+  puts "✅ Created user: #{user.email} (#{user.role})"
+  user
 end
 
-# Get the mikey.png image path
-mikey_image_path = get_mikey_image_path
+# Create Records with photos
+records = 10.times.map do |i|
+  record = Record.create!(
+    name: Faker::Name.name,
+    contact_number: Faker::PhoneNumber.phone_number,
+    address: Faker::Address.full_address,
+    pincode: Faker::Address.zip_code,
+    city: Faker::Address.city,
+    state: Faker::Address.state,
+    date_of_birth: Faker::Date.birthday(min_age: 18, max_age: 65),
+    father_name: Faker::Name.name,
+    government_id_number: Faker::Number.number(digits: 12),
+    user_id: users.sample.id
+  )
 
-if mikey_image_path
-  # Create records with different timestamps
-  names.each_with_index do |name, index|
+  begin
+    record.photo.attach(
+      io: URI.open("https://pic.re/image/blush/#{rand(1..200)}"),
+      filename: "record_photo_#{record.id}.jpg"
+    )
+    record.government_id_photo.attach(
+      io: URI.open("https://pic.re/image/blush/#{rand(211..300)}"),
+      filename: "gov_id_photo_#{record.id}.jpg"
+    )
+    puts "📷 Attached photos for record: #{record.name}"
+  rescue => e
+    puts "⚠️ Failed to attach image to record #{record.id}: #{e.message}"
+  end
+
+  record
+end
+
+# Create multiple attendance entries for each user
+users.each do |user|
+  10.times do
+    in_time = Faker::Time.between(from: 3.days.ago, to: 1.day.ago)
+    out_time = Faker::Time.between(from: in_time + 1.hour, to: in_time + 8.hours)
+
+    attendance = Attendance.create!(
+      user_id: user.id,
+      record_id: records.sample.id,
+      in_time: in_time,
+      out_time: out_time
+    )
+
     begin
-      # Create a record with check-in details and user_id: 1
-      record = Record.new(
-        name: name,
-        in_time: Time.current - rand(1..48).hours,
-        user_id: user.id
+      attendance.in_photo.attach(
+        io: URI.open("https://pic.re/image/blush/#{rand(1..200)}"),
+        filename: "in_photo_#{attendance.id}.jpg"
       )
-
-      # Add check-out details for some records (e.g., 70% chance)
-      record.in_photo.attach(io: File.open(File.join(Rails.root,'app/assets/images/mikey.png')), filename: 'mikey.png')
-
-     
-      
-      record.save!
-      puts "Created record for #{name} associated with user ID #{user.id}"
-
-    rescue ActiveStorage::IntegrityError => e
-      puts "Failed to attach photo for #{name}: #{e.message}"
-    rescue StandardError => e
-      puts "Failed to create record for #{name}: #{e.message}"
+      attendance.out_photo.attach(
+        io: URI.open("https://pic.re/image/blush/#{rand(1..200)}"),
+        filename: "out_photo_#{attendance.id}.jpg"
+      )
+      puts "🕒 Attendance created for #{user.email} at #{in_time.strftime('%F %T')}"
+    rescue => e
+      puts "⚠️ Failed to attach attendance image #{attendance.id}: #{e.message}"
     end
   end
-
-  puts "Seed completed successfully! Created #{Record.count} records for user ID #{user.id}."
-else
-  puts "Error: Could not create seeds because mikey.png was not found or invalid."
 end
+
+puts "✅ Seeding completed successfully!"

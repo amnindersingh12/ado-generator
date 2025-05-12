@@ -1,54 +1,81 @@
-    <div class="container mt-5">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>All Records</h2>
-        <%= link_to "New Record", new_record_path, class: "btn btn-primary" %>
-        <%= link_to "Back to Records", root_path, class: "btn btn-primary" %>
-      </div>
-      <table class="table table-striped table-hover shadow-sm">
-        <thead class="table-dark">
-          <tr>
-            <th>Name</th>
-            <th>Check In Time</th>
-            <th>Check In Photo</th>
-            <th>Check Out Time</th>
-            <th>Check Out Photo</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @records.each do |record| %>
-            <tr>
-              <td><%= record.name %></td>
-              <td><%= format_datetime(record.in_time) %></td>
-              <td>
-                <% if record.in_photo.attached? %>
-                  <%= link_to image_tag(record.in_photo.variant(:thumb)), record.in_photo, target: :_blank %>
-                <% else %>
-                  <p class="text-muted">No check-out photo available</p>
-                <% end %>
-              </td>
-              <td>
-                <% unless record.out_time.blank? %>
-                  <%= format_datetime(record.out_time)%>
-                <% else %>
-                  <p class="text-muted">Haven't checked out yet.</p>
-                <% end %>
-              </td>
-              <td>
-                <% if record.out_photo.attached? %>
-                  <%= link_to image_tag(record.out_photo.variant(:thumb)), record.out_photo, target: :_blank %>
-                <% else %>
-                  <p class="text-muted">No check-out photo available</p>
-                <% end %>
-              </td>
-              <td>
-                <%= link_to "Show", record_path(record), class: "btn btn-sm btn-outline-info me-1" %>
-                <% if current_user && current_user.role == "admin" %>
-                  <%= link_to "Destroy", record, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-outline-danger" %>
-                <%end %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+<h1 class="text-center my-4">Records</h1>
+
+<!-- 🔍 Search & Filter Form -->
+<%= search_form_for @q, url: records_path, method: :get, class: "mb-4" do |f| %>
+  <div class="row g-3 align-items-end">
+    <div class="col-md-4">
+      <%= f.label :name_cont, "Search by Name", class: "form-label" %>
+      <%= f.search_field :name_cont, class: "form-control", placeholder: "Enter record name" %>
     </div>
+    <div class="col-md-4">
+      <%= f.label :created_at, "Filter by Date", class: "form-label" %>
+      <%= f.select :created_at, options_for_select([['All Time', 'all'], ['Today', 'today'], ['This Week', 'week'], ['This Month', 'month']], params[:created_at]), {}, class: "form-select" %>
+    </div>
+    <div class="col-md-2">
+      <%= f.submit "Search", class: "btn btn-primary w-100" %>
+    </div>
+  </div>
+<% end %>
+
+<!-- 📊 Summary Stats -->
+<% if @records.any? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title text-center mb-3">Attendance Summary</h5>
+      <div class="row text-center">
+        <div class="col-md-3"><h6>Total Records</h6><p class="fs-4 text-primary"><%= @total_records %></p></div>
+        <div class="col-md-3"><h6>Total Check-Ins</h6><p class="fs-4 text-success"><%= @total_in %></p></div>
+        <div class="col-md-3"><h6>Total Check-Outs</h6><p class="fs-4 text-danger"><%= @total_out %></p></div>
+        <div class="col-md-3"><h6>Pending</h6><p class="fs-4 text-warning"><%= @pending_records %></p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎴 Records Grid -->
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    <% @records.each_with_index do |record, index| %>
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <% if record.photo.attached? %>
+            <%= image_tag record.photo, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+          <% else %>
+            <div class="card-img-top" style="height: 200px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+              <span class="text-muted">No Image</span>
+            </div>
+          <% end %>
+
+          <div class="card-body">
+            <h5 class="card-title text-truncate" title="<%= record.name %>"><%= record.name %></h5>
+
+            <!-- Metadata -->
+            <div class="mb-2">
+              <span class="badge bg-info">#<%= index + 1 %></span>
+              <span class="badge bg-secondary"><%= record.created_at.strftime("%b %d, %Y") %></span>
+            </div>
+
+            <% latest_attendance = record.attendances.order(created_at: :desc).first %>
+
+            <% if latest_attendance.present? %>
+              <p><strong>Last Check-In:</strong> <%= latest_attendance.in_time&.strftime('%I:%M %p') || '—' %></p>
+              <p><strong>Last Check-Out:</strong>
+                <% if latest_attendance.out_time.present? %>
+                  <%= latest_attendance.out_time.strftime('%I:%M %p') %>
+                <% else %>
+                  <span class="badge bg-warning text-dark">Pending</span>
+                <% end %>
+              </p>
+            <% else %>
+              <p class="text-muted">No attendance data yet.</p>
+            <% end %>
+          </div>
+
+          <div class="card-footer bg-transparent border-top-0 text-center">
+            <%= link_to "View Details", record_path(record), class: "btn btn-outline-primary btn-sm w-100" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-warning text-center mt-4">No records found matching your filters.</div>
+<% end %>

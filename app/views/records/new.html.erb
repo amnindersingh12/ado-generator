@@ -1,24 +1,74 @@
-    <div class="container mt-5">
-      <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">New Record</h2>
-        </div>
-        <div class="card-body">
-          <%= form_with(model: @record, local: true) do |form| %>
-            <div class="mb-3">
-              <%= form.label :name, class: "form-label" %>
-              <%= form.text_field :name, class: "form-control", required: true %>
-            </div>
-            <div class="mb-3">
-              <%= form.label :in_photo, "Upload Check in Photo", class: "form-label" %>
-              <%= form.file_field :in_photo, class: "form-control", accept: "image/*", capture: "camera" %>
-              <div class="form-text">Take a photo or upload an image for check out verification.</div>
-            </div>
-            <div class="d-flex justify-content-between">
-              <%= form.submit "Create Record", class: "btn btn-success" %>
-              <%= link_to "Back", root_path, class: "btn btn-secondary" %>
-            </div>
-          <% end %>
-        </div>
-      </div>
+<h1 class="mb-4">Create New Record</h1>
+
+<%= form_with model: @record, local: true, html: { class: "needs-validation", novalidate: true } do |form| %>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= form.label :name, class: "form-label" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+      <% @record.errors[:name].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
     </div>
+
+    <div class="col-md-6">
+      <%= form.label :contact_number, class: "form-label" %>
+      <%= form.telephone_field :contact_number, class: "form-control" %>
+      <% @record.errors[:contact_number].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
+    </div>
+
+    <div class="col-12">
+      <%= form.label :address, class: "form-label" %>
+      <%= form.text_field :address, class: "form-control" %>
+    </div>
+
+    <div class="col-md-4">
+      <%= form.label :pincode, class: "form-label" %>
+      <%= form.number_field :pincode, class: "form-control" %>
+    </div>
+
+    <div class="col-md-4">
+      <%= form.label :city, class: "form-label" %>
+      <%= form.text_field :city, class: "form-control" %>
+    </div>
+
+    <div class="col-md-4">
+      <%= form.label :state, class: "form-label" %>
+      <%= form.text_field :state, class: "form-control" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :date_of_birth, class: "form-label" %>
+      <%= form.date_field :date_of_birth, class: "form-control" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :father_name, class: "form-label" %>
+      <%= form.text_field :father_name, class: "form-control" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :government_id_number, class: "form-label" %>
+      <%= form.text_field :government_id_number, class: "form-control" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :government_id_photo, class: "form-label" %>
+      <%= form.file_field :government_id_photo, class: "form-control" %>
+    </div>
+
+    <div class="col-12 mt-3">
+      <%= form.label :photo, "Face Photo", class: "form-label" %>
+      <%= webcam_capture(form, :photo) %>
+      <% @record.errors[:photo].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-4 d-flex gap-2">
+    <%= form.submit "Create Record", class: "btn btn-primary" %>
+    <%= link_to "Back", records_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>

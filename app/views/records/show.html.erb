@@ -1,48 +1,74 @@
-    <div class="container mt-5">
-      <div class="card shadow-lg">
-        <div class="card-header bg-info text-white">
-          <h3 class="mb-0">Record Details</h3>
-        </div>
+<div class="container mt-4">
+  <div class="row g-4">
+    <!-- Left: Main Photo -->
+    <div class="col-lg-4">
+      <% if @record.photo.attached? %>
+        <%= enlargeable_image_tag(@record.photo, thumb_size: "100%", label: "Main Photo") %>
+      <% else %>
+        <div class="alert alert-secondary text-center">No face photo attached.</div>
+      <% end %>
+    </div>
+    <!-- Right: Details -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
         <div class="card-body">
-          <dl class="row">
-            <dt class="col-sm-3">Name</dt>
-            <dd class="col-sm-9"><%= @record.name %></dd>
-            <dt class="col-sm-3">Check In Time</dt>
-            <dd class="col-sm-9"><%= format_datetime(@record.in_time) %></dd>
-            <dt class="col-sm-3">Check In Photo</dt>
-            <dd class="col-sm-8  mt-2 rounded ">
-              <% if @record.in_photo.attached? %>
-                <%= link_to image_tag(@record.in_photo.variant(:thumb)), @record.in_photo , target: :_blank%>
+          <h3 class="card-title mb-3">
+            <%= @record.name.presence || "Unnamed Record" %>
+            <% if @record.age %>
+              <span class="badge bg-primary ms-2"><%= pluralize(@record.age, "year") %> old</span>
+            <% end %>
+          </h3>
+          <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item">
+              <strong>Created by:</strong> <%= @record.user.email.presence || "Unknown" %>
+            </li>
+            <li class="list-group-item">
+              <strong>Father's Name:</strong> <%= @record.father_name.presence || "N/A" %>
+            </li>
+            <li class="list-group-item">
+              <strong>Contact Number:</strong> <%= @record.contact_number.presence || "N/A" %>
+            </li>
+            <li class="list-group-item">
+              <strong>Address:</strong>
+              <%= [
+                @record.address.presence,
+                @record.city.presence,
+                @record.state.presence,
+                @record.pincode.presence
+              ].compact.join(', ').presence || "N/A" %>
+            </li>
+            <li class="list-group-item">
+              <strong>Govt. ID:</strong> <%= @record.government_id_number.presence || "N/A" %>
+            </li>
+            <li class="list-group-item">
+              <strong>Govt. ID Photo:</strong><br>
+              <% if @record.government_id_photo.attached? %>
+                <%= enlargeable_image_tag(@record.government_id_photo, thumb_size: "120px", label: "Govt. ID Photo") %>
               <% else %>
-                <p class="text-muted">No check-out photo available</p>
+                <span class="text-muted">No government ID photo attached.</span>
               <% end %>
-            </dd>
-            <dt class="col-sm-3">Check Out Time</dt>
-            <dd class="col-sm-9">
-              <% if @record.out_time.present? %>
-                <%= format_datetime(@record.out_time) %>
-              <% else %>
-                <p class="text-muted">Haven't Checked Out Yet</p>
-              <% end %></dd>
-            <dt class="col-sm-3">Check Out Photo</dt>
-            <dd class="col-sm-8  mt-2 rounded ">
-              <% if @record.out_photo.attached? %>
-                <%= link_to image_tag(@record.out_photo.variant(:thumb)), @record.out_photo , target: :_blank%>
-              <% else %>
-                <p class="text-muted">No check-out photo available</p>
-              <% end %>
-            </dd>
-          </dl>
-        </div>
-        <div class="card-footer d-flex justify-content-between">
-          <% unless @record.out_time.present? %>
-            <%= link_to "Check Out Now", edit_record_path(@record), class: "btn btn-warning" %>
-          <% end %>
-          <%= link_to "Back", records_path, class: "btn btn-secondary" %>
-          <% if current_user && current_user.role == 'admin' %>
-            <%= link_to "Destroy", record_path(@record), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger" %>
-          <%end %>
-          <%#debugger %>
+            </li>
+          </ul>
         </div>
       </div>
+      <!-- Attendance Actions -->
+      <div class="mt-4 mx-auto d-flex  gap-2 align-items-center">
+        <% open_attendance = @record.attendances.where(user: current_user, out_time: nil).last %>
+        <% if open_attendance %>
+          <div class="alert alert-danger flex-fill">You must check out before starting a new check-in.</div>
+        <% else %>
+          <%= link_to "New Check-In", new_record_attendance_path(@record), class: "btn btn-success" %>
+        <% end %>
+        <%= link_to "View History", history_record_attendances_path(@record), class: "btn btn-info" %>
+        <% if current_user&.role == 'admin' %>
+          <%= button_to "Destroy", record_path(@record), method: :delete,
+              class: "btn btn-danger",
+              data: { confirm: "Are you sure you want to delete this record?" } %>
+        <% end %>
+        <% if @has_pending_checkout %>
+          <%= link_to "Check Out", history_record_attendances_path(@record), class: "btn btn-warning" %>
+        <% end %>
+      </div>
     </div>
+  </div>
+</div>

@@ -1,77 +1,65 @@
 class RecordsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_record, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_admin!, only: [:destroy]
+  before_action :set_record, only: [ :edit, :update, :destroy ]
+  before_action :authorize_admin!, only: [ :new, :destroy ]
 
   def index
-    @records = Record.all.order(created_at: :desc)
+    @q = Record.ransack(params[:q])
+
+    # Apply date filtering
+    filter_by_date(params[:created_at]) if params[:created_at].present?
+
+    # Final filtered result
+    @records = @q.result(distinct: true).includes(:photo_attachment, :government_id_photo_attachment, attendances: [:in_photo_attachment, :out_photo_attachment]).order(created_at: :desc)
+
+    # Compute stats based on those records
+    calculate_attendance_statistics
   end
 
-  def home
-    @records = Record.all.order(created_at: :desc)
-    @searched_record = Record.search(params[:search])
-  end
-
-  def history
-    @records = Record.all
-    
-  end 
-    
 
   def show
-  end
+    @record = Record.find(params[:id])
 
-  def edit
+    @has_pending_checkout =  @record.attendances.count { |a| a.out_time.nil? } > 0
   end
 
   def new
-    @record = Record.new
+    @record = current_user.records.build
   end
 
   def create
     @record = current_user.records.build(record_params)
-    @record.in_time = Time.now
-    respond_to do |format|
-      if @record.save
-        format.html { redirect_to @record, notice: "Record was successfully created with check-in details." }
-        format.json { render :show, status: :created, location: @record }
-      else
-        format.html { render :new }
-        format.json { render json: @record.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def update
-    # Only update out_time and out_photo
-    update_params = { out_time: Time.current }
-    # Add out_photo to update_params if it's provided
-    update_params[:out_photo] = params[:record][:out_photo] if params[:record] && params[:record][:out_photo]
-
-    respond_to do |format|
-      if @record.update(update_params)
-        format.html { redirect_to @record, notice: "Record was successfully updated with check-out details." }
-        format.json { render :show, status: :ok, location: @record }
-      else
-        format.html { render :edit }
-        format.json { render json: @record.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # Remove edit and update actions (no editing allowed)
-
-  def destroy
-    @record.destroy
-    respond_to do |format|
-      format.html { redirect_to root_path, notice: "Record was successfully destroyed." }
-      format.json { head :no_content }
+    if @record.save
+      redirect_to @record, notice: "Record created successfully."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   def search
+    @records = Record.where("name ILIKE ?", "%#{params[:query]}%")
+    render :index
+  end
+
+  def update
+    if @record.update(record_params)
+      redirect_to records_path, notice: "Record updated successfully"
+    else
+      render :edit
+    end
+  end
+
+# Remove edit and update actions (no editing allowed)
+
+def destroy
+  @record = Record.find(params[:id])
+  @record.destroy
+  redirect_to records_path, notice: "Record deleted successfully."
+end
+
+  def search
     if params[:search].present?
-      @records = Record.search(params[:search])
+      @records = Record.find_by(name: params[:search])
       if @records.empty?
         @record_not_found = true
       end
@@ -79,10 +67,7 @@ class RecordsController < ApplicationController
       @records = Record.none
     end
 
-    respond_to do |format|
-      format.html
-      format.turbo_stream
-    end
+    render :index
   end
 
   private
@@ -92,10 +77,37 @@ class RecordsController < ApplicationController
   end
 
   def record_params
-    params.require(:record).permit(:name, :in_time, :out_time, :in_photo, :out_photo, :user_id, :search)
+    params.require(:record).permit(:government_id_photo, :name, :id, :photo, :contact_number, :address, :pincode, :city, :state, :date_of_birth, :father_name, :government_id_number, :created_at, :updated_at, :in_time, :out_time, :in_photo, :out_photo, :user_id, :search)
   end
 
   def authorize_admin!
     redirect_to records_path, alert: "Access denied." unless current_user.admin?
+  end
+
+  def filter_by_date(filter)
+    case filter
+    when "today"
+      @q = @q.where(created_at: Date.today.all_day)
+    when "week"
+      start_of_week = Date.today.beginning_of_week(:sunday)
+      end_of_week = Date.today.end_of_week(:sunday)
+      @q = @q.where(created_at: start_of_week..end_of_week)
+    when "month"
+      start_of_month = Date.today.beginning_of_month
+      end_of_month = Date.today.end_of_month
+      @q = @q.where(created_at: start_of_month..end_of_month)
+    when "all"
+      # No filtering for all time
+    else
+      # Default: No date filtering applied
+    end
+  end
+
+  def calculate_attendance_statistics
+    @attendances = Attendance.where(record_id: @records.pluck(:id))  # Assuming there's a record_id association
+    @total_in = @attendances.where.not(in_time: nil).count
+    @total_out = @attendances.where.not(out_time: nil).count
+    @pending_records = @attendances.where(out_time: nil).count
+    @total_records = @records.count
   end
 end

@@ -1,0 +1,21 @@
+<h1 class="text-center my-4">Check-In for <%= @record.name %></h1>
+
+<%= form_with model: [@record, @attendance], local: true, html: { class: "card p-4 shadow-sm" } do |form| %>
+  <div class="mb-3">
+    <%= form.label :in_photo, "Capture Check-In Photo", class: "form-label" %>
+    <div class="mb-2">
+      <%= webcam_capture(form, :in_photo) %>
+    </div>
+
+    <% if @attendance.errors[:in_photo].any? %>
+      <div class="text-danger small">
+        <%= @attendance.errors[:in_photo].join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <%= form.submit "Check In", class: "btn btn-success" %>
+    <%= link_to "Back", record_path(@record), class: "btn btn-secondary" %>
+  </div>
+<% end %>

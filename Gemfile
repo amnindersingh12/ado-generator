@@ -1,5 +1,6 @@
 source "https://rubygems.org"
-gem 'htmlbeautifier'
+gem "htmlbeautifier"
+gem "erb-formatter"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "hotwire-spark"
 gem "rails", "~> 8.0.2"
@@ -64,10 +65,13 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "ruby-vips", "~> 2.2"
+gem "faker"
+gem "dotenv-rails"
 
 gem "rubocop", "~> 1.75"
 
 gem "rufo", "~> 0.18.1"
 
 gem "simple_calendar", "~> 3.1"
+
+gem "ransack", "~> 4.3"
