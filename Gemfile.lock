@@ -430,6 +430,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   capybara
+  concurrent-ruby
   debug
   devise
   dotenv-rails
