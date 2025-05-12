@@ -68,7 +68,6 @@ end
 gem 'concurrent-ruby'
 
 gem "faker"
-gem "dotenv-rails"
 
 gem "rubocop", "~> 1.75"
 
