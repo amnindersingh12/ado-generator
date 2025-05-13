@@ -1,0 +1,27 @@
+<!-- shared/_summary_card.html.erb -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title d-flex justify-content-between align-items-center">
+      <span>📊 Summary for <%= Date::MONTHNAMES[@month] %> <%= @year %></span>
+      <span class="badge bg-secondary"><%= "#{@first_day.strftime('%b %d')} - #{@last_day.strftime('%b %d')}" %></span>
+    </h5>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Records Used:</strong>
+        <span class="badge bg-info text-dark rounded-pill"><%= @monthly_total_records %></span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Check-Ins:</strong>
+        <span class="badge bg-success rounded-pill"><%= @monthly_total_in %></span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Check-Outs:</strong>
+        <span class="badge bg-danger rounded-pill"><%= @monthly_total_out %></span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Unique Users:</strong>
+        <span class="badge bg-warning text-dark rounded-pill"><%= @monthly_unique_users %></span>
+      </li>
+    </ul>
+  </div>
+</div>

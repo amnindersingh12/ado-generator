@@ -6,6 +6,12 @@ class CalendarController < ApplicationController
     @first_day = Date.new(@year, @month, 1)
     @last_day = @first_day.end_of_month
     @attendances_by_day = Attendance.where(in_time: @first_day..@last_day).group_by { |a| a.in_time.to_date }
+
+    @current_month_attendances = Attendance.where(in_time: @first_day..@last_day)
+    @monthly_total_in = @current_month_attendances.where.not(in_time: nil).count
+    @monthly_total_out = @current_month_attendances.where.not(out_time: nil).count
+    @monthly_unique_users = @current_month_attendances.select(:user_id).distinct.count
+    @monthly_total_records = @current_month_attendances.select(:record_id).distinct.count
   end
 
   def show
@@ -30,7 +36,7 @@ class CalendarController < ApplicationController
     @pending_records = @attendances.where(out_time: nil).count
     @unique_users = @attendances.present? ? @attendances.distinct.count(:user_id) : 0
     respond_to do |format|
-      format.html { render partial: "calendar/day_tooltip",  locals: { date: @date, attendances: @attendances, total_in: @total_in, total_out: @total_out, pending_records: @pending_records, unique_users: @unique_users }}
+      format.html { render partial: "calendar/day_tooltip",  locals: { date: @date, attendances: @attendances, total_in: @total_in, total_out: @total_out, pending_records: @pending_records, unique_users: @unique_users } }
       format.js   # if you're using AJAX to render it into a div
     end
 end
