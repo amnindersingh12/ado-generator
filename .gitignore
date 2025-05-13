@@ -11,7 +11,7 @@ config/master.key
 
 # Ignore all environment files.
 /.env*
-
+/db/seeds/images/*
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
