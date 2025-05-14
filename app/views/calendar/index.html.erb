@@ -2,24 +2,30 @@
   <h2 class="text-center mb-4">
     Attendance Calendar - <%= Date::MONTHNAMES[@month] %> <%= @year %>
   </h2>
-
   <!-- Navigation Buttons -->
   <div class="d-flex justify-content-between flex-wrap mb-4">
     <%= link_to "← Previous Month",
                 history_calendar_path(year: @first_day.prev_month.year, month: @first_day.prev_month.month),
                 class: "btn btn-outline-primary mb-2" %>
-
     <%= link_to "Next Month →",
                 history_calendar_path(year: @first_day.next_month.year, month: @first_day.next_month.month),
                 class: "btn btn-outline-primary mb-2" %>
   </div>
-
   <div class="row">
     <!-- Summary Card -->
     <div class="col-lg-4 mb-4">
-      <%= render 'shared/summary_card' %>
+      <%= render partial: "shared/summary_card", locals: {
+  month: @month,
+  year: @year,
+  first_day: @first_day,
+  last_day: @last_day,
+  monthly_total_records: @monthly_total_records,
+  monthly_total_in: @monthly_total_in,
+  monthly_total_out: @monthly_total_out,
+  monthly_unique_users: @monthly_unique_users
+} %>
+      <%# render 'shared/summary_card' %>
     </div>
-
     <!-- Calendar -->
     <div class="col-lg-8">
       <div class="table-responsive">
@@ -34,7 +40,6 @@
           <tbody>
             <% start_date = @first_day.beginning_of_week(:sunday) %>
             <% end_date = @last_day.end_of_week(:sunday) %>
-
             <% (start_date..end_date).to_a.in_groups_of(7).each do |week| %>
               <tr>
                 <% week.each do |date| %>
@@ -50,7 +55,6 @@
                                   calendar_day_path(year: date.year, month: date.month, day: date.day),
                                   class: "btn btn-sm btn-outline-secondary w-100" %>
                     <% end %>
-
                     <% if is_today %>
                       <div class="small text-primary fw-bold mt-1">Today</div>
                     <% end %>
