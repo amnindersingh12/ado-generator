@@ -1,4 +1,3 @@
-# app/controllers/concerns/error_handlers.rb
 module ErrorHandlers
   extend ActiveSupport::Concern
 
@@ -8,9 +7,11 @@ module ErrorHandlers
     rescue_from ActionController::UnknownFormat, with: :handle_not_found
   end
 
-  def handle_not_found
+  private
+
+  def handle_not_found(exception = nil)
     respond_to do |format|
-      format.html { render partial: "shared/not_found", status: :not_found }
+      format.html { render partial: "shared/not_found", status: :not_found  }
       format.json { render json: { error: "Not Found" }, status: :not_found }
       format.any  { render plain: "404 Not Found", status: :not_found }
     end

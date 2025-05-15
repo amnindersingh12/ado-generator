@@ -23,7 +23,7 @@ users = 1.times.map do
 end
 
 # Create Records with photos
-records = 100.times.map do |i|
+records = 10.times.map do |i|
   record = Record.create!(
     name: Faker::Name.name,
     contact_number: Faker::PhoneNumber.phone_number,
@@ -56,7 +56,7 @@ end
 
 # Create multiple attendance entries for each user
 users.each do |user|
-  50.times do
+  10.times do
     in_time = Faker::Time.between(from: 90.days.ago, to: 1.day.ago)
     out_time = Faker::Time.between(from: in_time + 1.hour, to: in_time + 8.hours)
 

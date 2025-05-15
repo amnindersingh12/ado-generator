@@ -54,8 +54,8 @@ USER 1000:1000
 # Entry point for database setup (if needed)
 ENTRYPOINT ["/bin/bash", "/rails/bin/docker-entrypoint"]
 
-# Expose port 80
-EXPOSE 80
+# Expose port 3000
+EXPOSE 3000
 
 # Command to start the server, can be overridden at runtime
 CMD ["./bin/thrust", "./bin/rails", "server"]

@@ -1,86 +1,95 @@
+# 🚪 Gate In and Out
 
-# 🚪 Gate In and Out - Attendance Management System
+### Face-Based Attendance Management System
 
-A responsive, face-photo-based in/out attendance system built with **Ruby on Rails 8**, featuring admin/user roles, secure photo check-ins, and dynamic calendar views.
+A smart, webcam-powered **In/Out Attendance System** built with **Ruby on Rails 8**, supporting user/admin roles, secure photo check-ins, and an interactive calendar view for tracking daily records.
 
-![Demo]() <!-- You can update this with an actual demo screenshot later -->
-
----
-
-## ✨ Features Overview
-
-- 🔐 **Authentication**
-  - Secure **sign in / sign up** with Devise
-  - Role-based access with `user` and `admin` roles
-  - Role toggle via **secret catchphrase**
-
-- 👤 **User Roles & Permissions**
-  - `user`: Can create and manage their own check-ins/outs
-  - `admin`: Can view, manage, and delete records
-  - **No one** (not even admin) can edit or delete an existing attendance
-
-- 📇 **Record Management**
-  - Add records with:
-    - Name, Contact, Address, City, State, Pincode
-    - Government ID number + ID Photo
-    - User Face Photo (webcam)
-  - View all records in beautiful **Bootstrap cards**
-  - Filter records by **Today / This Week / This Month**
-  - Live **search bar**
-
-- 🕓 **Attendance**
-  - Check-In & Check-Out with **live webcam photos**
-  - Check-Out only possible after Check-In
-  - Attendance summary + detailed view
-
-- 📅 **Interactive Calendar View**
-  - Visual summary of daily/monthly attendance
-  - Navigate by **Previous** / **Next** month
-  - Dates with check-ins are highlighted in green
-  - Clicking a date shows full attendance of that day
-
-- 📊 **Record Summary View**
-  - Total Check-Ins / Check-Outs / Pending
-  - List of records with recent in/out timestamps
+![Demo Screenshot Placeholder]() <!-- Replace with actual demo screenshot -->
 
 ---
 
-## 🧠 Smart UI UX Decisions
+## ✨ Features at a Glance
 
-- 💡 **Role Indicator**: Top-left navbar shows `Signed in as email (role)`
-- 🔐 **Role Toggle**: A padlock icon lets users enter a **catchphrase** to become admin
-- 📷 **Webcam Integration**: All photos (record + attendance) are captured via webcam
-- 🔎 **Responsive Filtering**: Records filter dynamically based on time window or keyword
+### 🔐 Authentication & Roles
+
+* Secure login and registration with **Devise**
+* Role-based access (`user` and `admin`)
+* Admin access toggled via a **secret catchphrase**
+
+### 👥 User Permissions
+
+* **Users**: Can create and manage their own attendance records
+* **Admins**: Can view and delete any record
+* ❗ **Attendance entries cannot be edited or modified**
+
+### 📇 Comprehensive Record Management
+
+* Record includes:
+
+  * Name, Contact, Address, City, State, Pincode
+  * Government ID number and photo
+  * Live face photo (captured via webcam)
+* Filter records by **Today**, **This Week**, or **This Month**
+* Real-time **search functionality**
+* Responsive **Bootstrap card-based UI**
+
+### 🕒 Streamlined Attendance Tracking
+
+* One-click **Check-In / Check-Out** using webcam
+* **Check-Out** is enabled only after a Check-In
+* Summary and detailed views of attendance history
+
+### 📅 Interactive Calendar View
+
+* Fully navigable monthly calendar
+* Green-highlighted dates indicate check-ins
+* Click a date to view full attendance for that day
+
+### 📊 Attendance Summary Panel
+
+* Quick overview of:
+
+  * Total Check-Ins / Check-Outs / Pending
+  * Most recent attendance activity
+
+---
+
+## 💡 User Experience Highlights
+
+* 🛡️ **Role Display**: See the current user and their role in the top navigation bar
+* 🔐 **Catchphrase Toggle**: Elevate to admin with a secure passphrase and padlock icon
+* 📷 **Webcam-Only Photo Capture**: All photos taken live at the moment of action
+* ⚡ **Live Filtering**: Instantly narrow down records by time period or keyword
 
 ---
 
 ## 🧪 How It Works
 
-1. **User signs in**
-2. **Records are displayed** in a responsive grid (photo, name, status, etc.)
-3. **Click "View Details"** → see personal info + buttons:
-   - New Check-In ✅
-   - View History 📜
-   - Delete Record 🗑️ (if admin)
-4. **Check-In** opens webcam, captures image, stores with timestamp
-5. **Check-Out** becomes available afterward, does the same
-6. Upon checkout, user is redirected to **attendance history page**
-7. **Calendar View** offers powerful day-wise filtering and summary
+1. Sign in to your account
+2. View a grid of user records
+3. Select "View Details" to:
+
+   * Perform **Check-In**
+   * Access **Attendance History**
+   * **Delete a record** (admins only)
+4. Webcam activates to capture attendance photos
+5. Upon check-out, you're redirected to the **history view**
+6. Use the calendar to filter and browse attendance data
 
 ---
 
 ## 🖼️ Screenshots
 
-> Replace the links below with your real image URLs once deployed
+> Replace these with actual screenshots before deploying
 
-- 📌 Record List Page
-  ![Records]()
+* 📋 **Record List View**
+  ![Record List]()
 
-- 📸 Webcam Capture (Check-In / Check-Out)
-  ![Webcam]()
+* 📸 **Webcam Check-In/Out**
+  ![Webcam Capture]()
 
-- 📅 Calendar Attendance Summary
-  ![Calendar]()
+* 🗓️ **Calendar Summary View**
+  ![Calendar View]()
 
 ---
 
@@ -93,45 +102,73 @@ cd gate-in-out
 bundle install
 rails db:setup
 
-# If you need demo data:
+# Optional: Seed with demo data
 rails db:seed
 ```
 
-- Visit: `http://localhost:3000`
-- Use the catchphrase toggle (🔒) to switch to admin
+* Visit: `http://localhost:3000`
+* Use the 🔒 icon to enter the catchphrase and toggle admin role
 
 ---
 
-## 📂 Tech Stack
+## ⚙️ Tech Stack
 
-- **Ruby on Rails 8**
-- **PostgreSQL**
-- **Bootstrap 5**
-- **Turbo / Hotwire**
-- **ActiveStorage** for photo uploads
-- **OpenURI** for seed image downloads
-- **Face matching** compatible structure (if integrated)
+* **Ruby on Rails 8**
+* **PostgreSQL**
+* **Bootstrap 5**
+* **Turbo / Hotwire**
+* **ActiveStorage** for image uploads
+* **OpenURI** for downloading seed images
+* **Face recognition ready** (architecture supports integration)
+
+---
+
+## 🐳 Docker Setup
+
+### Build the Image
+
+```bash
+docker build -t gate-in-out:latest .
+```
+
+### Save the Image
+
+```bash
+docker save -o gate-in-out.tar gate-in-out:latest
+```
+
+### Load the Image
+
+```bash
+docker load -i gate-in-out.tar
+```
+
+### Run the App
+
+```bash
+docker run -p 3000:3000 gate-in-out:latest
+```
 
 ---
 
 ## 🙌 Acknowledgements
 
-- [Bootstrap Icons](https://icons.getbootstrap.com/)
-- [Faker](https://github.com/faker-ruby/faker) for seed data
-- [pic.re](https://pic.re/) for placeholder images
+* [Bootstrap Icons](https://icons.getbootstrap.com/)
+* [Faker](https://github.com/faker-ruby/faker) – For generating sample data
+* [pic.re](https://pic.re/) – For placeholder photos
 
 ---
 
-## 💡 Future Improvements
+## 🚧 Roadmap / Future Enhancements
 
-- Face recognition integration with DeepFace or similar
-- Role-based dashboard metrics
-- Export attendance as PDF/Excel
-- Email notifications
+* Integrate face recognition (e.g., DeepFace or similar)
+* Add analytics dashboards based on roles
+* Export attendance data to **PDF/Excel**
+* Enable email alerts for check-ins and check-outs
 
 ---
 
-## 📬 Contact
+## 📬 Get in Touch
 
-Want to contribute or report a bug?
-Message via Telegram or open an issue in the repo!
+Have suggestions, ideas, or bug reports?
+Reach out via Telegram or open an issue on the GitHub repository.
