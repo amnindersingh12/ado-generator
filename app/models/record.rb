@@ -2,7 +2,7 @@ class Record < ApplicationRecord
   belongs_to :user
   has_many :attendances, dependent: :destroy
   has_one_attached :photo
-  validates :name,  presence: true
+  validates :name,  presence: true, uniqueness: true
   has_one_attached :government_id_photo
   validates :contact_number, presence: true, uniqueness: true
 

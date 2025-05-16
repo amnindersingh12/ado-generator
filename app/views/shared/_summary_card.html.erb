@@ -1,0 +1,62 @@
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+
+    <%# ───────────── Monthly Summary (Calendar View) ───────────── %>
+    <% if defined?(month) && defined?(year) && defined?(first_day) && defined?(last_day) %>
+      <h5 class="card-title d-flex justify-content-between align-items-center">
+        <span>📊 Summary for <%= Date::MONTHNAMES[month] %> <%= year %></span>
+        <span class="badge bg-secondary"><%= "#{first_day.strftime('%b %d')} - #{last_day.strftime('%b %d')}" %></span>
+      </h5>
+      <ul class="list-group list-group-flush mb-3">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <strong>Records Used:</strong>
+          <span class="badge bg-info text-dark rounded-pill"><%= monthly_total_records %></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <strong>Check-Ins:</strong>
+          <span class="badge bg-success rounded-pill"><%= monthly_total_in %></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <strong>Check-Outs:</strong>
+          <span class="badge bg-danger rounded-pill"><%= monthly_total_out %></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <strong>Unique Users:</strong>
+          <span class="badge bg-warning text-dark rounded-pill"><%= monthly_unique_users %></span>
+        </li>
+      </ul>
+    <% end %>
+
+    <%# ───────────── Attendance Summary (Record View) ───────────── %>
+    <% if defined?(attendances) && defined?(record) %>
+      <h5 class="card-title mb-4">
+        Attendance Summary for <%= record.name %>
+      </h5>
+
+      <% total_in = attendances.count { |a| a.in_time.present? } %>
+      <% total_out = attendances.count { |a| a.out_time.present? } %>
+
+      <div class="row text-center mb-4">
+        <div class="col-md-4 mb-2">
+          <div class="bg-info bg-opacity-10 border border-info rounded p-3">
+            <h6>Total Records</h6>
+            <span class="badge bg-info fs-5"><%= attendances.size %></span>
+          </div>
+        </div>
+        <div class="col-md-4 mb-2">
+          <div class="bg-success bg-opacity-10 border border-success rounded p-3">
+            <h6>Check-Ins</h6>
+            <span class="badge bg-success fs-5"><%= total_in %></span>
+          </div>
+        </div>
+        <div class="col-md-4 mb-2">
+          <div class="bg-danger bg-opacity-10 border border-danger rounded p-3">
+            <h6>Check-Outs</h6>
+            <span class="badge bg-danger fs-5"><%= total_out %></span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</div>

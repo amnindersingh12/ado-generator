@@ -4,14 +4,14 @@
 # belong in git's global ignore instead:
 # `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`
 
-/node_modules
+config/master.key
 
 # Ignore bundler config.
 /.bundle
 
 # Ignore all environment files.
 /.env*
-
+/db/seeds/images/*
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
@@ -34,3 +34,6 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+/config/credentials/production.key
+config/master.key
