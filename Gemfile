@@ -65,6 +65,8 @@ group :test do
   gem "selenium-webdriver"
 end
 
+gem 'dotenv'
+
 gem 'concurrent-ruby'
 
 gem "faker"

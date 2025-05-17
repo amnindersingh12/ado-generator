@@ -430,6 +430,7 @@ DEPENDENCIES
   concurrent-ruby
   debug
   devise
+  dotenv
   erb-formatter
   faker
   hotwire-spark
