@@ -52,21 +52,26 @@
         </div>
       </div>
       <!-- Attendance Actions -->
-      <div class="mt-4 mx-auto d-flex  gap-2 align-items-center">
-        <% open_attendance = @record.attendances.where(user: current_user, out_time: nil).last %>
-        <% if open_attendance %>
-          <div class="alert alert-danger flex-fill">You must check out before starting a new check-in.</div>
+      <div class="mt-4 mx-auto d-flex gap-2 align-items-center">
+        <% last_attendance = @record.attendances.where(user: current_user).last %>
+        <% if last_attendance && last_attendance.in_time && !last_attendance.out_time %>
+          <!-- Open check-in, only allow check-out -->
+          <%= link_to "Check Out", edit_record_attendance_path(@record, last_attendance), class: "btn btn-warning" %>
+          <div class="alert alert-info flex-fill">Must check out before starting a new attendance.</div>
+        <% elsif last_attendance && !last_attendance.in_time && last_attendance.out_time %>
+          <!-- Open check-out, only allow check-in -->
+          <%= link_to "Complete Check-In", complete_check_in_record_attendance_path(@record, last_attendance), class: "btn btn-success" %>
+          <div class="alert alert-info flex-fill">Must check in to complete this attendance.</div>
         <% else %>
+          <!-- No open attendance, allow both -->
           <%= link_to "New Check-In", new_record_attendance_path(@record), class: "btn btn-success" %>
+          <%= link_to "New Check-Out", new_check_out_record_attendance_path(@record), class: "btn btn-warning" %>
         <% end %>
         <%= link_to "View History", history_record_attendances_path(@record), class: "btn btn-info" %>
         <% if current_user&.role == 'admin' %>
           <%= button_to "Destroy", record_path(@record), method: :delete,
               class: "btn btn-danger",
               data: { confirm: "Are you sure you want to delete this record?" } %>
-        <% end %>
-        <% if @has_pending_checkout %>
-          <%= link_to "Check Out", history_record_attendances_path(@record), class: "btn btn-warning" %>
         <% end %>
       </div>
     </div>
