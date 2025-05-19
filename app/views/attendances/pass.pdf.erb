@@ -1,0 +1,81 @@
+<%# app/views/attendances/pass.pdf.erb %>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body { font-family: "Helvetica", sans-serif; font-size: 14px; margin: 40px; }
+    .title { font-size: 18px; font-weight: bold; text-align: center; text-transform: uppercase; }
+    .token { text-align: center; margin-top: 5px; margin-bottom: 20px; }
+    .section { margin: 20px 0; }
+    .label { font-weight: bold; }
+    .field { display: inline-block; width: 250px; }
+    .signature-line { margin-top: 40px; display: flex; justify-content: space-between; }
+    .signature-line div { width: 45%; text-align: center; }
+    .footer { margin-top: 40px; font-size: 12px; text-align: center; }
+    hr { margin: 10px 0; }
+    .user-photo { width: 150px; height: auto; border-radius: 8px; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; }
+    .back-link { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+  <div class="back-link">
+    <%= link_to "← Back to Record", record_path(@record), class: "btn btn-secondary" %>
+  </div>
+
+  <div class="title">ATTENDANCE SYSTEM PASS</div>
+  <div class="token">TOKEN NO: <%= @token || "abcdef12345678" %></div>
+
+  <%# User photo if attached %>
+  <% if @record.photo.attached? %>
+    <%= image_tag url_for(@record.photo), alt: "User Photo", class: "user-photo" %>
+  <% end %>
+
+  <hr />
+
+  <div class="section">
+    <p><span class="label">DATE & TIME OF ACTION:</span> <%= (@attendance.out_time || @attendance.in_time || Time.current).strftime("%B %d, %Y %I:%M %p") %></p>
+    <p><span class="label">ACTION TYPE:</span> <%= @attendance.out_time.present? ? "Check-Out" : "Check-In" %></p>
+  </div>
+
+  <div class="section">
+    <p class="label">USER DETAILS:</p>
+    <p><span class="field label">Name:</span> <%= @record.name %></p>
+    <p><span class="field label">Age:</span> <%= @record.date_of_birth.present? ? ((Time.zone.now.year - @record.date_of_birth.year).to_s + " years") : "N/A" %></p>
+    <p><span class="field label">Father's Name:</span> <%= @record.father_name.presence || "N/A" %></p>
+    <p><span class="field label">Contact Number:</span> <%= @record.contact_number %></p>
+    <p><span class="field label">Address:</span> <%= "#{@record.address}, #{@record.city}, #{@record.state}, #{@record.pincode}" %></p>
+    <p><span class="field label">Government ID Number:</span> <%= @record.government_id_number.presence || "N/A" %></p>
+    <p><span class="field label">Created By:</span> <%= @attendance.user.email %></p>
+  </div>
+
+  <div class="section">
+    <p class="label">ATTENDANCE DETAILS:</p>
+    <p><span class="field label">Check-In Time:</span> <%= @attendance.in_time.present? ? @attendance.in_time.strftime("%B %d, %Y %I:%M %p") : "Not Yet Checked In" %></p>
+    <p><span class="field label">Check-Out Time:</span> <%= @attendance.out_time.present? ? @attendance.out_time.strftime("%B %d, %Y %I:%M %p") : "Not Yet Checked Out" %></p>
+  </div>
+
+  <div class="section">
+    <p><span class="label">TOKEN BARCODE:</span> [Placeholder for Barcode/QR Code of Token: <%= @token || "abcdef12345678" %>]</p>
+  </div>
+
+  <div class="signature-line">
+    <div>
+      Signature of Issuing Officer<br />
+      _______________________________
+    </div>
+    <div>
+      Signature of User<br />
+      _______________________________
+    </div>
+  </div>
+
+  <div class="footer">
+    (With Stamp)<br /><br />
+    Please retain this pass for future reference. Present it upon request.<br /><br />
+    [Page 1]
+  </div>
+
+</body>
+</html>

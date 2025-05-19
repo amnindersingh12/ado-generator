@@ -52,6 +52,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_131312) do
 
   create_table "records", force: :cascade do |t|
     t.string "name"
+    t.string "email"
     t.string "contact_number"
     t.string "address"
     t.integer "pincode"

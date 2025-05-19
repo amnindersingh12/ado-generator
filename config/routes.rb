@@ -10,7 +10,8 @@ Rails.application.routes.draw do
 
     # Nested attendance routes
     resources :attendances do
-  get 'history', on: :collection
+      get 'history', on: :collection
+      get 'print_pass', on: :member
       get 'new_check_out', on: :member
       post 'create_check_out', on: :member
       get 'complete_check_in', on: :member

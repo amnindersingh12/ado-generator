@@ -76,3 +76,6 @@ gem "rufo", "~> 0.18.1"
 gem "simple_calendar", "~> 3.1"
 
 gem "ransack", "~> 4.3"
+
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'

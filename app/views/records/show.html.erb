@@ -66,6 +66,9 @@
           <!-- No open attendance, allow both -->
           <%= link_to "New Check-In", new_record_attendance_path(@record), class: "btn btn-success" %>
           <%= link_to "New Check-Out", new_check_out_record_attendance_path(@record), class: "btn btn-warning" %>
+<% if @attendance.present? %>
+  <%= link_to "Generate Attendance Pass", print_pass_record_attendance_path(@record, @attendance, format: :pdf), class: "btn btn-primary", target: "_blank" %>
+<% end %>
         <% end %>
         <%= link_to "View History", history_record_attendances_path(@record), class: "btn btn-info" %>
         <% if current_user&.role == 'admin' %>

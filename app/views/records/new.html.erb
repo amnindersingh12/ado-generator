@@ -1,11 +1,40 @@
-<h1 class="mb-4">Create New Record</h1>
+<h1 class="mb-4 display-6 fw-bold text-primary">Create New Record</h1>
+
+<style>
+  input:focus, select:focus, textarea:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    transition: box-shadow 0.2s ease-in-out;
+  }
+
+  .form-label {
+    font-weight: 600;
+  }
+
+  .text-danger {
+    font-size: 0.875rem;
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+  }
+</style>
 
 <%= form_with model: @record, local: true, html: { class: "needs-validation", novalidate: true } do |form| %>
-  <div class="row g-3">
+  <div class="row g-4">
     <div class="col-md-6">
       <%= form.label :name, class: "form-label" %>
       <%= form.text_field :name, class: "form-control", required: true %>
       <% @record.errors[:name].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :email, class: "form-label" %>
+      <%= form.email_field :email, class: "form-control", required: true %>
+      <% @record.errors[:email].each do |err| %>
         <div class="text-danger"><%= err %></div>
       <% end %>
     </div>
@@ -55,7 +84,7 @@
 
     <div class="col-md-6">
       <%= form.label :government_id_photo, class: "form-label" %>
-      <%= form.file_field :government_id_photo, class: "form-control" %>
+      <%= form.file_field :government_id_photo, class: "form-control", accept: "image/*" %>
     </div>
 
     <div class="col-12 mt-3">
@@ -67,8 +96,23 @@
     </div>
   </div>
 
-  <div class="mt-4 d-flex gap-2">
-    <%= form.submit "Create Record", class: "btn btn-primary" %>
-    <%= link_to "Back", records_path, class: "btn btn-secondary" %>
+  <div class="mt-5 d-flex gap-3">
+    <%= form.submit "Create Record", class: "btn btn-lg btn-success" %>
+    <%= link_to "Back", records_path, class: "btn btn-lg btn-outline-secondary" %>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const forms = document.querySelectorAll(".needs-validation");
+    Array.from(forms).forEach(form => {
+      form.addEventListener("submit", event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add("was-validated");
+      }, false);
+    });
+  });
+</script>

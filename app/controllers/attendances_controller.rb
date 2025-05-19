@@ -1,7 +1,9 @@
 class AttendancesController < ApplicationController
   before_action :set_record
-  before_action :ensure_same_user_checking_out, only: [:edit, :update]
-  before_action :ensure_same_user_checking_in, only: [:complete_check_in, :update_check_in]
+  before_action :ensure_same_user_checking_out, only: [ :edit, :update ]
+  before_action :ensure_same_user_checking_in, only: [ :complete_check_in, :update_check_in ]
+
+
 
   def new
     unless valid_state_for_check_in?(@record)
@@ -19,11 +21,11 @@ class AttendancesController < ApplicationController
 
     @attendance = @record.attendances.build(attendance_params.merge(user: current_user, in_time: Time.current))
 
-    if @attendance.save
-      redirect_to @record, notice: "Checked in successfully."
-    else
-      render :new, status: :unprocessable_entity
-    end
+   if @attendance.save
+  redirect_to print_pass_record_attendance_path(@record, @attendance, format: :pdf)
+   else
+  render :new, status: :unprocessable_entity
+   end
   end
 
   def new_check_out
@@ -42,11 +44,11 @@ class AttendancesController < ApplicationController
 
     @attendance = @record.attendances.build(attendance_params.merge(user: current_user, out_time: Time.current))
 
-    if @attendance.save
-      redirect_to @record, notice: "Checked out successfully."
-    else
-      render :new_check_out, status: :unprocessable_entity
-    end
+   if @attendance.save
+  redirect_to print_pass_record_attendance_path(@record, @attendance, format: :pdf)
+   else
+  render :new_check_out, status: :unprocessable_entity
+   end
   end
 
   def complete_check_in
@@ -86,7 +88,27 @@ class AttendancesController < ApplicationController
     @created_by = @record.user.email
   end
 
-  private
+def print_pass
+  @attendance = @record.attendances.find(params[:id])
+  @token = generate_token(@attendance)
+
+  respond_to do |format|
+    format.pdf do
+      render pdf: "attendance_pass_#{@attendance.id}",
+             template: "attendances/pass",
+             layout: "pdf"
+    end
+  end
+end
+
+private
+
+def generate_token(attendance)
+  record_id = attendance.record_id
+  timestamp = attendance.created_at.strftime("%Y%m%d%H%M%S")
+  random_suffix = SecureRandom.hex(2)
+  "REC#{record_id}-#{timestamp}-#{random_suffix}"
+end
 
   def ensure_same_user_checking_out
     @attendance = Attendance.find(params[:id])
@@ -119,6 +141,16 @@ class AttendancesController < ApplicationController
   end
 
   def attendance_params
-    params.require(:attendance).permit(:in_photo, :out_photo, :in_time, :out_time)
+    params.require(:attendance).permit(:in_photo, :out_photo, :in_time, :out_time, :attendance)
   end
+
+  def image_to_base64(image)
+  return nil unless image.attached?
+
+  file = image.download
+  base64 = Base64.encode64(file).gsub(/\s+/, "")
+  "data:#{image.content_type};base64,#{base64}"
+end
+
+
 end

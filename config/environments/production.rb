@@ -84,6 +84,22 @@ Rails.application.configure do
   #   "example.com",     # Allow requests from example.com
   #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
   # ]
+  config.hosts.clear
+config.hosts << "localhost"
+  config.hosts << "[didacted]"
+  config.hosts << "[didacted]"
+  config.hosts << /\h+/  # For docker container IDs
+
+  # Force SSL but exclude internal requests
+  config.force_ssl = true
+  config.ssl_options = {
+    redirect: {
+      exclude: ->(request) {
+        request.path == "/up" ||
+        request.headers["X-Forwarded-Proto"] == "https"
+      }
+    }
+  }
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
