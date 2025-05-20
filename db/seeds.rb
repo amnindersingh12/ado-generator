@@ -1,4 +1,3 @@
-# to download and store images locally
 # rake waifu:download
 
 require 'open-uri'
@@ -40,11 +39,11 @@ records = 10.times.map do |i|
   begin
     record.photo.attach(
       io: sample_image_io,
-      filename: "record_photo_#{record.id}.jpg"
+      filename: "record_photo_#{record.id}.png"
     )
     record.government_id_photo.attach(
       io: sample_image_io,
-      filename: "gov_id_photo_#{record.id}.jpg"
+      filename: "gov_id_photo_#{record.id}.png"
     )
     puts "📷 Attached photos for record: #{record.name}"
   rescue => e
@@ -60,7 +59,7 @@ users.each do |user|
     in_time = Faker::Time.between(from: 90.days.ago, to: 1.day.ago)
     out_time = Faker::Time.between(from: in_time + 1.hour, to: in_time + 8.hours)
 
-    attendance = Attendance.create!(
+    attendance = Attendance.new(
       user_id: user.id,
       record_id: records.sample.id,
       in_time: in_time,
@@ -68,17 +67,35 @@ users.each do |user|
     )
 
     begin
-      attendance.in_photo.attach(
-        io: sample_image_io,
-        filename: "in_photo_#{attendance.id}.jpg"
-      )
-      attendance.out_photo.attach(
-        io: sample_image_io,
-        filename: "out_photo_#{attendance.id}.jpg"
-      )
-      puts "🕒 Attendance created for #{user.email} at #{in_time.strftime('%F %T')}"
+      # Randomly attach either in_photo, out_photo, or both
+      attach_type = %i[in out both].sample
+
+      case attach_type
+      when :in
+        attendance.in_photo.attach(
+          io: sample_image_io,
+          filename: "in_photo_#{attendance.id}.png"
+        )
+      when :out
+        attendance.out_photo.attach(
+          io: sample_image_io,
+          filename: "out_photo_#{attendance.id}.png"
+        )
+      when :both
+        attendance.in_photo.attach(
+          io: sample_image_io,
+          filename: "in_photo_#{attendance.id}.png"
+        )
+        attendance.out_photo.attach(
+          io: sample_image_io,
+          filename: "out_photo_#{attendance.id}.png"
+        )
+      end
+
+      attendance.save!
+      puts "🕒 Attendance created for #{user.email} at #{in_time.strftime('%F %T')} with #{attach_type} photo(s)"
     rescue => e
-      puts "⚠️ Failed to attach attendance image #{attendance.id}: #{e.message}"
+      puts "⚠️ Failed to create attendance or attach image: #{e.message}"
     end
   end
 end
