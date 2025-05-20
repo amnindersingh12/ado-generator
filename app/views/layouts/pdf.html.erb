@@ -2,14 +2,161 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Attendance Pass</title>
+  <title><%= yield(:title) || "Daily Attendance Summary" %></title>
   <style>
-    body { font-size: 14px; color: #000; }
-    ul { list-style: none; padding: 0; }
-    li { margin-bottom: 5px; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #000000;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #ffffff;
+      border: 3px solid #000000;
+    }
+    .header-title {
+      color: #005566;
+      font-size: 24pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .header-date {
+      font-size: 14pt;
+      color: #555555;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border: 3px solid #000000 !important;
+    }
+    .table th, .table td {
+      border: 3px solid #000000 !important;
+      padding: 8px;
+      text-align: left;
+      vertical-align: middle;
+      font-size: 12pt;
+    }
+    .table th {
+      background-color: #005566;
+      color: #ffffff;
+      font-weight: bold;
+      text-align: center;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #f5f5f5;
+    }
+    .text-success { color: #28a745 !important; }
+    .text-danger { color: #dc3545 !important; }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      font-size: 10pt;
+      border-radius: 4px;
+      background-color: #ffc107;
+      color: #000000;
+    }
+    .signature-box {
+      margin-top: 40px;
+      padding: 15px;
+      border: 3px solid #000000;
+      width: 48%;
+      display: inline-block;
+      text-align: center;
+      vertical-align: top;
+      box-sizing: border-box;
+      margin-right: 2%;
+    }
+    .signature-box:last-child {
+      margin-right: 0;
+    }
+    .signature-box p {
+      margin: 0 0 10px 0;
+      font-weight: bold;
+      font-size: 12pt;
+    }
+    .signature-line {
+      border-top: 3px solid #000000;
+      width: 80%;
+      margin: 10px auto;
+      min-height: 40px;
+    }
+    .footer-note {
+      font-size: 10pt;
+      color: #555555;
+      text-align: center;
+      margin-top: 20px;
+      font-style: italic;
+    }
+    .alert-info {
+      font-size: 12pt;
+      padding: 20px;
+      border: 3px solid #005566;
+      text-align: center;
+      margin-top: 30px;
+      background-color: #e9ecef;
+    }
+    .text-center { text-align: center !important; }
+    .text-nowrap { white-space: nowrap !important; }
+    .fw-bold { font-weight: bold !important; }
+    .fw-semibold { font-weight: 600 !important; }
+    .text-decoration-none { text-decoration: none !important; }
+    .border-primary { border-color: #005566 !important; }
+    .border-3 { border-width: 3px !important; }
+    .mx-auto { margin-left: auto !important; margin-right: auto !important; }
+    .w-25 { width: 25% !important; }
+    .mt-4 { margin-top: 1.5rem !important; }
+    .mt-5 { margin-top: 3rem !important; }
+    .mb-0 { margin-bottom: 0 !important; }
+    .mb-2 { margin-bottom: 0.5rem !important; }
+    .me-1 { margin-right: 0.25rem !important; }
+    @media print {
+      body {
+        background: #ffffff;
+        margin: 0;
+      }
+      .container {
+        border: none;
+        padding: 10px;
+        margin: 0 auto;
+      }
+      .table, .table th, .table td {
+        border: 3px solid #000000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .table th {
+        background-color: #005566 !important;
+        color: #ffffff !important;
+      }
+      .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f5f5f5 !important;
+      }
+      .alert-info {
+        border: 3px solid #005566 !important;
+        background-color: #e9ecef !important;
+      }
+      .signature-box {
+        border: 3px solid #000000 !important;
+      }
+      .badge {
+        background-color: #ffc107 !important;
+        color: #000000 !important;
+      }
+    }
   </style>
 </head>
 <body>
-  <%= yield %>
+  <div class="container">
+    <%= yield %>
+  </div>
 </body>
 </html>

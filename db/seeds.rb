@@ -13,9 +13,9 @@ end
 # Create Users
 users = 1.times.map do
   user = User.create!(
-    email: Faker::Internet.unique.email,
-    password: 'password123',
-    role: %w[user admin].sample
+    email: 'dev@dev.com',
+    password: 'rootroot',
+    role: 'admin'
   )
   puts "✅ Created user: #{user.email} (#{user.role})"
   user
@@ -57,7 +57,7 @@ end
 users.each do |user|
   10.times do
     in_time = Faker::Time.between(from: 90.days.ago, to: 1.day.ago)
-    out_time = Faker::Time.between(from: in_time + 1.hour, to: in_time + 8.hours)
+    out_time = Faker::Time.between(from: in_time + 1.hour, to: in_time + 12.hours)
 
     attendance = Attendance.new(
       user_id: user.id,

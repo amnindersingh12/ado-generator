@@ -10,12 +10,12 @@ Rails.application.routes.draw do
 
     # Nested attendance routes
     resources :attendances do
-      get 'history', on: :collection
-      get 'print_pass', on: :member
-      get 'new_check_out', on: :member
-      post 'create_check_out', on: :member
-      get 'complete_check_in', on: :member
-      patch 'update_check_in', on: :member
+      get "history", on: :collection
+      get "print_pass", on: :member
+      get "new_check_out", on: :member
+      post "create_check_out", on: :member
+      get "complete_check_in", on: :member
+      patch "update_check_in", on: :member
     end
   end
 
@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   # Calendar-based attendance history
   get "history_calendar", to: "calendar#index"
   get "history_calendar/:year/:month/:day", to: "calendar#show", as: :calendar_day
+  get "history_calendar/:year/:month/:day/print", to: "calendar#print_day", as: :calendar_day_print
   get "calendar/day_data", to: "calendar#day_data", as: :calendar_day_data
 
   # Root path
