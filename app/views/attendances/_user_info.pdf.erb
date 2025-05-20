@@ -1,0 +1,15 @@
+<div class="section user-info-container">
+  <%= base64_image_tag(@record.photo, class: "user-photo") %>
+
+  <div class="user-info-details">
+    <p><span class="field label">Name:</span> <%= @record.name %></p>
+    <p><span class="field label">Age:</span>
+      <%= @record.date_of_birth.present? ? "#{Time.zone.now.year - @record.date_of_birth.year} years" : "N/A" %>
+    </p>
+    <p><span class="field label">Father's Name:</span> <%= @record.father_name.presence || "N/A" %></p>
+    <p><span class="field label">Contact Number:</span> <%= @record.contact_number %></p>
+    <p><span class="field label">Address:</span> <%= [@record.address, @record.city, @record.state, @record.pincode].compact.join(', ') %></p>
+    <p><span class="field label">Government ID Number:</span> <%= @record.government_id_number.presence || "N/A" %></p>
+    <p><span class="field label">Created By:</span> <%= @attendance.user.email %></p>
+  </div>
+</div>

@@ -78,4 +78,9 @@ gem "simple_calendar", "~> 3.1"
 gem "ransack", "~> 4.3"
 
 gem 'wicked_pdf'
+
 gem 'wkhtmltopdf-binary'
+
+gem 'rqrcode'
+
+gem 'chunky_png'

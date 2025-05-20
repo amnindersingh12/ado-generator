@@ -96,7 +96,9 @@ def print_pass
     format.pdf do
       render pdf: "attendance_pass_#{@attendance.id}",
              template: "attendances/pass",
-             layout: "pdf"
+             layout: "pdf",
+            
+            margin: { top: 5, bottom: 5, left: 10, right: 10 }
     end
   end
 end
