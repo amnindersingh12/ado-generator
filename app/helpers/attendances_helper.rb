@@ -7,8 +7,18 @@ module AttendancesHelper
     return unless photo.attached?
 
     image_data = "data:#{photo.content_type};base64,#{Base64.strict_encode64(photo.download)}"
+
+    # Extract and convert size option if present (e.g., "120x120")
+    if options[:size]
+      width, height = options[:size].split('x')
+      options[:width] = width
+      options[:height] = height
+      options.delete(:size)
+    end
+
     image_tag(image_data, { alt: "User Photo" }.merge(options))
   end
+
 
   # Format datetime in DD-MM-YYYY HH:MM:SS format
   def format_datetime(datetime)

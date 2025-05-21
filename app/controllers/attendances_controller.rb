@@ -83,10 +83,26 @@ class AttendancesController < ApplicationController
     end
   end
 
-  def history
-    @attendances = @record.attendances.order(created_at: :desc)
-    @created_by = @record.user.email
+def history
+  @created_by = @record.user.email
+  @attendances = @record.attendances.order(in_time: :desc)
+
+  if params[:from].present? && params[:to].present?
+    from = Date.parse(params[:from]).beginning_of_day
+    to = Date.parse(params[:to]).end_of_day
+    @attendances = @attendances.where(in_time: from..to)
   end
+
+  respond_to do |format|
+    format.html
+    format.pdf do
+      render pdf: "attendance_#{@record.id}",
+             template: "attendances/record_report",
+             layout: "pdf",
+             margin: { top: 10, bottom: 10, left: 10, right: 10 }
+    end
+  end
+end
 
 def print_pass
   @attendance = @record.attendances.find(params[:id])
@@ -97,7 +113,6 @@ def print_pass
       render pdf: "attendance_pass_#{@attendance.id}",
              template: "attendances/pass",
              layout: "pdf",
-            
             margin: { top: 5, bottom: 5, left: 10, right: 10 }
     end
   end

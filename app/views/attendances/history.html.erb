@@ -1,4 +1,18 @@
 <h1>Attendance History for <%= @record.name %></h1>
+<%= form_with url: history_record_attendances_path(@record), method: :get, local: true, class: "row g-3 mb-4" do |f| %>
+  <div class="col-md-4">
+    <%= f.label :from, "From Date", class: "form-label" %>
+    <%= f.date_field :from, value: params[:from], class: "form-control" %>
+  </div>
+  <div class="col-md-4">
+    <%= f.label :to, "To Date", class: "form-label" %>
+    <%= f.date_field :to, value: params[:to], class: "form-control" %>
+  </div>
+  <div class="col-md-4 d-flex align-items-end">
+    <%= f.submit "Generate Report", class: "btn btn-primary me-2" %>
+    <%= link_to "Print PDF", history_record_attendances_path(@record, format: :pdf, from: params[:from], to: params[:to]), class: "btn btn-success", target: "_blank" %>
+  </div>
+<% end %>
 <% if @attendances.any? %>
   <%= render partial: "shared/summary_card", locals: {
   attendances: @attendances,
