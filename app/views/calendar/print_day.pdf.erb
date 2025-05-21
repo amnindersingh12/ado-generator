@@ -1,9 +1,9 @@
-<% content_for :title, "Daily Attendance Summary" %>
+<% content_for :title, 'Daily Attendance Summary' %>
 <div class="text-center mb-4">
   <h2 class="header-title">📋 Daily Attendance Summary</h2>
   <p class="mb-0 fs-5 fw-semibold">
     <% if @attendances.present? %>
-      <%= (@attendances.first.in_time || @attendances.first.out_time).strftime("%d-%m-%Y") %>
+      <%= (@attendances.first.in_time || @attendances.first.out_time).strftime('%d-%m-%Y') %>
     <% else %>
       No Date
     <% end %>
@@ -29,7 +29,7 @@
           <tr>
             <td style="text-align: center; border: 1px solid #dee2e6;"><%= counter %></td>
             <td style="border: 1px solid #dee2e6;">
-              <% if idx == 0 %>
+              <% if idx.zero? %>
                 <%= attendance.record.name %>
               <% else %>
                 &nbsp;
@@ -37,19 +37,19 @@
             </td>
             <td class="text-success" style="border: 1px solid #dee2e6; color: #198754;">
               <% if attendance.in_time.present? %>
-                <%= attendance.in_time.strftime("%d-%m-%Y %H:%M:%S") %>
+                <%= attendance.in_time.strftime('%d-%m-%Y %H:%M:%S') %>
               <% else %>
                 <span style="background-color: #ffc107; color: #212529; padding: 0.25em 0.4em; border-radius: 0.25rem; font-size: 0.875em;">Pending</span>
               <% end %>
             </td>
             <td class="text-danger" style="border: 1px solid #dee2e6; color: #dc3545;">
               <% if attendance.out_time.present? %>
-                <%= attendance.out_time.strftime("%d-%m-%Y %H:%M:%S") %>
+                <%= attendance.out_time.strftime('%d-%m-%Y %H:%M:%S') %>
               <% else %>
                 <span style="background-color: #ffc107; color: #212529; padding: 0.25em 0.4em; border-radius: 0.25rem; font-size: 0.875em;">Pending</span>
               <% end %>
             </td>
-            <td style="border: 1px solid #dee2e6;"><%= attendance.user&.email || "Unknown" %></td>
+            <td style="border: 1px solid #dee2e6;"><%= attendance.user&.email || 'Unknown' %></td>
           </tr>
           <% counter += 1 %>
         <% end %>

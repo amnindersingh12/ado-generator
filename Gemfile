@@ -50,6 +50,7 @@ group :development, :test do
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
 
+  gem "rubocop-erb", require: false
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end
@@ -65,7 +66,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem 'concurrent-ruby'
+gem "concurrent-ruby"
 
 gem "faker"
 
@@ -77,10 +78,10 @@ gem "simple_calendar", "~> 3.1"
 
 gem "ransack", "~> 4.3"
 
-gem 'wicked_pdf'
+gem "wicked_pdf"
 
-gem 'wkhtmltopdf-binary'
+gem "wkhtmltopdf-binary"
 
-gem 'rqrcode'
+gem "rqrcode"
 
-gem 'chunky_png'
+gem "chunky_png"

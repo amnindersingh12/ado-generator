@@ -53,7 +53,7 @@
               <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "Haven't Checked In Yet!" %>
             </span>
             <span class="badge bg-danger">
-              <%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || "Check Out Pending" %>
+              <%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || 'Check Out Pending' %>
             </span>
           </li>
         <% end %>

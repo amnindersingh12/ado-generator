@@ -1,6 +1,8 @@
-require_relative "boot"
+# frozen_string_literal: true
 
-require "rails/all"
+require_relative 'boot'
+
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -22,7 +24,7 @@ module AdoGenerator
     # in config/environments, which are processed later.
     #
     # updating time zone to indian standard time
-    config.time_zone = "Asia/Kolkata"
+    config.time_zone = 'Asia/Kolkata'
     config.active_record.default_timezone = :local
     # config.eager_load_paths << Rails.root.join("extras")
   end

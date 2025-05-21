@@ -1,18 +1,18 @@
 <h1 class="text-center my-4">Records</h1>
 
 <!-- 🔍 Search & Filter Form -->
-<%= search_form_for @q, url: records_path, method: :get, class: "mb-4" do |f| %>
+<%= search_form_for @q, url: records_path, method: :get, class: 'mb-4' do |f| %>
   <div class="row g-3 align-items-end">
     <div class="col-md-4">
-      <%= f.label :name_cont, "Search by Name", class: "form-label" %>
-      <%= f.search_field :name_cont, class: "form-control", placeholder: "Enter record name" %>
+      <%= f.label :name_cont, 'Search by Name', class: 'form-label' %>
+      <%= f.search_field :name_cont, class: 'form-control', placeholder: 'Enter record name' %>
     </div>
     <div class="col-md-4">
-      <%= f.label :created_at, "Filter by Date", class: "form-label" %>
-      <%= f.select :created_at, options_for_select([['All Time', 'all'], ['Today', 'today'], ['This Week', 'week'], ['This Month', 'month']], params[:created_at]), {}, class: "form-select" %>
+      <%= f.label :created_at, 'Filter by Date', class: 'form-label' %>
+      <%= f.select :created_at, options_for_select([['All Time', 'all'], ['Today', 'today'], ['This Week', 'week'], ['This Month', 'month']], params[:created_at]), {}, class: 'form-select' %>
     </div>
     <div class="col-md-2">
-      <%= f.submit "Search", class: "btn btn-primary w-100" %>
+      <%= f.submit 'Search', class: 'btn btn-primary w-100' %>
     </div>
   </div>
 <% end %>
@@ -37,7 +37,7 @@
       <div class="col">
         <div class="card h-100 shadow-sm">
           <% if record.photo.attached? %>
-            <%= image_tag record.photo, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+            <%= image_tag record.photo, class: 'card-img-top', style: 'height: 200px; object-fit: cover;' %>
           <% else %>
             <div class="card-img-top" style="height: 200px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
               <span class="text-muted">No Image</span>
@@ -50,7 +50,7 @@
             <!-- Metadata -->
             <div class="mb-2">
               <span class="badge bg-info">#<%= index + 1 %></span>
-              <span class="badge bg-secondary"><%= record.created_at.strftime("%b %d, %Y") %></span>
+              <span class="badge bg-secondary"><%= record.created_at.strftime('%b %d, %Y') %></span>
             </div>
 
             <% latest_attendance = record.attendances.order(created_at: :desc).first %>
@@ -70,7 +70,7 @@
           </div>
 
           <div class="card-footer bg-transparent border-top-0 text-center">
-            <%= link_to "View Details", record_path(record), class: "btn btn-outline-primary btn-sm w-100" %>
+            <%= link_to 'View Details', record_path(record), class: 'btn btn-outline-primary btn-sm w-100' %>
           </div>
         </div>
       </div>

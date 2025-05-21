@@ -1,20 +1,32 @@
 <h1 class="text-center my-4">Complete Check-In for <%= @record.name %></h1>
-
-<%= form_with model: [@record, @attendance], url: update_check_in_record_attendance_path(@record, @attendance), local: true, html: { class: "card p-4 shadow-sm" } do |form| %>
+<%= form_with model: [@record, @attendance], url: update_check_in_record_attendance_path(@record, @attendance), local: true, html: { class: 'card p-4 shadow-sm', id: 'checkInForm' } do |form| %>
   <div class="mb-3">
-    <%= form.label :in_photo, "Capture Check-In Photo", class: "form-label" %>
+    <% if @attendance.purpose.blank? %>
+      <%= form.label :purpose, 'Purpose', class: 'form-label' %>
+      <%= form.text_area :purpose, class: 'form-control', rows: 3, required: true %>
+    <% else %>
+      <strong>Purpose:</strong>
+      <%= @attendance.purpose %>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :in_photo, 'Capture Check-In Photo', class: 'form-label' %>
     <div class="mb-2">
-      <%= webcam_capture(form, :in_photo) %>
+    <%= render partial: 'shared/webcam_capture', locals: { form: form, field: :in_photo } %>
     </div>
     <% if @attendance.errors[:in_photo].any? %>
       <div class="text-danger small">
-        <%= @attendance.errors[:in_photo].join(", ") %>
+        <%= @attendance.errors[:in_photo].join(', ') %>
       </div>
     <% end %>
   </div>
 
-  <div class="d-flex justify-content-between">
-    <%= form.submit "Complete Check-In", class: "btn btn-success" %>
-    <%= link_to "Back", record_path(@record), class: "btn btn-secondary" %>
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <%= form.submit 'Complete Check-In', class: 'btn btn-success', id: 'submitBtn', disabled: true %>
+      <span id="photoWarning" class="text-danger ms-3 small">📸 Please take a photo to enable submission</span>
+    </div>
+    <%= link_to 'Back', record_path(@record), class: 'btn btn-secondary' %>
   </div>
 <% end %>

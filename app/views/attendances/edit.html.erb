@@ -6,26 +6,32 @@
       </h2>
     </div>
     <div class="card-body">
-      <%= form_with model: [@record, @attendance], local: true, html: { class: "needs-validation" } do |form| %>
-
+      <%= form_with model: [@record, @attendance], local: true, html: { class: 'needs-validation' } do |form| %>
+        <div class="mb-4">
+          <% if @attendance.purpose.blank? %>
+            <%= form.label :purpose, 'Purpose', class: 'form-label' %>
+      <%= form.text_area :purpose, class: 'form-control', rows: 3, required: true %>
+          <% else %>
+            <strong>Purpose:</strong>
+            <%= @attendance.purpose %>
+          <% end %>
+        </div>
         <!-- Current time and Capture Check-Out Photo Section -->
         <div class="mb-4">
           <p class="fw-semibold">
             <i class="bi bi-calendar-check me-2"></i> Current Time:
             <%= Time.current.strftime('%B %d, %Y %I:%M %p') %>
+            <br>
           </p>
-
-          <%= form.label :out_photo, "Capture Check-Out Photo", class: "form-label" %>
-          <%= webcam_capture(form, :out_photo) %>
-
+          <%= form.label :out_photo, 'Capture Check-Out Photo', class: 'form-label' %>
+    <%= render partial: 'shared/webcam_capture', locals: { form: form, field: :out_photo } %>
           <% if @attendance.errors[:out_photo].any? %>
             <div class="text-danger small mt-2">
               <i class="bi bi-exclamation-circle-fill me-2"></i>
-              <%= @attendance.errors[:out_photo].join(", ") %>
+              <%= @attendance.errors[:out_photo].join(', ') %>
             </div>
           <% end %>
         </div>
-
         <!-- Display Original Photo Section -->
         <% if @record.photo.attached? %>
           <div class="mb-4">
@@ -33,17 +39,20 @@
               <i class="bi bi-person-fill me-2"></i> Original Photo (during registration):
             </p>
             <div class="text-center">
-              <%= image_tag @record.photo, class: "img-fluid rounded border", style: "max-height: 300px;" %>
+              <%= image_tag @record.photo, class: 'img-fluid rounded border', style: 'max-height: 300px;' %>
             </div>
           </div>
         <% end %>
-
+              <% if @attendance.errors[:out_photo].any? %>
+        <div class="text-danger small">
+          <%= @attendance.errors[:out_photo].join(', ') %>
+        </div>
+      <% end %>
         <!-- Form Buttons: Check Out and Back -->
         <div class="d-flex justify-content-between">
-          <%= form.submit "Check Out", class: "btn btn-success px-4" %>
-          <%= link_to "Back", record_path(@record), class: "btn btn-secondary px-4" %>
+          <%= form.submit 'Check Out', class: 'btn btn-success px-4' %>
+          <%= link_to 'Back', record_path(@record), class: 'btn btn-secondary px-4' %>
         </div>
-
       <% end %>
     </div>
   </div>

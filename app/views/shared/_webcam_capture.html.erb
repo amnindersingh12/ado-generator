@@ -1,80 +1,106 @@
-<!-- Webcam video preview -->
-<video id="video" autoplay class="mb-3" style="max-width: 100%;"></video>
-<!-- Hidden canvas used for capturing photo from video -->
-<canvas id="canvas" style="display: none;"></canvas>
-<!-- File input and capture button -->
-<div class="mb-3">
-<%= form.label field, "Capture Photo", class: "form-label" %>
-<%= form.file_field field, id: field, class: "form-control" %>
-<!-- Take Photo button -->
-<button type="button" id="takePhotoBtn" onclick="capturePhoto('<%= field %>')" class="btn btn-secondary mt-2">
-  Take Photo
-</button>
-<!-- Retake Photo button (hidden initially) -->
-<button type="button" id="retakePhotoBtn" onclick="retakePhoto()" class="btn btn-warning mt-2" style="display: none;">
-  Retake Photo
-</button>
+<!-- Webcam Capture Partial -->
+<div id="webcam-capture-wrapper-<%= field %>">
+  <!-- Webcam preview -->
+  <video id="video-<%= field %>" autoplay class="mb-3" style="max-width: 200px; max-height: 200px;"></video>
+
+  <!-- Canvas for frame capture -->
+  <canvas id="canvas-<%= field %>" style="display: none;"></canvas>
+
+  <!-- File field -->
+  <%# form.label field, "Capture Photo", class: "form-label" %>
+  <%= form.file_field field, id: field, class: 'form-control', style: 'display: none;' %>
+
+  <!-- Action buttons -->
+  <button type="button" id="takePhotoBtn-<%= field %>" class="btn btn-secondary mt-2">
+    📸 Take Photo
+  </button>
+  <button type="button" id="retakePhotoBtn-<%= field %>" class="btn btn-warning mt-2" style="display: none;">
+    🔄 Retake Photo
+  </button>
+
+  <!-- Captured image preview -->
+  <img id="photoPreview-<%= field %>" alt="Captured photo" class="img-thumbnail mt-3" style="max-width: 200px; max-height: 200px; display: none;" />
+
+  <!-- Warning message -->
+  <div id="photoWarning-<%= field %>" class="text-danger small mt-2">
+    ⚠️ Please take a photo to enable form submission.
+  </div>
 </div>
-<!-- Captured photo preview -->
-<img id="photoPreview" alt="Captured photo" class="img-thumbnail mt-3" style="max-width: 100%; display: none;" />
+
 <script>
-// Initialize webcam stream once
-if (!window.hasInitializedWebcam) {
-  navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-    document.getElementById('video').srcObject = stream;
-  }).catch(err => {
-    console.error("Error accessing camera: ", err);
-  });
+  document.addEventListener("DOMContentLoaded", () => {
+    const field = "<%= field %>";
+    const video = document.getElementById(`video-${field}`);
+    const canvas = document.getElementById(`canvas-${field}`);
+    const preview = document.getElementById(`photoPreview-${field}`);
+    const fileInput = document.getElementById(field);
+    const takeBtn = document.getElementById(`takePhotoBtn-${field}`);
+    const retakeBtn = document.getElementById(`retakePhotoBtn-${field}`);
+    const warning = document.getElementById(`photoWarning-${field}`);
+    const form = fileInput.closest("form");
+    const submitBtn = form.querySelector("input[type=submit], button[type=submit]");
 
-  /**
-    * Capture photo from video stream and show preview.
-    */
-  window.capturePhoto = function(inputId) {
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const photoPreview = document.getElementById('photoPreview');
+    // Start camera once
+    if (!window[`webcamStarted-${field}`]) {
+      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        video.srcObject = stream;
+      }).catch(err => {
+        console.error("Camera error:", err);
+        warning.innerText = "❌ Cannot access webcam. Please allow camera access.";
+      });
+      window[`webcamStarted-${field}`] = true;
+    }
 
-    // Capture current frame
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
+    // Capture photo
+    takeBtn.addEventListener("click", () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext("2d").drawImage(video, 0, 0);
+      const dataURL = canvas.toDataURL("image/jpeg");
 
-    // Show preview image
-    photoPreview.src = canvas.toDataURL("image/jpeg");
-    photoPreview.style.display = 'block';
+      // Preview
+      preview.src = dataURL;
+      preview.style.display = "block";
+      video.style.display = "none";
 
-    // Hide video feed and toggle buttons
-    video.style.display = 'none';
-    document.getElementById('takePhotoBtn').style.display = 'none';
-    document.getElementById('retakePhotoBtn').style.display = 'inline-block';
+      // Set blob to file input
+      canvas.toBlob(blob => {
+        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
 
-    // Assign the captured image to the file input
-    canvas.toBlob(blob => {
-      const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
-      const input = document.getElementById(inputId);
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      input.files = dataTransfer.files;
+        // Enable submit
+        submitBtn.disabled = false;
+        warning.style.display = "none";
+      });
+
+      takeBtn.style.display = "none";
+      retakeBtn.style.display = "inline-block";
     });
-  };
 
-  /**
-    * Reset UI and allow user to retake photo.
-    */
-  window.retakePhoto = function() {
-    const video = document.getElementById('video');
-    const photoPreview = document.getElementById('photoPreview');
+    // Retake photo
+    retakeBtn.addEventListener("click", () => {
+      preview.style.display = "none";
+      video.style.display = "block";
+      takeBtn.style.display = "inline-block";
+      retakeBtn.style.display = "none";
 
-    // Show video feed again
-    video.style.display = 'block';
-    photoPreview.style.display = 'none';
+      // Reset input and disable submit
+      fileInput.value = "";
+      submitBtn.disabled = true;
+      warning.style.display = "block";
+    });
 
-    // Toggle buttons
-    document.getElementById('takePhotoBtn').style.display = 'inline-block';
-    document.getElementById('retakePhotoBtn').style.display = 'none';
-  };
+    // Initial disable
+    submitBtn.disabled = true;
 
-  // Prevent re-initializing
-  window.hasInitializedWebcam = true;
-}
+    // Last defense before submit
+    form.addEventListener("submit", e => {
+      if (!fileInput.files.length) {
+        e.preventDefault();
+        alert("🚫 You must take a photo before submitting.");
+      }
+    });
+  });
 </script>

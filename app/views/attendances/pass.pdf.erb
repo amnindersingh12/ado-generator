@@ -28,14 +28,15 @@
   <body>
     <div class="title">ATTENDANCE SYSTEM PASS</div>
     <div class="token">TOKEN ID: <%= display_token(@attendance) %></div>
-    <%= render "user_info" %>
+    <%= render 'user_info' %>
     <hr />
     <div class="section">
-      <p><span class="label">DATE & TIME OF ACTION:</span> <%= format_datetime(@attendance.out_time || @attendance.in_time || Time.current) %></p>
-      <p><span class="label">ACTION TYPE:</span> <%= @attendance.out_time.present? ? "Check-Out" : "Check-In" %></p>
+      <p><span class="field label">DATE & TIME OF ACTION:</span> <%= format_datetime(@attendance.out_time || @attendance.in_time || Time.current) %></p>
+      <p><span class="field label">ACTION TYPE:</span> <strong><%= @attendance.out_time.present? ? 'Check-Out' : 'Check-In' %></strong></p>
     </div>
     <div class="section">
       <p class="label">ATTENDANCE DETAILS:</p>
+      <p><span class="field label">Purpose Of Visit:</span> <%= @attendance.purpose %></p>
       <p><span class="field label">Check-In Time:</span> <%= format_datetime(@attendance.in_time) %></p>
       <p><span class="field label">Check-Out Time:</span> <%= format_datetime(@attendance.out_time) %></p>
     </div>

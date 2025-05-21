@@ -81,6 +81,13 @@ GEM
     bcrypt_pbkdf (1.1.1-arm64-darwin)
     bcrypt_pbkdf (1.1.1-x86_64-darwin)
     benchmark (0.4.0)
+    better_html (2.1.1)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
+      ast (~> 2.0)
+      erubi (~> 1.4)
+      parser (>= 2.4)
+      smart_properties
     bigdecimal (3.1.9)
     bindex (0.8.1)
     bootsnap (1.18.4)
@@ -318,6 +325,10 @@ GEM
     rubocop-ast (1.44.1)
       parser (>= 3.3.7.2)
       prism (~> 1.4)
+    rubocop-erb (0.6.0)
+      better_html
+      lint_roller (~> 1.1)
+      rubocop (~> 1.72, >= 1.72.1)
     rubocop-performance (1.25.0)
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
@@ -347,6 +358,7 @@ GEM
       websocket (~> 1.0)
     simple_calendar (3.1.0)
       rails (>= 6.1)
+    smart_properties (1.17.0)
     solid_cable (3.0.7)
       actioncable (>= 7.2)
       activejob (>= 7.2)
@@ -454,6 +466,7 @@ DEPENDENCIES
   ransack (~> 4.3)
   rqrcode
   rubocop (~> 1.75)
+  rubocop-erb
   rubocop-rails-omakase
   rufo (~> 0.18.1)
   selenium-webdriver

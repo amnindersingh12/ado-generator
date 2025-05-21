@@ -1,5 +1,7 @@
-require "rqrcode"
-require "chunky_png" # needed to render PNG from QR
+# frozen_string_literal: true
+
+require 'rqrcode'
+require 'chunky_png' # needed to render PNG from QR
 
 module AttendancesHelper
   # Convert an attached ActiveStorage image to base64 format
@@ -16,18 +18,17 @@ module AttendancesHelper
       options.delete(:size)
     end
 
-    image_tag(image_data, { alt: "User Photo" }.merge(options))
+    image_tag(image_data, { alt: 'User Photo' }.merge(options))
   end
-
 
   # Format datetime in DD-MM-YYYY HH:MM:SS format
   def format_datetime(datetime)
-    datetime&.strftime("%d-%m-%Y %H:%M:%S") || "N/A"
+    datetime&.strftime('%d-%m-%Y %H:%M:%S') || 'N/A'
   end
 
   # Show user token or fallback to ID
   def display_token(attendance)
-      attendance.id
+    attendance.id
   end
 
   def attendance_qr_code_base64(attendance)
@@ -36,7 +37,7 @@ module AttendancesHelper
       name: attendance.record.name,
       address: attendance.record.address,
       government_id: attendance.record.government_id_number,
-      action: attendance.out_time.present? ? "Check-Out" : "Check-In",
+      action: attendance.out_time.present? ? 'Check-Out' : 'Check-In',
       in_time: format_datetime(attendance.in_time),
       out_time: format_datetime(attendance.out_time)
     }
@@ -47,9 +48,9 @@ module AttendancesHelper
       bit_depth: 1,
       border_modules: 4,
       color_mode: ChunkyPNG::COLOR_GRAYSCALE,
-      color: "black",
+      color: 'black',
       file: nil,
-      fill: "white",
+      fill: 'white',
       module_px_size: 6,
       resize_exactly_to: false,
       resize_gte_to: false,
@@ -58,6 +59,6 @@ module AttendancesHelper
 
     base64 = Base64.strict_encode64(png.to_s)
 
-    image_tag "data:image/png;base64,#{base64}", alt: "QR Code", class: "qr-code"
+    image_tag "data:image/png;base64,#{base64}", alt: 'QR Code', class: 'qr-code'
   end
 end

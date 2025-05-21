@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class CalendarController < ApplicationController
   def index
-    today = Date.today
+    today = Time.zone.today
     @year = params[:year]&.to_i || today.year
     @month = params[:month]&.to_i || today.month
     @first_day = Date.new(@year, @month, 1)
@@ -36,28 +38,33 @@ class CalendarController < ApplicationController
     @pending_records = @attendances.where(out_time: nil).count
     @unique_users = @attendances.present? ? @attendances.distinct.count(:user_id) : 0
     respond_to do |format|
-      format.html { render partial: "calendar/day_tooltip",  locals: { date: @date, attendances: @attendances, total_in: @total_in, total_out: @total_out, pending_records: @pending_records, unique_users: @unique_users } }
-      format.js   # if you're using AJAX to render it into a div
+      format.html do
+        render partial: 'calendar/day_tooltip',
+               locals: { date: @date, attendances: @attendances, total_in: @total_in, total_out: @total_out,
+                         pending_records: @pending_records, unique_users: @unique_users }
+      end
+      format.js # if you're using AJAX to render it into a div
     end
   end
+
   def print_day
     date = Date.new(params[:year].to_i, params[:month].to_i, params[:day].to_i)
 
     # Use in_time and out_time instead of created_at
     @attendances = Attendance
-      .includes(:record, :user)
-      .where("(in_time BETWEEN ? AND ?) OR (out_time BETWEEN ? AND ?)",
-            date.beginning_of_day, date.end_of_day,
-            date.beginning_of_day, date.end_of_day)
+                   .includes(:record, :user)
+                   .where('(in_time BETWEEN ? AND ?) OR (out_time BETWEEN ? AND ?)',
+                          date.beginning_of_day, date.end_of_day,
+                          date.beginning_of_day, date.end_of_day)
 
     @attendances_by_record = @attendances.group_by(&:record_id)
 
     respond_to do |format|
       format.pdf do
         render pdf: "attendance_summary_#{date}",
-              template: "calendar/print_day",
-              layout: "pdf",
-              encoding: "UTF-8"
+               template: 'calendar/print_day',
+               layout: 'pdf',
+               encoding: 'UTF-8'
       end
     end
   end

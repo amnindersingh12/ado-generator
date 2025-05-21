@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 class Record < ApplicationRecord
   belongs_to :user
   has_many :attendances, dependent: :destroy
   has_one_attached :photo
-  validates :name,  presence: true
+  validates :name, presence: true
   has_one_attached :government_id_photo
   validates :contact_number, presence: true
-  
 
-  def self.ransackable_attributes(auth_object = nil)
-    [ "address", "city", "contact_number", "created_at", "date_of_birth", "father_name", "government_id_number", "id", "name", "pincode", "state", "updated_at", "user_id" ]
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[address city contact_number created_at date_of_birth father_name government_id_number id
+       name pincode state updated_at user_id]
   end
 
   def self.search(search)
     if search
-      where("name LIKE ?", "%#{search}%")
+      where('name LIKE ?', "%#{search}%")
     else
       all
     end
@@ -21,6 +23,7 @@ class Record < ApplicationRecord
 
   def age
     return unless date_of_birth
+
     now = Time.zone.now.to_date
     dob = date_of_birth.to_date
     age = now.year - dob.year

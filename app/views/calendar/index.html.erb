@@ -4,17 +4,17 @@
   </h2>
   <!-- Navigation Buttons -->
   <div class="d-flex justify-content-between flex-wrap mb-4">
-    <%= link_to "← Previous Month",
+    <%= link_to '← Previous Month',
                 history_calendar_path(year: @first_day.prev_month.year, month: @first_day.prev_month.month),
-                class: "btn btn-outline-primary mb-2" %>
-    <%= link_to "Next Month →",
+                class: 'btn btn-outline-primary mb-2' %>
+    <%= link_to 'Next Month →',
                 history_calendar_path(year: @first_day.next_month.year, month: @first_day.next_month.month),
-                class: "btn btn-outline-primary mb-2" %>
+                class: 'btn btn-outline-primary mb-2' %>
   </div>
   <div class="row">
     <!-- Summary Card -->
     <div class="col-lg-4 mb-4">
-      <%= render partial: "shared/summary_card", locals: {
+      <%= render partial: 'shared/summary_card', locals: {
   month: @month,
   year: @year,
   first_day: @first_day,
@@ -49,11 +49,11 @@
                     <% if has_attendance %>
                       <%= link_to date.day,
                                   calendar_day_path(year: date.year, month: date.month, day: date.day),
-                                  class: "btn btn-sm btn-success w-100" %>
+                                  class: 'btn btn-sm btn-success w-100' %>
                     <% else %>
                       <%= link_to date.day,
                                   calendar_day_path(year: date.year, month: date.month, day: date.day),
-                                  class: "btn btn-sm btn-outline-secondary w-100" %>
+                                  class: 'btn btn-sm btn-outline-secondary w-100' %>
                     <% end %>
                     <% if is_today %>
                       <div class="small text-primary fw-bold mt-1">Today</div>

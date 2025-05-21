@@ -38,12 +38,12 @@
               ].compact.join(', ').presence || "N/A" %>
             </li>
             <li class="list-group-item">
-              <strong>Govt. ID:</strong> <%= @record.government_id_number.presence || "N/A" %>
+              <strong>Govt. ID:</strong> <%= @record.government_id_number.presence || 'N/A' %>
             </li>
             <li class="list-group-item">
               <strong>Govt. ID Photo:</strong><br>
               <% if @record.government_id_photo.attached? %>
-                <%= enlargeable_image_tag(@record.government_id_photo, thumb_size: "120px", label: "Govt. ID Photo") %>
+                <%= enlargeable_image_tag(@record.government_id_photo, thumb_size: '120px', label: 'Govt. ID Photo') %>
               <% else %>
                 <span class="text-muted">No government ID photo attached.</span>
               <% end %>
@@ -54,27 +54,27 @@
       <!-- Attendance Actions -->
       <div class="mt-4 mx-auto d-flex gap-2 align-items-center">
         <% last_attendance = @record.attendances.where(user: current_user).last %>
-        <% if last_attendance && last_attendance.in_time && !last_attendance.out_time %>
+        <% if last_attendance&.in_time && !last_attendance.out_time %>
           <!-- Open check-in, only allow check-out -->
-          <%= link_to "Check Out", edit_record_attendance_path(@record, last_attendance), class: "btn btn-warning" %>
+          <%= link_to 'Check Out', edit_record_attendance_path(@record, last_attendance), class: 'btn btn-warning' %>
           <div class="alert alert-info flex-fill">Must check out before starting a new attendance.</div>
         <% elsif last_attendance && !last_attendance.in_time && last_attendance.out_time %>
           <!-- Open check-out, only allow check-in -->
-          <%= link_to "Complete Check-In", complete_check_in_record_attendance_path(@record, last_attendance), class: "btn btn-success" %>
+          <%= link_to 'Complete Check-In', complete_check_in_record_attendance_path(@record, last_attendance), class: 'btn btn-success' %>
           <div class="alert alert-info flex-fill">Must check in to complete this attendance.</div>
         <% else %>
           <!-- No open attendance, allow both -->
-          <%= link_to "New Check-In", new_record_attendance_path(@record), class: "btn btn-success" %>
-          <%= link_to "New Check-Out", new_check_out_record_attendance_path(@record), class: "btn btn-warning" %>
+          <%= link_to 'New Check-In', new_record_attendance_path(@record), class: 'btn btn-success' %>
+          <%= link_to 'New Check-Out', new_check_out_record_attendance_path(@record), class: 'btn btn-warning' %>
 <% if @attendance.present? %>
-  <%= link_to "Generate Attendance Pass", print_pass_record_attendance_path(@record, @attendance, format: :pdf), class: "btn btn-primary", target: "_blank" %>
+  <%= link_to 'Generate Attendance Pass', print_pass_record_attendance_path(@record, @attendance, format: :pdf), class: 'btn btn-primary', target: '_blank', rel: 'noopener' %>
 <% end %>
         <% end %>
-        <%= link_to "View History", history_record_attendances_path(@record), class: "btn btn-info" %>
+        <%= link_to 'View History', history_record_attendances_path(@record), class: 'btn btn-info' %>
         <% if current_user&.role == 'admin' %>
-          <%= button_to "Destroy", record_path(@record), method: :delete,
-              class: "btn btn-danger",
-              data: { confirm: "Are you sure you want to delete this record?" } %>
+          <%= button_to 'Destroy', record_path(@record), method: :delete,
+              class: 'btn btn-danger',
+              data: { confirm: 'Are you sure you want to delete this record?' } %>
         <% end %>
       </div>
     </div>

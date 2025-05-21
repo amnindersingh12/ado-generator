@@ -68,27 +68,27 @@
     </div>
 
     <div class="col-md-6">
-      <%= form.label :date_of_birth, class: "form-label" %>
-      <%= form.date_field :date_of_birth, class: "form-control" %>
+      <%= form.label :date_of_birth, class: 'form-label' %>
+      <%= form.date_field :date_of_birth, class: 'form-control' %>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :father_name, class: "form-label" %>
-      <%= form.text_field :father_name, class: "form-control" %>
+      <%= form.label :father_name, class: 'form-label' %>
+      <%= form.text_field :father_name, class: 'form-control' %>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :government_id_number, class: "form-label" %>
-      <%= form.text_field :government_id_number, class: "form-control" %>
+      <%= form.label :government_id_number, class: 'form-label' %>
+      <%= form.text_field :government_id_number, class: 'form-control' %>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :government_id_photo, class: "form-label" %>
-      <%= form.file_field :government_id_photo, class: "form-control", accept: "image/*" %>
+      <%= form.label :government_id_photo, class: 'form-label' %>
+      <%= form.file_field :government_id_photo, class: 'form-control', accept: 'image/*' %>
     </div>
 
     <div class="col-12 mt-3">
-      <%= form.label :photo, "Face Photo", class: "form-label" %>
+      <%= form.label :photo, 'Face Photo', class: 'form-label' %>
       <%= webcam_capture(form, :photo) %>
       <% @record.errors[:photo].each do |err| %>
         <div class="text-danger"><%= err %></div>
@@ -97,8 +97,8 @@
   </div>
 
   <div class="mt-5 d-flex gap-3">
-    <%= form.submit "Create Record", class: "btn btn-lg btn-success" %>
-    <%= link_to "Back", records_path, class: "btn btn-lg btn-outline-secondary" %>
+    <%= form.submit 'Create Record', class: 'btn btn-lg btn-success' %>
+    <%= link_to 'Back', records_path, class: 'btn btn-lg btn-outline-secondary' %>
   </div>
 <% end %>
 

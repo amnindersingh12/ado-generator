@@ -22,8 +22,8 @@
   </div>
   <!-- Back Button -->
   <div class="mb-3">
-    <%= link_to "← Back to Calendar", history_calendar_path(year: @date.year, month: @date.month), class: "btn btn-secondary" %>
-    <%= link_to "🖨️ Print This Day's Summary", calendar_day_print_path(params[:year], params[:month], params[:day], format: :pdf), target: "_blank", class: "btn btn-primary" %>
+    <%= link_to '← Back to Calendar', history_calendar_path(year: @date.year, month: @date.month), class: 'btn btn-secondary' %>
+    <%= link_to "🖨️ Print This Day's Summary", calendar_day_print_path(params[:year], params[:month], params[:day], format: :pdf), target: '_blank', class: 'btn btn-primary', rel: 'noopener' %>
   </div>
   <!-- Attendance Records -->
   <% if @attendances.any? %>
@@ -33,7 +33,7 @@
           <div class="card h-100 shadow-sm">
             <div class="card-header bg-light">
               <strong>Record #<%= index + 1 %>:</strong>
-              <%= link_to attendance.record.name, history_record_attendances_path(attendance.record), class: "text-decoration-underline text-primary", target: "_blank" %>
+              <%= link_to attendance.record.name, history_record_attendances_path(attendance.record), class: 'text-decoration-underline text-primary', target: '_blank', rel: 'noopener' %>
               <br>
               <strong>User:</strong> <%= attendance.user.email %>
             </div>
@@ -42,7 +42,7 @@
                 <%= attendance.in_time&.strftime('%I:%M %p') || "<span class='badge bg-warning text-dark'>Not Checked In</span>" %>
               </p>
               <% if attendance.in_photo.attached? %>
-                <%= enlargeable_image_tag(attendance.in_photo, id: "in#{attendance.id}", label: "Check In Photo", thumb_size: "80px") %>
+                <%= enlargeable_image_tag(attendance.in_photo, id: "in#{attendance.id}", label: 'Check In Photo', thumb_size: '80px') %>
               <% end %>
               <hr>
               <p><strong>Check Out:</strong>
@@ -53,7 +53,7 @@
                 <% end %>
               </p>
               <% if attendance.out_photo.attached? %>
-                <%= enlargeable_image_tag(attendance.out_photo, id: "out#{attendance.id}", label: "Check Out Photo", thumb_size: "80px") %>
+                <%= enlargeable_image_tag(attendance.out_photo, id: "out#{attendance.id}", label: 'Check Out Photo', thumb_size: '80px') %>
               <% end %>
             </div>
           </div>
