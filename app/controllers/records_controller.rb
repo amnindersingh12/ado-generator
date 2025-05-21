@@ -38,10 +38,7 @@ class RecordsController < ApplicationController
     end
   end
 
-  def search
-    @records = Record.where('name ILIKE ?', "%#{params[:query]}%")
-    render :index
-  end
+
 
   def update
     if @record.update(record_params)
