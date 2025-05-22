@@ -29,6 +29,7 @@
           <th>In Photo</th>
           <th>Out Time</th>
           <th>Out Photo</th>
+          <th>Time Spent</th>
           <th>Created By</th>
         </tr>
       </thead>
@@ -56,6 +57,7 @@
                 N/A
               <% end %>
             </td>
+            <td><%= time_spent(attendance) %></td>
             <td><%= attendance.user&.email || 'Unknown' %></td>
           </tr>
         <% end %>

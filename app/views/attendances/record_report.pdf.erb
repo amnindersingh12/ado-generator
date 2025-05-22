@@ -43,7 +43,7 @@
       <div class="row mb-4 align-items-start">
         <div class="col-md-3 text-center">
           <% if @record.photo.attached? %>
-            <%= base64_image_tag(@record.photo, width: 200, height: 200, class: 'rounded') %>
+            <%= base64_image_tag(@record.photo, width: 100, height: 100, class: 'rounded') %>
           <% else %>
             <div class="user-photo d-flex align-items-center justify-content-center text-muted">No Photo</div>
           <% end %>
@@ -70,6 +70,7 @@
             <th>Purpose of Visit</th>
             <th>Check-In Time</th>
             <th>Check-Out Time</th>
+            <th>Time Spent</th>
             <th>Marked By</th>
           </tr>
         </thead>
@@ -80,6 +81,7 @@
               <td><strong><%= attendance.purpose %></strong></td>
               <td><%= format_datetime(attendance.in_time) %></td>
               <td><%= attendance.out_time.present? ? format_datetime(attendance.out_time) : 'N/A' %></td>
+              <td><%= time_spent(attendance) %></td>
               <td><%= attendance.user&.email || 'N/A' %></td>
             </tr>
           <% end %>
