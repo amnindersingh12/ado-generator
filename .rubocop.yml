@@ -15,8 +15,11 @@ AllCops:
 
   # Common excludes
   Exclude:
+    - 'db/**/*'
+    
+    - 'config/**/*'
+    - 'db/seeds.rb'
     - 'bin/**/*'
-    - 'db/schema.rb'
     - 'node_modules/**/*'
     - 'vendor/**/*'
 

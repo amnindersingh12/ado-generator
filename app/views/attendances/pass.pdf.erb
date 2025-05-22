@@ -26,34 +26,62 @@
     </style>
   </head>
   <body>
-    <div class="title">ATTENDANCE SYSTEM PASS</div>
-    <div class="token">TOKEN ID: <%= display_token(@attendance) %></div>
+    <p class="back-button" style=" margin-top: 20PX;">
+      <a href="<%= record_url(@record) %>" style="text-decoration: none; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 4px;">
+        ⬅ Back to Record
+      </a>
+    </p>
+    <div class="title">IN/OUT RECEIPT OF <%= @record.name %> </div>
+    <div class="title">(<%= format_datetime(@attendance.out_time || @attendance.in_time || Time.current) %>)</div>
+    <div class="title" style="text-align: right;margin-top: 5px; margin-bottom: 20px;">TOKEN ID: <%= display_token(@attendance) %></div>
+    <%= base64_image_tag(@attendance.out_time.present? ? @attendance.out_photo : @attendance.in_photo, width: 150, height: 150, class: 'rounded') %>
     <%= render 'user_info' %>
     <hr />
     <div class="section">
-      <p><span class="field label">DATE & TIME OF ACTION:</span> <%= format_datetime(@attendance.out_time || @attendance.in_time || Time.current) %></p>
-      <p><span class="field label">ACTION TYPE:</span> <strong><%= @attendance.out_time.present? ? 'Check-Out' : 'Check-In' %></strong></p>
-    </div>
-    <div class="section">
-      <p class="label">ATTENDANCE DETAILS:</p>
-      <p><span class="field label">Purpose Of Visit:</span> <%= @attendance.purpose %></p>
-      <p><span class="field label">Check-In Time:</span> <%= format_datetime(@attendance.in_time) %></p>
-      <p><span class="field label">Check-Out Time:</span> <%= format_datetime(@attendance.out_time) %></p>
+      <table style="width: 100%; border-collapse: collapse; margin: 0 auto; font-size: 15px;">
+        <tr style="background-color: #f2f2f2;">
+          <th style="padding: 10px; border: 1px solid #ddd; text-align: left;"><strong>Field</strong></th>
+          <th style="padding: 10px; border: 1px solid #ddd; text-align: left;"><strong>Details</strong></th>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Date & Time of Action</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd; background-color: #e6f7ff; font-weight: bold; color: #007bff;">
+            <%= format_datetime(@attendance.out_time || @attendance.in_time) %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Action Type</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd; background-color: #e6f7ff; font-weight: bold; color: #007bff;">
+            <%= @attendance.out_time.present? ? 'Check-Out' : 'Check-In' %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Purpose Of Visit</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd; background-color: #e6f7ff; font-weight: bold; color: #007bff;">
+            <%= @attendance.purpose %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Check-In Time</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd; background-color: #e6f7ff; font-weight: bold; color: #007bff;">
+            <%= format_datetime(@attendance.in_time) %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Check-Out Time</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd; background-color: #e6f7ff; font-weight: bold; color: #007bff;">
+            <%= format_datetime(@attendance.out_time) %>
+          </td>
+        </tr>
+      </table>
     </div>
     <div class="section">
       <p><span class="label">ATTENDANCE QR CODE:</span></p>
       <%= attendance_qr_code_base64(@attendance) %>
     </div>
-    <div class="signature-line">
-      <div>
-        Signature of Issuing Officer<br />
-        _______________________________
-      </div>
-      <div>
-        Signature of User<br />
-        _______________________________
-      </div>
-    </div>
+    <br>
+    <br>
+    <br>
     <div class="footer">
       (With Stamp)<br />
       <br />

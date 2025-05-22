@@ -37,6 +37,8 @@ module AttendancesHelper
       name: attendance.record.name,
       address: attendance.record.address,
       government_id: attendance.record.government_id_number,
+      purpose: attendance.purpose,
+      contact_number: attendance.record.contact_number,
       action: attendance.out_time.present? ? 'Check-Out' : 'Check-In',
       in_time: format_datetime(attendance.in_time),
       out_time: format_datetime(attendance.out_time)

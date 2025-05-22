@@ -110,8 +110,7 @@ class AttendancesController < ApplicationController
 
   def print_pass
     @attendance = @record.attendances.find(params[:id])
-    @token = generate_token(@attendance)
-
+    @token = @attendance.id
     respond_to do |format|
       format.pdf do
         render pdf: "attendance_pass_#{@attendance.id}",
@@ -123,13 +122,6 @@ class AttendancesController < ApplicationController
   end
 
   private
-
-  def generate_token(attendance)
-    record_id = attendance.record_id
-    timestamp = attendance.created_at.strftime('%Y%m%d%H%M%S')
-    random_suffix = SecureRandom.hex(2)
-    "REC#{record_id}-#{timestamp}-#{random_suffix}"
-  end
 
   def ensure_same_user_checking_out
     @attendance = Attendance.find(params[:id])
