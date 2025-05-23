@@ -61,7 +61,13 @@
             </div>
             <% latest_attendance = record.attendances.order(created_at: :desc).first %>
             <% if latest_attendance.present? %>
-              <p><strong>Last Check-In:</strong> <%= latest_attendance.in_time&.strftime('%I:%M %p') || '—' %></p>
+              <p><strong>Last Check-In:</strong>
+               <% if latest_attendance.in_time&.strftime('%I:%M %p') %>
+                 <%= latest_attendance.in_time&.strftime('%I:%M %p') %>
+               <% else %>
+                 <span class="badge bg-warning text-dark">Pending</span>
+               <% end %>
+              </p>
               <p><strong>Last Check-Out:</strong>
                 <% if latest_attendance.out_time.present? %>
                   <%= latest_attendance.out_time.strftime('%I:%M %p') %>

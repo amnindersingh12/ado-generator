@@ -39,7 +39,11 @@
           <tr class="<%= 'table-warning' if needs_checkout %>">
             <td><%= index + 1 %></td>
             <td><strong><%=attendance.purpose%></strong></td>
-            <td><%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') || "Haven't Checked in Yet !!" %></td>
+            <td><% if attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') %>
+               <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') %>
+             <% else %>
+                <%= link_to 'Check-In', complete_check_in_record_attendance_path(@record, attendance), class: 'btn btn-success' %>
+             <% end %></td>
             <td>
               <% if attendance.in_photo.attached? %>
                 <%= enlargeable_image_tag attendance.in_photo, id: "in#{attendance.id}", label: 'Check In Photo' %>
