@@ -9,6 +9,7 @@
       <p><span class="field label">Contact Number:</span> <%= @record.contact_number %></p>
       <p><span class="field label">Address:</span> <%= [@record.address, @record.city, @record.state, @record.pincode].compact.join(', ') %></p>
       <p><span class="field label">Government ID Number:</span> <%= @record.government_id_number.presence || 'N/A' %></p>
+      <p><span class="field label">Email:</span> <%= @record.email.presence || "Unknown" %></p>
       <p><span class="field label">Created By:</span> <%= @attendance.user.email %></p>
     </div>
   </div>
