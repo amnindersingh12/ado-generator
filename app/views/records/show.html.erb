@@ -20,7 +20,7 @@
           </h3>
           <ul class="list-group list-group-flush mb-3">
             <li class="list-group-item">
-              <strong>Created by:</strong> <%= @record.user.email.presence || "Unknown" %>
+              <strong>Email :</strong> <%= @record.email.presence || "Unknown" %>
             </li>
             <li class="list-group-item">
               <strong>Father's Name:</strong> <%= @record.father_name.presence || "N/A" %>
@@ -36,6 +36,9 @@
                 @record.state.presence,
                 @record.pincode.presence
               ].compact.join(', ').presence || "N/A" %>
+            </li>
+              <li class="list-group-item">
+              <strong>Created By:</strong> <%= @record.user.email.presence || "Unknown" %>
             </li>
             <li class="list-group-item">
               <strong>Govt. ID:</strong> <%= @record.government_id_number.presence || 'N/A' %>

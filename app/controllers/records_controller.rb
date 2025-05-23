@@ -56,7 +56,7 @@ class RecordsController < ApplicationController
   def record_params
     params.require(:record).permit(:government_id_photo, :name, :photo, :contact_number, :address, :pincode,
                                    :city, :state, :date_of_birth, :father_name, :government_id_number,
-                                   :in_time, :out_time, :in_photo, :out_photo, :user_id)
+                                   :in_time, :out_time, :in_photo, :out_photo, :user_id, :email)
   end
 
   def authorize_admin!
