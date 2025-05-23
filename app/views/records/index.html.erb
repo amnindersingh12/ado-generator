@@ -1,11 +1,10 @@
 <h1 class="text-center my-4">Records</h1>
-
 <!-- 🔍 Search & Filter Form -->
 <%= search_form_for @q, url: records_path, method: :get, class: 'mb-4' do |f| %>
   <div class="row g-3 align-items-end">
     <div class="col-md-4">
-      <%= f.label :name_cont, 'Search by Name', class: 'form-label' %>
-      <%= f.search_field :name_cont, class: 'form-control', placeholder: 'Enter record name' %>
+      <%= f.search_field :name_or_email_or_contact_number_or_address_or_city_or_state_or_father_name_or_pincode_str_or_government_id_number_str_cont,
+                       placeholder: "Search by any field...", class: "form-control" %>
     </div>
     <div class="col-md-4">
       <%= f.label :created_at, 'Filter by Date', class: 'form-label' %>
@@ -16,21 +15,31 @@
     </div>
   </div>
 <% end %>
-
 <!-- 📊 Summary Stats -->
 <% if @records.any? %>
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <h5 class="card-title text-center mb-3">Attendance Summary</h5>
       <div class="row text-center">
-        <div class="col-md-3"><h6>Total Records</h6><p class="fs-4 text-primary"><%= @total_records %></p></div>
-        <div class="col-md-3"><h6>Total Check-Ins</h6><p class="fs-4 text-success"><%= @total_in %></p></div>
-        <div class="col-md-3"><h6>Total Check-Outs</h6><p class="fs-4 text-danger"><%= @total_out %></p></div>
-        <div class="col-md-3"><h6>Pending</h6><p class="fs-4 text-warning"><%= @pending_records %></p></div>
+        <div class="col-md-3">
+          <h6>Total Records</h6>
+          <p class="fs-4 text-primary"><%= @total_records %></p>
+        </div>
+        <div class="col-md-3">
+          <h6>Total Check-Ins</h6>
+          <p class="fs-4 text-success"><%= @total_in %></p>
+        </div>
+        <div class="col-md-3">
+          <h6>Total Check-Outs</h6>
+          <p class="fs-4 text-danger"><%= @total_out %></p>
+        </div>
+        <div class="col-md-3">
+          <h6>Pending</h6>
+          <p class="fs-4 text-warning"><%= @pending_records %></p>
+        </div>
       </div>
     </div>
   </div>
-
   <!-- 🎴 Records Grid -->
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
     <% @records.each_with_index do |record, index| %>
@@ -43,18 +52,14 @@
               <span class="text-muted">No Image</span>
             </div>
           <% end %>
-
           <div class="card-body">
             <h5 class="card-title text-truncate" title="<%= record.name %>"><%= record.name %></h5>
-
             <!-- Metadata -->
             <div class="mb-2">
               <span class="badge bg-info">#<%= index + 1 %></span>
               <span class="badge bg-secondary"><%= record.created_at.strftime('%b %d, %Y') %></span>
             </div>
-
             <% latest_attendance = record.attendances.order(created_at: :desc).first %>
-
             <% if latest_attendance.present? %>
               <p><strong>Last Check-In:</strong> <%= latest_attendance.in_time&.strftime('%I:%M %p') || '—' %></p>
               <p><strong>Last Check-Out:</strong>
@@ -68,7 +73,6 @@
               <p class="text-muted">No attendance data yet.</p>
             <% end %>
           </div>
-
           <div class="card-footer bg-transparent border-top-0 text-center">
             <%= link_to 'View Details', record_path(record), class: 'btn btn-outline-primary btn-sm w-100' %>
           </div>

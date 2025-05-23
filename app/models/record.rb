@@ -8,17 +8,25 @@ class Record < ApplicationRecord
   has_one_attached :government_id_photo
   validates :contact_number, presence: true
 
+ # Allow searching on these fields
   def self.ransackable_attributes(_auth_object = nil)
-    %w[address city contact_number created_at date_of_birth father_name government_id_number id
-       name pincode state updated_at user_id]
+    %w[
+      name email contact_number address city state father_name
+      pincode_str government_id_number_str date_of_birth created_at updated_at
+    ]
   end
 
-  def self.search(search)
-    if search
-      where('name LIKE ?', "%#{search}%")
-    else
-      all
-    end
+  # Make integers searchable as strings
+  ransacker :pincode_str, type: :string do
+    Arel.sql('CAST(pincode AS TEXT)')
+  end
+
+  ransacker :government_id_number_str, type: :string do
+    Arel.sql('CAST(government_id_number AS TEXT)')
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    ["attendances", "government_id_photo_attachment", "government_id_photo_blob", "photo_attachment", "photo_blob", "user"]
   end
 
   def age
