@@ -24,8 +24,8 @@
     </div>
 
     <div class="d-flex justify-content-end gap-2">
-      <%= link_to '<i class="bi bi-arrow-left-circle-fill me-2"></i> Back'.html_safe, record_path(@record), class: 'btn btn-outline-secondary rounded-pill shadow-sm' %>
-      <%= form.submit '<i class="bi bi-check-circle-fill me-2"></i> Check In'.html_safe, class: 'btn btn-primary rounded-pill shadow-sm' %>
+      <%= link_to 'Back'.html_safe, record_path(@record), class: 'btn btn-outline-secondary rounded-pill shadow-sm' %>
+      <%= form.submit 'Check In'.html_safe, class: 'btn btn-primary rounded-pill shadow-sm' %>
     </div>
   <% end %>
 </div>

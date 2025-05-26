@@ -31,7 +31,7 @@
   </div>
 
   <div class="d-flex justify-content-between mb-3">
-    <%= link_to '<i class="bi bi-arrow-left-circle-fill me-2"></i> Back to Calendar'.html_safe,
+    <%= link_to 'Back to Calendar'.html_safe,
                 history_calendar_path(year: @date.year, month: @date.month),
                 class: 'btn btn-outline-secondary rounded-pill shadow-sm' %>
     <%= link_to '<i class="bi bi-printer-fill me-2"></i> Print Summary'.html_safe,

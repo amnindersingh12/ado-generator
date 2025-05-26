@@ -1,146 +1,223 @@
 <%# app/views/shared/_navbar.html.erb %>
-<div class="d-flex flex-column flex-shrink-0 p-3 text-white" style="width: 280px; min-height: 100vh; background-color: #29ABE2;"> <%# Primary Color Background %>
-  <div class="sidebar-header mb-4" style="padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
-    <%= link_to root_path, class: 'fs-4 text-white text-decoration-none' do %>
-      <span style="color: #FFDA63;">Ado</span>Generator <%# Secondary Color Highlight %>
+
+<%
+
+  current_theme_name = cookies[:theme]&.to_sym  || ColorSchemes::DEFAULT_THEME
+  current_scheme = ColorSchemes::SCHEMES[current_theme_name]
+  primary_color = current_scheme[:primary]
+  secondary_color = current_scheme[:secondary]
+  accent_color = current_scheme[:accent]
+  text_color = current_scheme[:text]
+  link_hover_color = current_scheme[:link_hover]
+  active_link_color = current_scheme[:active_link]
+  dropdown_bg_color = current_scheme[:dropdown_bg]
+  dropdown_hover_color = current_scheme[:dropdown_hover]
+  border_color = current_scheme[:border]
+%>
+<div class="d-flex flex-column flex-shrink-0 p-3" style="width: 280px; min-height: 100vh; background-color: <%= primary_color %>; color: <%= text_color %>;">
+  <div class="sidebar-header mb-4 d-flex justify-content-between align-items-center" style="padding-bottom: 1.5rem; border-bottom: 2px solid <%= border_color %>;">
+    <%= link_to root_path, class: 'fs-4 text-white text-decoration-none fw-bold' do %>
+      <span style="color: <%= secondary_color %>;">Ado</span><span style="color: <%= accent_color %>;">Gen</span>
     <% end %>
+    <div class="theme-switcher">
+      <button type="button" class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        Theme
+      </button>
+       <ul class="dropdown-menu dropdown-menu-dark" style="background-color: <%= dropdown_bg_color %>;">
+        <% ColorSchemes::SCHEMES.each do |name, scheme| %>
+          <li><button type="button" class="dropdown-item text-white change-theme" data-theme="<%= name %>"><%=name %></button></li>
+        <% end %>
+      </ul>
+    </div>
   </div>
   <ul class="nav nav-pills flex-column mb-auto">
     <li class="nav-item mb-2">
       <%= link_to dashboard_path, class: "nav-link text-white #{'active' if current_page?(dashboard_path)}" do %>
-        <i class="bi bi-speedometer2 me-2" style="color: #90EE90;"></i> <%# Playful Icon Color %>
-        Dashboard
+        <i class="bi bi-speedometer2 me-2" style="color: <%= accent_color %>;"></i> <span class="fw-semibold">Dashboard</span>
       <% end %>
     </li>
     <li class="nav-item mb-2">
-      <div class="nav-link text-white" data-bs-toggle="collapse" href="#recordsSubmenu" role="button" aria-expanded="true" aria-controls="recordsSubmenu" style="background-color: rgba(255, 255, 255, 0.05); border-radius: 0.3rem;">
-        <i class="bi bi-folder me-2" style="color: #F08080;"></i> <%# Playful Icon Color %>
-        Records
+      <div class="nav-link text-white fw-semibold" data-bs-toggle="collapse" href="#recordsSubmenu" role="button" aria-expanded="true" aria-controls="recordsSubmenu" style="background-color: rgba(255, 255, 255, 0.05); border-radius: 0.3rem;">
+        <i class="bi bi-folder me-2" style="color: <%= secondary_color %>;"></i> Records
         <i class="bi bi-chevron-down ms-auto"></i>
       </div>
       <div class="collapse show ps-3" id="recordsSubmenu">
         <ul class="nav flex-column">
           <li class="nav-item mb-1">
             <%= link_to new_record_path, class: "nav-link text-white ps-4 #{'active' if controller_name == 'records' && action_name == 'new'}" do %>
-              <i class="bi bi-plus-square me-2" style="color: #ADD8E6;"></i> <%# Playful Icon Color %>
-              New Record
+              <i class="bi bi-plus-square me-2" style="color: #80cbc4;"></i> New
             <% end %>
           </li>
           <li class="nav-item mb-1">
             <%= link_to records_path, class: "nav-link text-white ps-4 #{'active' if current_page?(records_path) && action_name != 'new'}" do %>
-              <i class="bi bi-list me-2" style="color: #FFA07A;"></i> <%# Playful Icon Color %>
-              View All Records
+              <i class="bi bi-list me-2" style="color: #ffcc80;"></i> View All
             <% end %>
           </li>
         </ul>
       </div>
     </li>
     <li class="nav-item mb-2">
-      <div class="nav-link text-white" data-bs-toggle="collapse" href="#attendanceSubmenu" role="button" aria-expanded="true" aria-controls="attendanceSubmenu" style="background-color: rgba(255, 255, 255, 0.05); border-radius: 0.3rem;">
-        <i class="bi bi-calendar-check me-2" style="color: #ADFF2F;"></i> <%# Playful Icon Color %>
-        Attendance
+      <div class="nav-link text-white fw-semibold" data-bs-toggle="collapse" href="#attendanceSubmenu" role="button" aria-expanded="true" aria-controls="attendanceSubmenu" style="background-color: rgba(255, 255, 255, 0.05); border-radius: 0.3rem;">
+        <i class="bi bi-calendar-check me-2" style="color: <%= secondary_color %>;"></i> Attendance
         <i class="bi bi-chevron-down ms-auto"></i>
       </div>
       <div class="collapse show ps-3" id="attendanceSubmenu">
         <ul class="nav flex-column">
           <li class="nav-item mb-1">
             <%= link_to search_records_path(search_type: 'check_in_out'), class: "nav-link text-white ps-4" do %>
-              <i class="bi bi-search me-2" style="color: #87CEFA;"></i> <%# Playful Icon Color %>
-              Check In/Out
+              <i class="bi bi-search me-2" style="color: #aed6ff;"></i> Check In/Out
             <% end %>
           </li>
           <li class="nav-item mb-1">
             <%= link_to records_path, class: "nav-link text-white ps-4" do %>
-              <i class="bi bi-clock-history me-2" style="color: #FF69B4;"></i> <%# Playful Icon Color %>
-              History
+              <i class="bi bi-clock-history me-2" style="color: #f48fb1;"></i> History
             <% end %>
           </li>
           <li class="nav-item mb-1">
             <%= link_to history_calendar_path, class: "nav-link text-white ps-4" do %>
-              <i class="bi bi-calendar3 me-2" style="color: #FFFF00;"></i> <%# Playful Icon Color %>
-              Calendar
+              <i class="bi bi-calendar3 me-2" style="color: #9c27b0;"></i> Calendar
             <% end %>
           </li>
         </ul>
       </div>
     </li>
   </ul>
-  <hr style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+  <hr style="border-top: 2px solid <%= border_color %>;">
   <% if user_signed_in? %>
     <div class="dropdown mt-4">
       <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-person-circle fs-4 me-2" style="color: #FFD700;"></i> <%# Playful User Icon Color %>
-        <strong><%= current_user.email %> (<%= current_user.role.capitalize %>)</strong>
+        <i class="bi bi-person-circle fs-4 me-2" style="color: <%= secondary_color %>;"></i> <strong class="fw-semibold"><%= current_user.email %> (<%= current_user.role.capitalize %>)</strong>
       </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1" style="background-color: #333;">
+      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1" style="background-color: <%= dropdown_bg_color %>;">
         <li><%= link_to 'Profile', edit_user_registration_path, class: 'dropdown-item text-white' %></li>
-        <li><hr class="dropdown-divider" style="border-top: 1px solid rgba(255, 255, 255, 0.1);"></li>
+        <li><hr class="dropdown-divider" style="border-top: 1px solid <%= border_color %>;"></li>
         <li><%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'dropdown-item text-white' %></li>
         <% unless current_user.role.downcase == 'admin' %>
-          <li><hr class="dropdown-divider" style="border-top: 1px solid rgba(255, 255, 255, 0.1);"></li>
+          <li><hr class="dropdown-divider" style="border-top: 1px solid <%= border_color %>;"></li>
           <li>
-            <a class="dropdown-item text-white" href="#adminCatchphraseSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-              Admin Access <i class="bi bi-key-fill ms-2" style="color: #00FF7F;"></i> <%# Playful Icon Color %>
+            <a class="dropdown-item text-white fw-semibold" href="#adminCatchphraseSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+              Admin Access <i class="bi bi-key-fill ms-2" style="color: <%= accent_color %>;"></i>
             </a>
-            <div class="collapse show px-3 py-2" id="adminCatchphraseSubmenu" style="background-color: #444; border-radius: 0.3rem; margin-top: 0.5rem;">
+            <div class="collapse show px-3 py-2" id="adminCatchphraseSubmenu" style="background-color: <%= dropdown_hover_color %>; border-radius: 0.3rem; margin-top: 0.5rem;">
               <%= form_with url: admin_role_path, method: :put, local: true, class: 'd-flex flex-column' do |f| %>
-                <%= f.password_field :catchphrase, placeholder: 'Enter Catchphrase', class: 'form-control form-control-sm mb-2 bg-dark text-white', style: 'width: 180px; background-color: #555; border: none; border-radius: 0.2rem;' %>
+                <%= f.password_field :catchphrase, placeholder: 'Enter Catchphrase', class: 'form-control form-control-sm mb-2 bg-dark text-white', style: 'width: 180px; background-color: #333; border: none; border-radius: 0.2rem;' %>
                 <%= f.submit 'Go', class: 'btn btn-outline-light btn-sm' %>
               <% end %>
             </div>
           </li>
         <% end %>
+        <li><hr class="dropdown-divider" style="border-top: 1px solid <%= border_color %>;"></li>
+        <li><%= link_to 'Customize', edit_user_registration_path(anchor: 'customize-sidebar'), class: 'dropdown-item text-white fw-semibold' %></li>
       </ul>
     </div>
   <% else %>
     <ul class="nav nav-pills flex-column mt-4">
       <li class="nav-item">
-        <%= link_to 'Sign In', new_user_session_path, class: 'nav-link text-white' %>
+        <%= link_to 'Sign In', new_user_session_path, class: 'nav-link text-white fw-semibold' %>
       </li>
     </ul>
   <% end %>
 </div>
 <script>
-  // Keep the main dropdowns always shown by default
   document.addEventListener('DOMContentLoaded', function() {
-    const recordSubmenu = document.getElementById('recordsSubmenu');
-    const attendanceSubmenu = document.getElementById('attendanceSubmenu');
-    if (recordSubmenu) {
-      recordSubmenu.classList.add('show');
-    }
-    if (attendanceSubmenu) {
-      attendanceSubmenu.classList.add('show');
+    const themeSwitcherButtons = document.querySelectorAll('.change-theme');
+    const body = document.querySelector('body');
+    const sidebar = document.querySelector('.flex-column');
+    const dropdownMenu = document.querySelector('.dropdown-menu-dark');
+    const sidebarHeader = document.querySelector('.sidebar-header');
+
+    function setTheme(themeName) {
+      const theme = ColorSchemes.SCHEMES[themeName];
+      if (theme) {
+        document.cookie = `theme=${themeName}; path=/; SameSite=Lax`;
+        sidebar.style.backgroundColor = theme.primary;
+        sidebar.style.color = theme.text;
+        sidebarHeader.style.borderBottomColor = theme.border;
+        dropdownMenu.style.backgroundColor = theme.dropdown_bg;
+
+        // Optional: Update body background and text color as well
+        if (body) {
+          body.style.backgroundColor = theme.primary;
+          body.style.color = theme.text;
+        }
+
+        // Update dropdown button text (optional)
+        const themeButton = document.querySelector('.theme-switcher .dropdown-toggle');
+        if (themeButton) {
+          themeButton.textContent = `Theme (${themeName.humanize})`;
+        }
+
+        // Update active link color dynamically
+        const activeLink = document.querySelector('.nav-link.active');
+        if (activeLink) {
+          activeLink.style.backgroundColor = theme.active_link;
+          activeLink.style.color = theme.text;
+        }
+      }
     }
 
-    // Initialize Bootstrap dropdown for the user menu
-    var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-      return new bootstrap.Dropdown(dropdownToggleEl)
-    })
+    themeSwitcherButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const theme = this.dataset.theme;
+        setTheme(theme);
+      });
+    });
 
-    // Keep the Admin Access submenu open too, if present
-    const adminSubmenu = document.getElementById('adminCatchphraseSubmenu');
-    if (adminSubmenu) {
-      adminSubmenu.classList.add('show');
+    // Apply initial theme on load
+    const initialTheme = getCookie('theme') || ColorSchemes.DEFAULT_THEME;
+    setTheme(initialTheme);
+
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
     }
   });
+
+  // Ensure ColorSchemes is available in the browser's scope
+  const ColorSchemes = {
+    SCHEMES: <%= raw ColorSchemes::SCHEMES.to_json %>
+  };
 </script>
 <style>
-  /* ModernUI-inspired styles */
+  /* ModernUI-inspired styles with vibrant color customization */
+  .nav-link {
+    padding: 0.8rem 1rem;
+    border-radius: 0.4rem;
+    transition: background-color 0.15s ease-in-out;
+  }
   .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 0.3rem;
+    background-color: <%= link_hover_color %>;
   }
   .nav-link.active {
-    background-color: #1779BF !important; /* A slightly darker shade of primary */
-    color: #fff !important;
+    background-color: <%= active_link_color %> !important;
+    color: <%= text_color %> !important;
+  }
+  .nav-link i {
+    font-size: 1.1rem;
+  }
+  .sidebar-header a {
+    font-size: 1.75rem !important;
+  }
+  .theme-switcher {
+    margin-left: auto;
   }
   .dropdown-menu {
     border: none !important;
     border-radius: 0.5rem !important;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
   }
+  .dropdown-item {
+    padding: 0.7rem 1.2rem;
+    transition: background-color 0.1s ease-in-out;
+  }
   .dropdown-item:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: <%= dropdown_hover_color %> !important;
+  }
+  .dropdown-divider {
+    border-top-color: <%= border_color %> !important;
+  }
+  body {
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 </style>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light"> <head>
+<html lang="en" data-bs-theme="light">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AdoGenerator - Your Attendance Hub</title>
@@ -8,54 +9,18 @@
   <%= stylesheet_link_tag 'application', 'data-turbo-track': 'reload' %>
   <%= javascript_include_tag 'application', 'data-turbo-track': 'reload', defer: true %>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <style>
-    /* Modern UI & Elegant Tone - Starter Styles */
+    /* Modern UI & Elegant Tone - Base Styles with Theme Variables */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A clean, modern font */
-      background-color: #f8f9fa; /* Light grey background */
-      color: #343a40; /* Dark grey text */
+      background-color: var(--body-bg); /* Use theme variable */
+      color: var(--body-color); /* Use theme variable */
       line-height: 1.6;
       min-height: 100vh; /* Ensure full viewport height */
-    }
-
-    .sidebar {
-      background-color: #343a40; /* Dark sidebar */
-      color: #ffffff; /* White text on sidebar */
-      min-height: 100vh;
-      width: 250px; /* Adjust as needed */
-      padding-top: 1rem;
-    }
-
-    .sidebar a {
-      color: #e9ecef; /* Light grey sidebar links */
-      padding: 0.75rem 1.5rem;
-      display: block;
-      text-decoration: none;
-      transition: background-color 0.2s ease;
-    }
-
-    .sidebar a:hover {
-      background-color: #495057; /* Slightly darker on hover */
-    }
-
-    .sidebar .logo {
-      padding: 1rem 1.5rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #28a745; /* A nice accent color for the logo */
-      border-bottom: 1px solid #6c757d;
-      margin-bottom: 1rem;
-    }
-
-    .top-bar {
-      background-color: #ffffff; /* White top bar */
-      padding: 1rem;
-      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.08); /* Subtle shadow */
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
     }
 
     .content-area {
@@ -68,13 +33,87 @@
       border-radius: 0.3rem;
     }
 
-    /* You can add more global styles here for buttons, cards, etc. */
+    /* Define default light theme variables */
+    :root {
+      --body-bg: #f8f9fa; /* Light grey background */
+      --body-color: #343a40; /* Dark grey text */
+    }
+
+    /* Dark theme variables (will be applied when the body has a 'dark-theme' class) */
+    body.dark-theme {
+      --body-bg: #212529; /* Dark background */
+      --body-color: #f8f9fa; /* Light text */
+    }
+
+    /* Styles for elements within the content area will inherit body text color */
+    h1, h2, h3, h4, h5, h6, p, strong, em, span, a {
+      color: inherit; /* Inherit text color from the body */
+    }
+
+    /* Ensure Bootstrap components also adapt (some might need overrides) */
+    .bg-light {
+      background-color: var(--body-bg) !important;
+    }
+    .text-light {
+      color: var(--body-color) !important;
+    }
+    .btn-outline-light {
+      color: var(--body-color);
+      border-color: var(--body-color);
+    }
+    .btn-outline-light:hover {
+      background-color: var(--body-color);
+      color: var(--body-bg);
+    }
+    .dropdown-menu-dark {
+      background-color: #343a40; /* Dark dropdown background */
+      color: #f8f9fa;
+    }
+    .dropdown-item {
+      color: #f8f9fa;
+    }
+    .dropdown-item:hover {
+      background-color: #495057;
+    }
+    .nav-link {
+      color: inherit; /* Inherit text color */
+    }
+    .form-control {
+      background-color: #fff;
+      color: #343a40;
+      border: 1px solid #ced4da;
+    }
+    .form-control:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    body.dark-theme .form-control {
+      background-color: #495057;
+      color: #e9ecef;
+      border-color: #6c757d;
+    }
+    body.dark-theme .form-control:focus {
+      border-color: #6610f2;
+      box-shadow: 0 0 0 0.2rem rgba(102, 16, 242, 0.25);
+    }
+    .card {
+      background-color: #fff;
+      color: #343a40;
+      border: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    body.dark-theme .card {
+      background-color: #343a40;
+      color: #e9ecef;
+      border-color: #6c757d;
+    }
+
+    /* You can add more overrides for other Bootstrap components as needed */
   </style>
 </head>
 <body>
   <div class="d-flex">
-    <%= render 'shared/navbar' %> <div class="content-area flex-grow-1">
-      
+    <%= render 'shared/navbar' %>
+    <div class="content-area flex-grow-1">
       <div class="p-4">
         <% if notice %>
           <div class="alert alert-success"><%= notice %></div>
@@ -86,5 +125,42 @@
       </div>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const body = document.querySelector('body');
+      const themeCookieName = 'theme';
+
+      function setTheme(themeName) {
+        if (themeName === 'dark') {
+          body.classList.add('dark-theme');
+          body.classList.remove('light-theme');
+        } else {
+          body.classList.add('light-theme');
+          body.classList.remove('dark-theme');
+        }
+        document.cookie = `${themeCookieName}=${themeName}; path=/; SameSite=Lax`;
+      }
+
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      }
+
+      // Apply theme on load
+      const savedTheme = getCookie(themeCookieName) || 'light'; // Default to light
+      setTheme(savedTheme);
+
+      // Add event listeners to theme switcher buttons in the navbar
+      const themeSwitcherButtons = document.querySelectorAll('.change-theme');
+      themeSwitcherButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const theme = this.dataset.theme;
+          setTheme(theme);
+        });
+      });
+    });
+  </script>
 </body>
 </html>
