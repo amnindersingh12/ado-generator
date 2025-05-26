@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  get "dashboard/index"
   # Devise authentication
   devise_for :users
 
@@ -31,7 +32,9 @@ Rails.application.routes.draw do
   get 'calendar/day_data', to: 'calendar#day_data', as: :calendar_day_data
 
   # Root path
-  root to: 'records#index'
+  get 'dashboard', to: 'dashboard#index', as: :dashboard # This creates dashboard_path
+
+  root to: 'dashboard#index'
 
   # Catch-all route for handling 404 errors (excluding internal Rails engine routes)
   match '*unmatched', to: 'application#not_found', via: :all, constraints: lambda { |req|

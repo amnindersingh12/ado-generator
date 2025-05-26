@@ -1,0 +1,84 @@
+<%# app/views/dashboard/index.html.erb %>
+<div class="container-fluid"> <%# Or just container based on your preference %>
+  <h1 class="mb-4">Welcome to AdoGenerator</h1>
+  <p class="lead mb-4">Select an option from the sidebar to get started.</p>
+
+  <h2 class="h4 mb-3">Attendance Summary</h2>
+  <div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Records</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= @total_records %></div>
+            </div>
+            <div class="col-auto">
+              <%# <i class="fas fa-users fa-2x text-gray-300"></i> Optional Icon %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Check-Ins</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= @total_check_ins %></div>
+            </div>
+            <div class="col-auto">
+              <%# <i class="fas fa-sign-in-alt fa-2x text-gray-300"></i> %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Check-Outs</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= @total_check_outs %></div>
+            </div>
+            <div class="col-auto">
+              <%# <i class="fas fa-sign-out-alt fa-2x text-gray-300"></i> %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# You could add another card for Pending Check-Outs if you calculate @pending_check_outs %>
+  </div>
+
+  <h2 class="h4 mb-3 mt-4">Attendance Trends</h2>
+  <div class="row">
+    <div class="col-xl-8 col-lg-7">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Daily Check-Ins (Last 7 Days)</h6>
+        </div>
+        <div class="card-body">
+          <div class="chart-area">
+            <%# You'll integrate your charting library here %>
+            <%# Example for Chart.js: <canvas id="attendanceTrendChart"></canvas> %>
+            <p><em>Chart will be displayed here.</em></p>
+            <%#
+              Example data structure for Chart.js:
+              Labels: @attendance_trend_data.keys
+              Data: @attendance_trend_data.values
+            %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+

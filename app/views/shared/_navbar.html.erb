@@ -1,57 +1,102 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="<%= root_path %>">AdoGenerator</a>
+<%# app/views/shared/_navbar.html.erb %>
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px; min-height: 100vh;">
+  <div class="sidebar-header mb-3">
+    <%= link_to root_path, class: 'fs-4 text-white text-decoration-none' do %>
+      AdoGenerator
+    <% end %>
+  </div>
+  <hr>
+  <ul class="nav nav-pills flex-column mb-auto">
+    <li class="nav-item">
+      <%# You'll need to create a route and action for dashboard %>
+      <%= link_to dashboard_path, class: "nav-link #{'active' if current_page?(dashboard_path)}" do %>
+        <%# Add icon here if desired, e.g., <i class="bi bi-house-door me-2"></i> %>
+        Dashboard
+      <% end %>
+    </li>
+    <li class="nav-item">
 
-    <!-- Toggler button for mobile -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <%= link_to records_path, class: "nav-link #{'active' if current_page?(records_path) || controller_name == 'records' && action_name != 'new'}" do %>
+        <%# <i class="bi bi-card-list me-2"></i> %>
+        Records
+      <% end %>
+    </li>
+    <%# Attendance Accordion/Dropdown %>
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="#attendanceSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+        <%# <i class="bi bi-calendar-check me-2"></i> %>
+        Attendance
+      </a>
+      <div class="collapse ps-3" id="attendanceSubmenu">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <%# You'll need a route for "Check In/Out", e.g., new_check_in_out_path %>
+            <%= link_to new_record_path, class: 'nav-link' do %> <%# Assuming new_record_path is for Check In/Out %>
+              <%# <i class="bi bi-box-arrow-in-right me-2"></i> %>
+              Check In/Out
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to history_calendar_path, class: 'nav-link' do %> <%# Your existing history link %>
+              <%# <i class="bi bi-clock-history me-2"></i> %>
+              History
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%# Assuming history_calendar_path is also your main calendar view as per image %>
+            <%= link_to history_calendar_path, class: 'nav-link' do %>
+              <%# <i class="bi bi-calendar3 me-2"></i> %>
+              Calendar
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </li>
 
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <%= link_to 'All Record History', history_calendar_path, class: 'nav-link' %>
+  </ul>
+  <hr>
+  <% if user_signed_in? %>
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+        <%# Add user avatar here if available %>
+        <strong class="ms-2"><%= current_user.email %> (<%= current_user.role.capitalize %>)</strong>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+        <li>
+          <%# You'll need a route for profile, e.g., edit_user_registration_path %>
+          <%= link_to 'Profile', edit_user_registration_path, class: 'dropdown-item' %>
         </li>
-        <li class="nav-item">
-          <%= link_to 'Records', records_path, class: 'nav-link' %>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'dropdown-item' %>
         </li>
-        <% if user_signed_in? %>
-          <li class="nav-item">
-            <%= link_to 'New Record', new_record_path, class: 'nav-link' %>
-          </li>
-        <% end %>
-      </ul>
-
-      <ul class="navbar-nav ms-auto">
-        <% if user_signed_in? %>
-          <li class="nav-item">
-            <span class="nav-link">
-              Signed in as <%= current_user.email %> <strong>(<%= current_user.role.capitalize %>)</strong>
-            </span>
-          </li>
-          <li class="nav-item">
-            <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'btn btn-primary btn-sm ms-2' %>
-          </li>
-          <li class="nav-item d-flex align-items-center ms-3">
-            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleAdminForm()">🔒</button>
-            <div id="admin-form" class="d-none ms-2">
-              <%= form_with url: admin_role_path, method: :put, local: true, class: 'd-flex' do |f| %>
-                <%= f.password_field :catchphrase, placeholder: 'Enter Catchphrase', class: 'form-control form-control-sm me-2', style: 'width: 150px;' %>
-                <%= f.submit 'Go', class: 'btn btn-outline-dark btn-sm' %>
+        <%# Admin catchphrase form - moved from main nav to user dropdown if preferred %>
+        <%# Or keep it where it was if the 'Admin' link above is for something else %>
+        <% unless current_user.role.downcase == 'admin' %> <%# Show if not already admin %>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <a class="dropdown-item" href="#adminCatchphraseSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+              Admin Access
+            </a>
+            <div class="collapse px-3 py-2" id="adminCatchphraseSubmenu">
+              <%= form_with url: admin_role_path, method: :put, local: true, class: 'd-flex flex-column' do |f| %>
+                <%= f.password_field :catchphrase, placeholder: 'Enter Catchphrase', class: 'form-control form-control-sm mb-2 bg-dark text-white', style: 'width: 180px;' %>
+                <%= f.submit 'Go', class: 'btn btn-outline-light btn-sm' %>
               <% end %>
             </div>
           </li>
         <% end %>
       </ul>
     </div>
-  </div>
-</nav>
-
+  <% else %>
+    <ul class="nav nav-pills flex-column">
+      <li class="nav-item">
+        <%= link_to 'Sign In', new_user_session_path, class: 'nav-link text-white' %>
+      </li>
+    </ul>
+  <% end %>
+</div>
 <script>
-  function toggleAdminForm() {
-    const form = document.getElementById('admin-form');
-    form.classList.toggle('d-none');
-  }
+  // Ensure Bootstrap's JavaScript is loaded for the dropdown and collapse to work.
+  // Your application.js should be taking care of this if you've included bootstrap.bundle.min.js
 </script>
