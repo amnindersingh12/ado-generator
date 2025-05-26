@@ -1,5 +1,4 @@
 <%# app/views/shared/_navbar.html.erb %>
-
 <%
 
   current_theme_name = cookies[:theme]&.to_sym  || ColorSchemes::DEFAULT_THEME
@@ -23,7 +22,7 @@
       <button type="button" class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         Theme
       </button>
-       <ul class="dropdown-menu dropdown-menu-dark" style="background-color: <%= dropdown_bg_color %>;">
+      <ul class="dropdown-menu dropdown-menu-dark" style="background-color: <%= dropdown_bg_color %>;">
         <% ColorSchemes::SCHEMES.each do |name, scheme| %>
           <li><button type="button" class="dropdown-item text-white change-theme" data-theme="<%= name %>"><%=name %></button></li>
         <% end %>
@@ -63,16 +62,6 @@
       </div>
       <div class="collapse show ps-3" id="attendanceSubmenu">
         <ul class="nav flex-column">
-          <li class="nav-item mb-1">
-            <%= link_to search_records_path(search_type: 'check_in_out'), class: "nav-link text-white ps-4" do %>
-              <i class="bi bi-search me-2" style="color: #aed6ff;"></i> Check In/Out
-            <% end %>
-          </li>
-          <li class="nav-item mb-1">
-            <%= link_to records_path, class: "nav-link text-white ps-4" do %>
-              <i class="bi bi-clock-history me-2" style="color: #f48fb1;"></i> History
-            <% end %>
-          </li>
           <li class="nav-item mb-1">
             <%= link_to history_calendar_path, class: "nav-link text-white ps-4" do %>
               <i class="bi bi-calendar3 me-2" style="color: #9c27b0;"></i> Calendar

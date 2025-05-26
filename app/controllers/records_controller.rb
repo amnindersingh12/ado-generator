@@ -1,19 +1,12 @@
 class RecordsController < ApplicationController
-before_action :authenticate_user!
-before_action :set_record, only: %i[edit update destroy]
-before_action :authorize_admin!, only: [:destroy]
+  before_action :authenticate_user!
+  before_action :set_record, only: %i[edit update destroy]
+  before_action :authorize_admin!, only: [:destroy]
 
-def search
+  def search
     @q = Record.ransack(params[:q])
     @records = @q.result(distinct: true)
-
-    if params[:search_type] == 'check_in_out'
-      render :search_check_in_out
-    else
-      # Your existing search results rendering logic for the main records page
-      render :index
-    end
-end
+  end
 
   def check_in
     @record = Record.find(params[:id])
@@ -26,7 +19,7 @@ end
     if @attendance.save
       redirect_to @record, notice: "#{@record.name} checked in."
     else
-      render :check_in, alert: "Check-in failed."
+      render :check_in, alert: 'Check-in failed.'
     end
   end
 
@@ -51,29 +44,29 @@ end
     end
   end
 
- def index
+  def index
     @q = Record.ransack(params[:q])
-  filter_by_date(params[:created_at]) if params[:created_at].present?
+    filter_by_date(params[:created_at]) if params[:created_at].present?
 
-  @records = @q.result(distinct: true)
-                .includes(:photo_attachment, :government_id_photo_attachment,
-                          attendances: %i[in_photo_attachment out_photo_attachment])
-                .order(created_at: :desc)
+    @records = @q.result(distinct: true)
+                 .includes(:photo_attachment, :government_id_photo_attachment,
+                           attendances: %i[in_photo_attachment out_photo_attachment])
+                 .order(created_at: :desc)
 
-  calculate_attendance_statistics
-  @record_not_found = @records.empty? if params[:q].present?
-    case params[:filter]
-    when 'checked_in'
-      @records = @q.result.joins(:attendances).where.not(attendances: { in_time: nil, out_time: nil }).distinct.order(created_at: :desc)
-    when 'checked_out'
-      @records = @q.result.joins(:attendances).where.not(attendances: { out_time: nil }).where.not(attendances: { in_time: nil }).distinct.order(created_at: :desc)
-    when 'pending'
-      @records = @q.result.joins(:attendances).where(attendances: { out_time: nil }).where.not(attendances: { in_time: nil }).distinct.order(created_at: :desc)
-    when 'all'
-      @records = @q.result.order(created_at: :desc)
-    else
-      @records = @q.result.order(created_at: :desc)
-    end
+    calculate_attendance_statistics
+    @record_not_found = @records.empty? if params[:q].present?
+    @records = case params[:filter]
+               when 'checked_in'
+                 @q.result.joins(:attendances).where.not(attendances: { in_time: nil, out_time: nil }).distinct.order(created_at: :desc)
+               when 'checked_out'
+                 @q.result.joins(:attendances).where.not(attendances: { out_time: nil }).where.not(attendances: { in_time: nil }).distinct.order(created_at: :desc)
+               when 'pending'
+                 @q.result.joins(:attendances).where(attendances: { out_time: nil }).where.not(attendances: { in_time: nil }).distinct.order(created_at: :desc)
+               when 'all'
+                 @q.result.order(created_at: :desc)
+               else
+                 @q.result.order(created_at: :desc)
+               end
 
     @total_records = Record.count
     @total_in = Attendance.where.not(in_time: nil).where.not(out_time: nil).count
@@ -81,70 +74,69 @@ end
     @pending_records = Attendance.where(out_time: nil).where.not(in_time: nil).count
   end
 
-
-def show
-  @record = Record.find(params[:id])
-  @has_pending_checkout = @record.attendances.any? { |a| a.out_time.nil? }
-end
-
-def new
-  @record = current_user.records.build
-end
-
-def create
-  @record = current_user.records.build(record_params)
-  if @record.save
-    redirect_to @record, notice: 'Record created successfully.'
-  else
-    render :new, status: :unprocessable_entity
+  def show
+    @record = Record.find(params[:id])
+    @has_pending_checkout = @record.attendances.any? { |a| a.out_time.nil? }
   end
-end
 
-def update
-  if @record.update(record_params)
-    redirect_to records_path, notice: 'Record updated successfully'
-  else
-    render :edit
+  def new
+    @record = current_user.records.build
   end
-end
 
-def destroy
-  @record.destroy
-  redirect_to records_path, notice: 'Record deleted successfully.'
-end
-
-private
-
-def set_record
-  @record = Record.find(params[:id])
-end
-
-def record_params
-  params.require(:record).permit(:government_id_photo, :name, :photo, :contact_number, :address, :pincode,
-                                  :city, :state, :date_of_birth, :father_name, :government_id_number,
-                                  :in_time, :out_time, :in_photo, :out_photo, :user_id, :email)
-end
-
-def authorize_admin!
-  redirect_to records_path, alert: 'Access denied.' unless current_user.admin?
-end
-
-def filter_by_date(filter)
-  case filter
-  when 'today'
-    @q = @q.result.where(created_at: Time.zone.today.all_day)
-  when 'week'
-    @q = @q.result.where(created_at: Time.zone.today.beginning_of_week..Time.zone.today.end_of_week)
-  when 'month'
-    @q = @q.result.where(created_at: Time.zone.today.beginning_of_month..Time.zone.today.end_of_month)
+  def create
+    @record = current_user.records.build(record_params)
+    if @record.save
+      redirect_to @record, notice: 'Record created successfully.'
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
-end
 
-def calculate_attendance_statistics
-  @attendances = Attendance.where(record_id: @records.pluck(:id))
-  @total_in = @attendances.where.not(in_time: nil).count
-  @total_out = @attendances.where.not(out_time: nil).count
-  @pending_records = @attendances.where(out_time: nil).count
-  @total_records = @records.count
-end
+  def update
+    if @record.update(record_params)
+      redirect_to records_path, notice: 'Record updated successfully'
+    else
+      render :edit
+    end
+  end
+
+  def destroy
+    @record.destroy
+    redirect_to records_path, notice: 'Record deleted successfully.'
+  end
+
+  private
+
+  def set_record
+    @record = Record.find(params[:id])
+  end
+
+  def record_params
+    params.require(:record).permit(:government_id_photo, :name, :photo, :contact_number, :address, :pincode,
+                                   :city, :state, :date_of_birth, :father_name, :government_id_number,
+                                   :in_time, :out_time, :in_photo, :out_photo, :user_id, :email)
+  end
+
+  def authorize_admin!
+    redirect_to records_path, alert: 'Access denied.' unless current_user.admin?
+  end
+
+  def filter_by_date(filter)
+    case filter
+    when 'today'
+      @q = @q.result.where(created_at: Time.zone.today.all_day)
+    when 'week'
+      @q = @q.result.where(created_at: Time.zone.today.all_week)
+    when 'month'
+      @q = @q.result.where(created_at: Time.zone.today.all_month)
+    end
+  end
+
+  def calculate_attendance_statistics
+    @attendances = Attendance.where(record_id: @records.pluck(:id))
+    @total_in = @attendances.where.not(in_time: nil).count
+    @total_out = @attendances.where.not(out_time: nil).count
+    @pending_records = @attendances.where(out_time: nil).count
+    @total_records = @records.count
+  end
 end
