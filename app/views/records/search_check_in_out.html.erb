@@ -1,0 +1,33 @@
+<h1 class="text-center my-4">Search Record for Check In/Out</h1>
+
+<%= search_form_for @q, url: search_records_path, method: :get, class: 'mb-4' do |f| %>
+  <%= hidden_field_tag :search_type, 'check_in_out' %>
+  <div class="row g-3 align-items-end">
+    <div class="col-md-6">
+      <%= f.search_field :name_or_email_or_contact_number_or_address_or_city_or_state_or_father_name_or_pincode_str_or_government_id_number_str_cont,
+                         placeholder: "Search by any field...", class: "form-control" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.submit 'Search', class: 'btn btn-primary w-100' %>
+    </div>
+  </div>
+<% end %>
+
+<% if @records.present? %>
+  <h3 class="mt-4">Search Results</h3>
+  <ul class="list-group">
+    <% @records.each do |record| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <%= record.name %> (<%= record.email %>)
+        <div>
+          <%= link_to 'Check In', record_attendances_path(record), method: :post, params: { attendance: { in_time: Time.current } }, class: 'btn btn-success btn-sm me-2' %>
+          <%= link_to 'Check Out', new_check_out_record_path(record), class: 'btn btn-danger btn-sm' %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+<% elsif params[:q].present? %>
+  <div class="alert alert-info mt-3 text-center">No records found matching your search.</div>
+<% end %>
+
+<%= link_to 'Back to Records', records_path, class: 'btn btn-secondary mt-3' %>

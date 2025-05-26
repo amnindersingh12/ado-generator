@@ -1,86 +1,90 @@
 <%# app/views/shared/_navbar.html.erb %>
-<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px; min-height: 100vh;">
-  <div class="sidebar-header mb-3">
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white" style="width: 280px; min-height: 100vh; background-color: #29ABE2;"> <%# Primary Color Background %>
+  <div class="sidebar-header mb-4" style="padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
     <%= link_to root_path, class: 'fs-4 text-white text-decoration-none' do %>
-      AdoGenerator
+      <span style="color: #FFDA63;">Ado</span>Generator <%# Secondary Color Highlight %>
     <% end %>
   </div>
-  <hr>
   <ul class="nav nav-pills flex-column mb-auto">
-    <li class="nav-item">
-      <%# You'll need to create a route and action for dashboard %>
-      <%= link_to dashboard_path, class: "nav-link #{'active' if current_page?(dashboard_path)}" do %>
-        <%# Add icon here if desired, e.g., <i class="bi bi-house-door me-2"></i> %>
+    <li class="nav-item mb-2">
+      <%= link_to dashboard_path, class: "nav-link text-white #{'active' if current_page?(dashboard_path)}" do %>
+        <i class="bi bi-speedometer2 me-2" style="color: #90EE90;"></i> <%# Playful Icon Color %>
         Dashboard
       <% end %>
     </li>
-    <li class="nav-item">
-
-      <%= link_to records_path, class: "nav-link #{'active' if current_page?(records_path) || controller_name == 'records' && action_name != 'new'}" do %>
-        <%# <i class="bi bi-card-list me-2"></i> %>
+    <li class="nav-item mb-2">
+      <div class="nav-link text-white" data-bs-toggle="collapse" href="#recordsSubmenu" role="button" aria-expanded="true" aria-controls="recordsSubmenu" style="background-color: rgba(255, 255, 255, 0.05); border-radius: 0.3rem;">
+        <i class="bi bi-folder me-2" style="color: #F08080;"></i> <%# Playful Icon Color %>
         Records
-      <% end %>
-    </li>
-    <%# Attendance Accordion/Dropdown %>
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="#attendanceSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-        <%# <i class="bi bi-calendar-check me-2"></i> %>
-        Attendance
-      </a>
-      <div class="collapse ps-3" id="attendanceSubmenu">
+        <i class="bi bi-chevron-down ms-auto"></i>
+      </div>
+      <div class="collapse show ps-3" id="recordsSubmenu">
         <ul class="nav flex-column">
-          <li class="nav-item">
-            <%# You'll need a route for "Check In/Out", e.g., new_check_in_out_path %>
-            <%= link_to new_record_path, class: 'nav-link' do %> <%# Assuming new_record_path is for Check In/Out %>
-              <%# <i class="bi bi-box-arrow-in-right me-2"></i> %>
+          <li class="nav-item mb-1">
+            <%= link_to new_record_path, class: "nav-link text-white ps-4 #{'active' if controller_name == 'records' && action_name == 'new'}" do %>
+              <i class="bi bi-plus-square me-2" style="color: #ADD8E6;"></i> <%# Playful Icon Color %>
+              New Record
+            <% end %>
+          </li>
+          <li class="nav-item mb-1">
+            <%= link_to records_path, class: "nav-link text-white ps-4 #{'active' if current_page?(records_path) && action_name != 'new'}" do %>
+              <i class="bi bi-list me-2" style="color: #FFA07A;"></i> <%# Playful Icon Color %>
+              View All Records
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item mb-2">
+      <div class="nav-link text-white" data-bs-toggle="collapse" href="#attendanceSubmenu" role="button" aria-expanded="true" aria-controls="attendanceSubmenu" style="background-color: rgba(255, 255, 255, 0.05); border-radius: 0.3rem;">
+        <i class="bi bi-calendar-check me-2" style="color: #ADFF2F;"></i> <%# Playful Icon Color %>
+        Attendance
+        <i class="bi bi-chevron-down ms-auto"></i>
+      </div>
+      <div class="collapse show ps-3" id="attendanceSubmenu">
+        <ul class="nav flex-column">
+          <li class="nav-item mb-1">
+            <%= link_to search_records_path(search_type: 'check_in_out'), class: "nav-link text-white ps-4" do %>
+              <i class="bi bi-search me-2" style="color: #87CEFA;"></i> <%# Playful Icon Color %>
               Check In/Out
             <% end %>
           </li>
-          <li class="nav-item">
-            <%= link_to history_calendar_path, class: 'nav-link' do %> <%# Your existing history link %>
-              <%# <i class="bi bi-clock-history me-2"></i> %>
+          <li class="nav-item mb-1">
+            <%= link_to records_path, class: "nav-link text-white ps-4" do %>
+              <i class="bi bi-clock-history me-2" style="color: #FF69B4;"></i> <%# Playful Icon Color %>
               History
             <% end %>
           </li>
-          <li class="nav-item">
-            <%# Assuming history_calendar_path is also your main calendar view as per image %>
-            <%= link_to history_calendar_path, class: 'nav-link' do %>
-              <%# <i class="bi bi-calendar3 me-2"></i> %>
+          <li class="nav-item mb-1">
+            <%= link_to history_calendar_path, class: "nav-link text-white ps-4" do %>
+              <i class="bi bi-calendar3 me-2" style="color: #FFFF00;"></i> <%# Playful Icon Color %>
               Calendar
             <% end %>
           </li>
         </ul>
       </div>
     </li>
-
   </ul>
-  <hr>
+  <hr style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
   <% if user_signed_in? %>
-    <div class="dropdown">
+    <div class="dropdown mt-4">
       <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-        <%# Add user avatar here if available %>
-        <strong class="ms-2"><%= current_user.email %> (<%= current_user.role.capitalize %>)</strong>
+        <i class="bi bi-person-circle fs-4 me-2" style="color: #FFD700;"></i> <%# Playful User Icon Color %>
+        <strong><%= current_user.email %> (<%= current_user.role.capitalize %>)</strong>
       </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-        <li>
-          <%# You'll need a route for profile, e.g., edit_user_registration_path %>
-          <%= link_to 'Profile', edit_user_registration_path, class: 'dropdown-item' %>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li>
-          <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'dropdown-item' %>
-        </li>
-        <%# Admin catchphrase form - moved from main nav to user dropdown if preferred %>
-        <%# Or keep it where it was if the 'Admin' link above is for something else %>
-        <% unless current_user.role.downcase == 'admin' %> <%# Show if not already admin %>
-          <li><hr class="dropdown-divider"></li>
+      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1" style="background-color: #333;">
+        <li><%= link_to 'Profile', edit_user_registration_path, class: 'dropdown-item text-white' %></li>
+        <li><hr class="dropdown-divider" style="border-top: 1px solid rgba(255, 255, 255, 0.1);"></li>
+        <li><%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'dropdown-item text-white' %></li>
+        <% unless current_user.role.downcase == 'admin' %>
+          <li><hr class="dropdown-divider" style="border-top: 1px solid rgba(255, 255, 255, 0.1);"></li>
           <li>
-            <a class="dropdown-item" href="#adminCatchphraseSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-              Admin Access
+            <a class="dropdown-item text-white" href="#adminCatchphraseSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+              Admin Access <i class="bi bi-key-fill ms-2" style="color: #00FF7F;"></i> <%# Playful Icon Color %>
             </a>
-            <div class="collapse px-3 py-2" id="adminCatchphraseSubmenu">
+            <div class="collapse show px-3 py-2" id="adminCatchphraseSubmenu" style="background-color: #444; border-radius: 0.3rem; margin-top: 0.5rem;">
               <%= form_with url: admin_role_path, method: :put, local: true, class: 'd-flex flex-column' do |f| %>
-                <%= f.password_field :catchphrase, placeholder: 'Enter Catchphrase', class: 'form-control form-control-sm mb-2 bg-dark text-white', style: 'width: 180px;' %>
+                <%= f.password_field :catchphrase, placeholder: 'Enter Catchphrase', class: 'form-control form-control-sm mb-2 bg-dark text-white', style: 'width: 180px; background-color: #555; border: none; border-radius: 0.2rem;' %>
                 <%= f.submit 'Go', class: 'btn btn-outline-light btn-sm' %>
               <% end %>
             </div>
@@ -89,7 +93,7 @@
       </ul>
     </div>
   <% else %>
-    <ul class="nav nav-pills flex-column">
+    <ul class="nav nav-pills flex-column mt-4">
       <li class="nav-item">
         <%= link_to 'Sign In', new_user_session_path, class: 'nav-link text-white' %>
       </li>
@@ -97,6 +101,46 @@
   <% end %>
 </div>
 <script>
-  // Ensure Bootstrap's JavaScript is loaded for the dropdown and collapse to work.
-  // Your application.js should be taking care of this if you've included bootstrap.bundle.min.js
+  // Keep the main dropdowns always shown by default
+  document.addEventListener('DOMContentLoaded', function() {
+    const recordSubmenu = document.getElementById('recordsSubmenu');
+    const attendanceSubmenu = document.getElementById('attendanceSubmenu');
+    if (recordSubmenu) {
+      recordSubmenu.classList.add('show');
+    }
+    if (attendanceSubmenu) {
+      attendanceSubmenu.classList.add('show');
+    }
+
+    // Initialize Bootstrap dropdown for the user menu
+    var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+      return new bootstrap.Dropdown(dropdownToggleEl)
+    })
+
+    // Keep the Admin Access submenu open too, if present
+    const adminSubmenu = document.getElementById('adminCatchphraseSubmenu');
+    if (adminSubmenu) {
+      adminSubmenu.classList.add('show');
+    }
+  });
 </script>
+<style>
+  /* ModernUI-inspired styles */
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 0.3rem;
+  }
+  .nav-link.active {
+    background-color: #1779BF !important; /* A slightly darker shade of primary */
+    color: #fff !important;
+  }
+  .dropdown-menu {
+    border: none !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  }
+  .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+</style>

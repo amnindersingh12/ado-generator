@@ -85,3 +85,5 @@ gem "wkhtmltopdf-binary"
 gem "rqrcode"
 
 gem "chunky_png"
+
+gem 'chartjs-rails'

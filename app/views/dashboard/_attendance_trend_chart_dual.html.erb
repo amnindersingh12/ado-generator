@@ -1,0 +1,72 @@
+<div class="card shadow mb-4" style="border-radius: 0.7rem;">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #E0FFFF; border-bottom: 0.1rem solid #ADD8E6;">
+    <h6 class="m-0 font-weight-bold text-primary" style="color: #1E90FF !important;"><i class="bi bi-graph-line me-2" style="color: #ADFF2F;"></i> <%= title %></h6>
+    <% if controls %>
+      <div class="dropdown no-arrow">
+        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+          <div class="dropdown-header">More Actions:</div>
+          <a class="dropdown-item" href="#">View Details</a>
+          <a class="dropdown-item" href="#">Export Data</a>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="card-body" style="background-color: #F8F8FF;">
+    <div class="chart-area">
+      <canvas id="<%= chart_id %>"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var ctx = document.getElementById('<%= chart_id %>').getContext('2d');
+    var myLineChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: <%= raw labels.to_json %>,
+        datasets: [
+          {
+            label: '<%= dataset_in_label %>',
+            backgroundColor: 'rgba(78, 115, 223, 0.05)',
+            borderColor: '#<%= border_color_in %>',
+            pointRadius: 5,
+            pointBackgroundColor: '#<%= point_background_color_in %>',
+            pointBorderColor: 'rgba(78, 115, 223, 0.8)',
+            pointHoverRadius: 7,
+            pointHoverBackgroundColor: '#<%= point_hover_background_color_in %>',
+            pointHitRadius: 50,
+            pointBorderWidth: 2,
+            data: <%= raw in_data.to_json %>,
+          },
+          {
+            label: '<%= dataset_out_label %>',
+            backgroundColor: 'rgba(231, 74, 59, 0.05)', // Light red fill
+            borderColor: '#<%= border_color_out %>',
+            pointRadius: 5,
+            pointBackgroundColor: '#<%= point_background_color_out %>',
+            pointBorderColor: 'rgba(231, 74, 59, 0.8)',
+            pointHoverRadius: 7,
+            pointHoverBackgroundColor: '#<%= point_hover_background_color_out %>',
+            pointHitRadius: 50,
+            pointBorderWidth: 2,
+            data: <%= raw out_data.to_json %>,
+          },
+        ],
+      },
+      options: {
+        maintainAspectRatio: false,
+        layout: { padding: { left: 10, right: 25, top: 25, bottom: 0 } },
+        scales: {
+          xAxes: [{ gridLines: { display: false, drawBorder: false }, ticks: { maxTicksLimit: 7 } }],
+          yAxes: [{ ticks: { maxTicksLimit: 5, padding: 10, callback: function(value) { return '' + value; } }, gridLines: { color: 'rgb(234, 236, 244)', zeroLineColor: 'rgb(234, 236, 244)', drawBorder: false, borderDash: [2], zeroLineBorderDash: [2] } }],
+        },
+        legend: { display: true, position: 'bottom' }, // Show legend for both lines
+        tooltips: { backgroundColor: 'rgb(255,255,255)', bodyFontColor: '#858796', titleMarginBottom: 10, titleFontColor: '#6e707e', borderColor: '#dddfeb', borderWidth: 1, xPadding: 15, yPadding: 15, displayColors: true, intersect: false, mode: 'index', caretPadding: 10 },
+      }
+    });
+  });
+</script>

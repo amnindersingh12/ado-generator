@@ -3,6 +3,54 @@ before_action :authenticate_user!
 before_action :set_record, only: %i[edit update destroy]
 before_action :authorize_admin!, only: [:destroy]
 
+def search
+    @q = Record.ransack(params[:q])
+    @records = @q.result(distinct: true)
+
+    if params[:search_type] == 'check_in_out'
+      render :search_check_in_out
+    else
+      # Your existing search results rendering logic for the main records page
+      render :index
+    end
+end
+
+  def check_in
+    @record = Record.find(params[:id])
+    @attendance = @record.attendances.new # Prepare a new attendance record
+  end
+
+  def complete_check_in
+    @record = Record.find(params[:record_id]) # Assuming record_id is passed
+    @attendance = @record.attendances.new(in_time: Time.current)
+    if @attendance.save
+      redirect_to @record, notice: "#{@record.name} checked in."
+    else
+      render :check_in, alert: "Check-in failed."
+    end
+  end
+
+  def new_check_out
+    @record = Record.find(params[:id])
+    @attendance = @record.attendances.order(created_at: :desc).first # Find the latest attendance
+    if @attendance&.in_time.present? && @attendance.out_time.nil?
+      # Proceed with check-out form
+    else
+      redirect_to @record, alert: "No active check-in found for #{@record.name}."
+    end
+  end
+
+  def create_check_out
+    @record = Record.find(params[:record_id]) # Assuming record_id is passed
+    @attendance = @record.attendances.order(created_at: :desc).first
+    if @attendance&.in_time.present? && @attendance.out_time.nil?
+      @attendance.update(out_time: Time.current)
+      redirect_to @record, notice: "#{@record.name} checked out."
+    else
+      redirect_to @record, alert: "No active check-in found for #{@record.name}."
+    end
+  end
+
 def index
   @q = Record.ransack(params[:q])
   filter_by_date(params[:created_at]) if params[:created_at].present?
