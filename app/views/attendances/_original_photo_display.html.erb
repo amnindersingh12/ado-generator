@@ -1,10 +1,46 @@
 <% if record.photo.attached? %>
   <div class="mb-4">
-    <p class="fw-semibold">
-      <i class="bi bi-person-fill me-2"></i> Original Photo (during registration):
-    </p>
-    <div class="text-center">
-      <%= image_tag record.photo, class: 'img-fluid rounded border', style: 'max-height: 300px;' %>
+    <p class="fw-semibold text-muted"><i class="bi bi-camera-fill me-2"></i> Original Photo (Registration)</p>
+    <div class="text-center border rounded overflow-hidden" style="max-width: 200px; margin: 0 auto;">
+      <%= image_tag record.photo, class: 'img-fluid', style: 'object-fit: cover; width: 100%; height: auto;' %>
     </div>
+    <small class="form-text text-muted d-block mt-1 text-center">Reference image from registration.</small>
   </div>
 <% end %>
+
+<style>
+  .fw-semibold {
+    font-weight: 600 !important; /* Slightly bolder */
+  }
+  .text-muted {
+    color: #6c757d !important;
+  }
+  .border {
+    border-color: #ced4da !important; /* Lighter border */
+  }
+  .rounded {
+    border-radius: 0.5rem !important;
+  }
+  .img-fluid {
+    max-width: 100%;
+    height: auto;
+  }
+  .text-center {
+    text-align: center !important;
+  }
+  .overflow-hidden {
+    overflow: hidden;
+  }
+  .form-text {
+    font-size: 0.875em;
+  }
+  .d-block {
+    display: block !important;
+  }
+  .mt-1 {
+    margin-top: 0.25rem !important;
+  }
+  .bi {
+    font-size: 1em; /* Adjust icon size if needed */
+  }
+</style>

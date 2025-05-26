@@ -9,8 +9,7 @@
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1" style="color: #29ABE2 !important;">Total Records <i class="bi bi-journal-bookmark-fill" style="color: #87CEFA;"></i></div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= @total_records %></div>
-            </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= link_to records_path(filter: 'all') do %><%= @total_records %><% end %></div>            </div>
             <div class="col-auto">
               <i class="bi bi-journal-bookmark-fill" style="color: #87CEFA;"></i>
             </div>
@@ -56,7 +55,7 @@
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
               <div class="text-xs font-weight-bold text-danger text-uppercase mb-1" style="color: #FF69B4 !important;">Pending Check-Outs <i class="bi bi-hourglass-split" style="color: #FFA07A;"></i></div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= @pending_check_outs %></div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= link_to records_path(filter: 'pending') do %><%= @pending_check_outs %><% end %></div>
             </div>
             <div class="col-auto">
               <i class="bi bi-hourglass-split" style="color: #FFA07A;"></i>

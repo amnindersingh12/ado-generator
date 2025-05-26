@@ -1,74 +1,119 @@
-<h1>Attendance History for <%= @record.name %></h1>
-<%= form_with url: history_record_attendances_path(@record), method: :get, local: true, class: "row g-3 mb-4" do |f| %>
-  <div class="col-md-4">
-    <%= f.label :from, "From Date", class: "form-label" %>
-    <%= f.date_field :from, value: params[:from], class: "form-control" %>
-  </div>
-  <div class="col-md-4">
-    <%= f.label :to, "To Date", class: "form-label" %>
-    <%= f.date_field :to, value: params[:to], class: 'form-control' %>
-  </div>
-  <div class="col-md-4 d-flex align-items-end">
-    <%= f.submit 'Generate Report', class: 'btn btn-primary me-2' %>
-    <%= link_to 'Print PDF', history_record_attendances_path(@record, format: :pdf, from: params[:from], to: params[:to]), class: 'btn btn-success', target: '_blank', rel: 'noopener' %>
-  </div>
-<% end %>
-<% if @attendances.any? %>
-  <%= render partial: 'shared/summary_card', locals: {
-  attendances: @attendances,
-  record: @record,
-  current_user: current_user
-} %>
-  <div class="table-responsive">
-    <table class="table table-hover table-bordered align-middle text-center shadow-sm">
-      <thead class="table-light">
-        <tr>
-          <th>#</th>
-          <th>Purpose of Visit</th>
-          <th>In Time</th>
-          <th>In Photo</th>
-          <th>Out Time</th>
-          <th>Out Photo</th>
-          <th>Time Spent</th>
-          <th>Created By</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @attendances.each_with_index do |attendance, index| %>
-          <% needs_checkout = attendance.out_time.nil? %>
-          <tr class="<%= 'table-warning' if needs_checkout %>">
-            <td><%= index + 1 %></td>
-            <td><strong><%=attendance.purpose%></strong></td>
-            <td><% if attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') %>
-               <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') %>
-             <% else %>
-                <%= link_to 'Check-In', complete_check_in_record_attendance_path(@record, attendance), class: 'btn btn-success' %>
-             <% end %></td>
-            <td>
-              <% if attendance.in_photo.attached? %>
-                <%= enlargeable_image_tag attendance.in_photo, id: "in#{attendance.id}", label: 'Check In Photo' %>
-              <% else %>
-                N/A
-              <% end %>
-            </td>
-            <td><%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || 'Check Out Pending' %></td>
-            <td>
-              <% if attendance.out_photo.attached? %>
-                <%= enlargeable_image_tag attendance.out_photo, id: "out#{attendance.id}", label: 'Check Out Photo' %>
-              <% elsif attendance.user_id == current_user.id && attendance.out_time.nil? %>
-                <%= link_to 'Check Out', edit_record_attendance_path(@record, attendance), class: 'btn btn-warning btn-sm' %>
-              <% else %>
-                N/A
-              <% end %>
-            </td>
-            <td><%= time_spent(attendance) %></td>
-            <td><%= attendance.user&.email || 'Unknown' %></td>
+<div class="container mt-5">
+  <h1 class="mb-4" style="color: #343a40;"><i class="bi bi-clock-history me-2"></i> Attendance History for <span class="fw-semibold text-primary"><%= @record.name %></span></h1>
+
+  <%= form_with url: history_record_attendances_path(@record), method: :get, local: true, class: "row g-3 mb-4" do |f| %>
+    <div class="col-md-4">
+      <%= f.label :from, "From Date", class: "form-label text-muted" %>
+      <%= f.date_field :from, value: params[:from], class: "form-control form-control-lg rounded-pill" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :to, "To Date", class: "form-label text-muted" %>
+      <%= f.date_field :to, value: params[:to], class: 'form-control form-control-lg rounded-pill' %>
+    </div>
+    <div class="col-md-4 d-flex align-items-end">
+      <%= f.submit 'Generate Report', class: 'btn btn-primary btn-lg rounded-pill me-2 shadow-sm' %>
+      <%= link_to 'Print PDF',
+                  history_record_attendances_path(@record, format: :pdf, from: params[:from], to: params[:to]),
+                  class: 'btn btn-success btn-lg rounded-pill shadow-sm',
+                  target: '_blank',
+                  rel: 'noopener' %>
+    </div>
+  <% end %>
+
+  <% if @attendances.any? %>
+    <div class="mb-4">
+      <%= render partial: 'shared/summary_card', locals: {
+        attendances: @attendances,
+        record: @record,
+        current_user: current_user
+      } %>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered align-middle text-center shadow-sm rounded-lg">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="text-secondary">#</th>
+            <th scope="col" class="text-secondary">Purpose of Visit</th>
+            <th scope="col" class="text-success"><i class="bi bi-arrow-right-circle-fill me-1"></i> In Time</th>
+            <th scope="col" class="text-secondary"><i class="bi bi-camera-fill me-1"></i> In Photo</th>
+            <th scope="col" class="text-danger"><i class="bi bi-arrow-left-circle-fill me-1"></i> Out Time</th>
+            <th scope="col" class="text-secondary"><i class="bi bi-camera-fill me-1"></i> Out Photo</th>
+            <th scope="col" class="text-info"><i class="bi bi-hourglass-split me-1"></i> Time Spent</th>
+            <th scope="col" class="text-muted"><i class="bi bi-person-fill me-1"></i> Created By</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <p class="text-muted">No attendance records found.</p>
-<% end %>
-<%= link_to 'Back', record_path(@record), class: 'btn btn-secondary mt-3' %>
+        </thead>
+        <tbody>
+          <% @attendances.each_with_index do |attendance, index| %>
+            <% needs_checkout = attendance.out_time.nil? %>
+            <tr class="<%= 'table-warning bg-opacity-25' if needs_checkout %>">
+              <td><%= index + 1 %></td>
+              <td class="fw-semibold"><%= attendance.purpose %></td>
+              <td>
+                <% if attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') %>
+                  <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') %>
+                <% else %>
+                  <%= link_to 'Check-In', complete_check_in_record_attendance_path(@record, attendance), class: 'btn btn-success btn-sm rounded-pill' %>
+                <% end %>
+              </td>
+              <td>
+                <% if attendance.in_photo.attached? %>
+                  <%= enlargeable_image_tag attendance.in_photo, id: "in#{attendance.id}", label: 'Check In Photo' %>
+                <% else %>
+                  <span class="text-muted">N/A</span>
+                <% end %>
+              </td>
+              <td><%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || '<span class="badge bg-warning text-dark rounded-pill"><i class="bi bi-hourglass-half me-1"></i> Pending</span>'.html_safe %></td>
+              <td>
+                <% if attendance.out_photo.attached? %>
+                  <%= enlargeable_image_tag attendance.out_photo, id: "out#{attendance.id}", label: 'Check Out Photo' %>
+                <% elsif attendance.user_id == current_user.id && attendance.out_time.nil? %>
+                  <%= link_to 'Check Out', edit_record_attendance_path(@record, attendance), class: 'btn btn-warning btn-sm rounded-pill' %>
+                <% else %>
+                  <span class="text-muted">N/A</span>
+                <% end %>
+              </td>
+              <td class="fw-semibold"><%= time_spent(attendance) %></td>
+              <td class="text-muted"><%= attendance.user&.email || 'Unknown' %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info text-center rounded-lg shadow-sm mt-4">
+      <i class="bi bi-info-circle-fill me-2"></i> No attendance records found for <%= @record.name %>.
+    </div>
+  <% end %>
+
+  <%= link_to '<i class="bi bi-arrow-left-circle-fill me-2"></i> Back to Record'.html_safe, record_path(@record), class: 'btn btn-outline-secondary rounded-pill mt-3 shadow-sm' %>
+</div>
+
+<style>
+  .form-label {
+    font-weight: 500;
+  }
+
+  .btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .table th {
+    font-weight: bold;
+  }
+
+  .img-thumbnail {
+    max-width: 80px;
+    height: auto;
+  }
+
+  .table-warning {
+    --bs-table-bg: rgba(var(--bs-warning-rgb), 0.15) !important;
+  }
+</style>

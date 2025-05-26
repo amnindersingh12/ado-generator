@@ -51,8 +51,8 @@ end
     end
   end
 
-def index
-  @q = Record.ransack(params[:q])
+ def index
+    @q = Record.ransack(params[:q])
   filter_by_date(params[:created_at]) if params[:created_at].present?
 
   @records = @q.result(distinct: true)
@@ -62,7 +62,25 @@ def index
 
   calculate_attendance_statistics
   @record_not_found = @records.empty? if params[:q].present?
-end
+    case params[:filter]
+    when 'checked_in'
+      @records = @q.result.joins(:attendances).where.not(attendances: { in_time: nil, out_time: nil }).distinct.order(created_at: :desc)
+    when 'checked_out'
+      @records = @q.result.joins(:attendances).where.not(attendances: { out_time: nil }).where.not(attendances: { in_time: nil }).distinct.order(created_at: :desc)
+    when 'pending'
+      @records = @q.result.joins(:attendances).where(attendances: { out_time: nil }).where.not(attendances: { in_time: nil }).distinct.order(created_at: :desc)
+    when 'all'
+      @records = @q.result.order(created_at: :desc)
+    else
+      @records = @q.result.order(created_at: :desc)
+    end
+
+    @total_records = Record.count
+    @total_in = Attendance.where.not(in_time: nil).where.not(out_time: nil).count
+    @total_out = Attendance.where.not(out_time: nil).where.not(in_time: nil).count
+    @pending_records = Attendance.where(out_time: nil).where.not(in_time: nil).count
+  end
+
 
 def show
   @record = Record.find(params[:id])
