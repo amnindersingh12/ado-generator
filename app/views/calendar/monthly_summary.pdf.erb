@@ -35,7 +35,7 @@
   <% if @monthly_summary[:record_activity][:most_time] %>
     <p>
       <strong>Record with Most Time Spent:</strong> <%= @monthly_summary[:record_activity][:most_time][:record].try(:name) || @monthly_summary[:record_activity][:most_time][:record].try(:id) %>
-      (<%= time_spent(@monthly_summary[:record_activity][:most_time][:total_time_seconds]) %>)
+      (<%= time_spent_cal(@monthly_summary[:record_activity][:most_time][:total_time_seconds]) %>)
       <% if @monthly_summary[:record_activity][:most_time][:attendance] %>
         <br>
         <small>
@@ -50,7 +50,7 @@
   <% if @monthly_summary[:record_activity][:least_time] %>
     <p>
       <strong>Record with Least Time Spent:</strong> <%= @monthly_summary[:record_activity][:least_time][:record].try(:name) || @monthly_summary[:record_activity][:least_time][:record].try(:id) %>
-      (<%= time_spent(@monthly_summary[:record_activity][:least_time][:total_time_seconds]) %>)
+      (<%= time_spent_cal(@monthly_summary[:record_activity][:least_time][:total_time_seconds]) %>)
       <% if @monthly_summary[:record_activity][:least_time][:attendance] %>
         <br>
         <small>
