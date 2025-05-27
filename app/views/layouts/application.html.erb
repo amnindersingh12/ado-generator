@@ -125,42 +125,5 @@
       </div>
     </div>
   </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const body = document.querySelector('body');
-      const themeCookieName = 'theme';
-
-      function setTheme(themeName) {
-        if (themeName === 'dark') {
-          body.classList.add('dark-theme');
-          body.classList.remove('light-theme');
-        } else {
-          body.classList.add('light-theme');
-          body.classList.remove('dark-theme');
-        }
-        document.cookie = `${themeCookieName}=${themeName}; path=/; SameSite=Lax`;
-      }
-
-      function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-      }
-
-      // Apply theme on load
-      const savedTheme = getCookie(themeCookieName) || 'light'; // Default to light
-      setTheme(savedTheme);
-
-      // Add event listeners to theme switcher buttons in the navbar
-      const themeSwitcherButtons = document.querySelectorAll('.change-theme');
-      themeSwitcherButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const theme = this.dataset.theme;
-          setTheme(theme);
-        });
-      });
-    });
-  </script>
 </body>
 </html>

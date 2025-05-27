@@ -7,7 +7,7 @@ module ColorSchemes
     text: '#f8f8f2',       # Off-White
     link_hover: '#c5e1a5',   # Lime Green
     active_link: '#e63946',  # Crimson
-    dropdown_bg: '#4d4d4d',   # Dark Gray
+    dropdown_bg: '#4d4d4d', # Dark Gray
     dropdown_hover: '#616161', # Medium Gray
     border: 'rgba(255, 255, 255, 0.08)'
   }
@@ -19,7 +19,7 @@ module ColorSchemes
     text: '#f3e5f5',       # Light Lavender
     link_hover: '#b388ff',   # Violet
     active_link: '#f06292',  # Pink
-    dropdown_bg: '#6a1b9a',   # Darker Purple
+    dropdown_bg: '#6a1b9a', # Darker Purple
     dropdown_hover: '#8e24aa', # Medium Purple
     border: 'rgba(255, 255, 255, 0.08)'
   }
@@ -31,7 +31,7 @@ module ColorSchemes
     text: '#fbe9e7',       # Light Beige
     link_hover: '#ffca28',   # Gold
     active_link: '#d84315',  # Deep Orange
-    dropdown_bg: '#6d4c41',   # Darker Brown
+    dropdown_bg: '#6d4c41', # Darker Brown
     dropdown_hover: '#8d6e63', # Medium Brown
     border: 'rgba(255, 255, 255, 0.08)'
   }
@@ -43,7 +43,7 @@ module ColorSchemes
     text: '#eceff1',       # Light Gray
     link_hover: '#ce93d8',   # Lilac
     active_link: '#e91e63',  # Deep Pink
-    dropdown_bg: '#37474f',   # Darker Slate Gray
+    dropdown_bg: '#37474f', # Darker Slate Gray
     dropdown_hover: '#4f5b62', # Medium Slate Gray
     border: 'rgba(255, 255, 255, 0.08)'
   }

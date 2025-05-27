@@ -103,7 +103,7 @@
           render pdf: "attendance_#{@record.id}",
                 template: 'attendances/record_report',
                 layout: 'pdf',
-                margin: { top: 10, bottom: 10, left: 10, right: 10 }
+                margin: { top: 10, bottom: 10, left: 10, right: 10,}
         end
       end
     end

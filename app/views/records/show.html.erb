@@ -57,7 +57,7 @@
           <div class="mt-4 d-flex flex-wrap gap-2 align-items-center">
             <% last_attendance = @record.attendances.where(user: current_user).last %>
             <% if last_attendance&.in_time && !last_attendance.out_time %>
-              <%= link_to 'Check Out', edit_record_attendance_path(@record, last_attendance), class: 'btn btn-warning rounded-pill shadow-sm' %>
+              <%= link_to 'Check Out', edit_record_attendance_path(@record, last_attendance), class: 'btn btn-warning rounded-pill shadow-sm'  %>
               <div class="alert alert-info flex-grow-1 mb-0 rounded-pill small">Must check out before starting a new attendance.</div>
             <% elsif last_attendance && !last_attendance.in_time && last_attendance.out_time %>
               <%= link_to 'Complete Check-In', complete_check_in_record_attendance_path(@record, last_attendance), class: 'btn btn-success rounded-pill shadow-sm' %>

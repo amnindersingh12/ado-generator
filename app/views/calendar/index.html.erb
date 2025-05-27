@@ -36,6 +36,7 @@
               Unique Visitors: <span class="fw-bold text-warning"><%= @monthly_unique_users %></span>
             </li>
           </ul>
+          <%= link_to "Download Monthly Summary (PDF)", monthly_summary_path(year: @year, month: @month, format: :pdf), class: "btn btn-success mt-3", target: "_blank" %>
         </div>
       </div>
     </div>
@@ -72,6 +73,7 @@
                         <% end %>
                         <% if is_today && date.month == @month %>
                           <div class="small text-primary fw-semibold mt-1">Today</div>
+
                         <% end %>
                       </td>
                     <% end %>

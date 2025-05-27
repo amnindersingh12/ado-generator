@@ -64,20 +64,32 @@ module AttendancesHelper
     image_tag "data:image/png;base64,#{base64}", alt: 'QR Code', class: 'qr-code'
   end
 
-  def time_spent(attendance)
-    unless attendance.in_time && attendance.out_time
-      return 'Incomplete attendance'
-    end
+  # def time_spent(attendance)
+  #   unless attendance.in_time && attendance.out_time
+  #     return 'Incomplete attendance'
+  #   end
 
-    time_diff = (attendance.out_time - attendance.in_time).abs
+  #   time_diff = (attendance.out_time - attendance.in_time).abs
 
-    return 'Less than a min' if time_diff < 60
+  #   return 'Less than a min' if time_diff < 60
 
-    hours, remainder = time_diff.divmod(3600)
+  #   hours, remainder = time_diff.divmod(3600)
+  #   minutes, _seconds = remainder.divmod(60)
+
+  #   "#{hours}h #{minutes}m"
+  # end
+
+  def time_spent(total_seconds)
+    return 'Incomplete attendance' unless total_seconds.is_a?(Numeric) && total_seconds >= 0
+
+    return 'Less than a min' if total_seconds < 60
+
+    hours, remainder = total_seconds.divmod(3600)
     minutes, _seconds = remainder.divmod(60)
 
     "#{hours}h #{minutes}m"
   end
+
 
 
 

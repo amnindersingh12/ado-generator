@@ -1,17 +1,16 @@
 <%# app/views/shared/_navbar.html.erb %>
 <%
-
   current_theme_name = cookies[:theme]&.to_sym  || ColorSchemes::DEFAULT_THEME
   current_scheme = ColorSchemes::SCHEMES[current_theme_name]
-  primary_color = current_scheme[:primary]
-  secondary_color = current_scheme[:secondary]
-  accent_color = current_scheme[:accent]
-  text_color = current_scheme[:text]
-  link_hover_color = current_scheme[:link_hover]
-  active_link_color = current_scheme[:active_link]
-  dropdown_bg_color = current_scheme[:dropdown_bg]
-  dropdown_hover_color = current_scheme[:dropdown_hover]
-  border_color = current_scheme[:border]
+  primary_color ||= ColorSchemes::SCHEMES[ColorSchemes::DEFAULT_THEME][:primary]
+  secondary_color ||= ColorSchemes::SCHEMES[ColorSchemes::DEFAULT_THEME][:secondary]
+  accent_color ||= ColorSchemes::SCHEMES[ColorSchemes::DEFAULT_THEME][:accent]
+  text_color ||= ColorSchemes::SCHEMES[ColorSchemes::DEFAULT_THEME][:text]
+  link_hover_color ||= ColorSchemes::SCHEMES[ColorSchemes::DEFAULT_THEME][:link_hover]
+  active_link_color ||= ColorSchemes::SCHEMES[ColorSchemes::DEFAULT_THEME][:active_link]
+  dropdown_bg_color ||= ColorSchemes::SCHEMES[ColorSchemes::DEFAULT_THEME][:dropdown_bg]
+  dropdown_hover_color ||= ColorSchemes::SCHEMES[ColorSchemes::DEFAULT_THEME][:dropdown_hover]
+  border_color ||= ColorSchemes::SCHEMES[ColorSchemes::DEFAULT_THEME][:border]
 %>
 <div class="d-flex flex-column flex-shrink-0 p-3" style="width: 280px; min-height: 100vh; background-color: <%= primary_color %>; color: <%= text_color %>;">
   <div class="sidebar-header mb-4 d-flex justify-content-between align-items-center" style="padding-bottom: 1.5rem; border-bottom: 2px solid <%= border_color %>;">
@@ -24,7 +23,7 @@
       </button>
       <ul class="dropdown-menu dropdown-menu-dark" style="background-color: <%= dropdown_bg_color %>;">
         <% ColorSchemes::SCHEMES.each do |name, scheme| %>
-          <li><button type="button" class="dropdown-item text-white change-theme" data-theme="<%= name %>"><%=name %></button></li>
+          <li><button type="button" class="dropdown-item text-white change-theme" data-theme="<%= name || ColorSchemes::DEFAULT_THEME %>"><%=name %></button></li>
         <% end %>
       </ul>
     </div>
@@ -81,22 +80,18 @@
         <li><%= link_to 'Profile', edit_user_registration_path, class: 'dropdown-item text-white' %></li>
         <li><hr class="dropdown-divider" style="border-top: 1px solid <%= border_color %>;"></li>
         <li><%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'dropdown-item text-white' %></li>
-        <% unless current_user.role.downcase == 'admin' %>
-          <li><hr class="dropdown-divider" style="border-top: 1px solid <%= border_color %>;"></li>
-          <li>
-            <a class="dropdown-item text-white fw-semibold" href="#adminCatchphraseSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+        <li><hr class="dropdown-divider" style="border-top: 1px solid <%= border_color %>;"></li>
+        <li>
+          <div class="collapse show px-3 py-2" id="adminCatchphraseSubmenu" style="background-color: <%= dropdown_hover_color %>; border-radius: 0.3rem; margin-top: 0.5rem;">
+            <p class="dropdown-item text-white fw-semibold"  data-bs-toggle="collapse" aria-expanded="false">
               Admin Access <i class="bi bi-key-fill ms-2" style="color: <%= accent_color %>;"></i>
-            </a>
-            <div class="collapse show px-3 py-2" id="adminCatchphraseSubmenu" style="background-color: <%= dropdown_hover_color %>; border-radius: 0.3rem; margin-top: 0.5rem;">
-              <%= form_with url: admin_role_path, method: :put, local: true, class: 'd-flex flex-column' do |f| %>
-                <%= f.password_field :catchphrase, placeholder: 'Enter Catchphrase', class: 'form-control form-control-sm mb-2 bg-dark text-white', style: 'width: 180px; background-color: #333; border: none; border-radius: 0.2rem;' %>
-                <%= f.submit 'Go', class: 'btn btn-outline-light btn-sm' %>
-              <% end %>
+            </p>
+            <%= form_with url: admin_role_path, method: :put, local: true, class: 'd-flex flex-column' do |f| %>
+              <%= f.password_field :catchphrase, placeholder: 'Enter Catchphrase', class: 'form-control form-control-sm mb-2 bg-dark text-white', style: 'width: 180px;  border: none; border-radius: 0.2rem;' %>
+              <%= f.submit 'Go', class: 'btn btn-outline-light btn-sm' %>
             </div>
           </li>
         <% end %>
-        <li><hr class="dropdown-divider" style="border-top: 1px solid <%= border_color %>;"></li>
-        <li><%= link_to 'Customize', edit_user_registration_path(anchor: 'customize-sidebar'), class: 'dropdown-item text-white fw-semibold' %></li>
       </ul>
     </div>
   <% else %>

@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   get 'history_calendar/:year/:month/:day', to: 'calendar#show', as: :calendar_day
   get 'history_calendar/:year/:month/:day/print', to: 'calendar#print_day', as: :calendar_day_print
   get 'calendar/day_data', to: 'calendar#day_data', as: :calendar_day_data
+  get 'monthly_summary', to: 'calendar#monthly_summary', as: :monthly_summary
 
   # Root path
   get 'dashboard', to: 'dashboard#index', as: :dashboard # This creates dashboard_path
