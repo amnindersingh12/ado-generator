@@ -16,11 +16,10 @@
             <%= @attendance.purpose %>
           <% end %>
         </div>
-        <!-- Current time and Capture Check-Out Photo Section -->
-        <div class="mb-4">
+        <!-- Check In time and Capture Check-Out Photo Section -->
           <p class="fw-semibold">
-            <i class="bi bi-calendar-check me-2"></i> Current Time:
-            <%= Time.current.strftime('%B %d, %Y %I:%M %p') %>
+            <i class="bi bi-calendar-check me-2"></i> Check In Time:
+            <%= @attendance.in_time.strftime('%B %d, %Y %I:%M %p') %>
             <br>
           </p>
           <%= form.label :out_photo, 'Capture Check-Out Photo', class: 'form-label' %>

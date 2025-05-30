@@ -9,6 +9,11 @@
       <% else %>
         <p class="mb-1"><strong class="fw-semibold">Purpose of Visit:</strong></p>
         <div class="alert alert-light border rounded"><%= @attendance.purpose %></div>
+                  <p class="fw-semibold">
+            <i class="bi bi-calendar-check me-2"></i> Check Out Time:
+            <%= @attendance.out_time.strftime('%B %d, %Y %I:%M %p') %>
+            <br>
+          </p>
       <% end %>
     </div>
 
