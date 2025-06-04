@@ -71,7 +71,7 @@ gem 'concurrent-ruby'
 
 gem "faker"
 
-gem "rubocop", "~> 1.75"
+gem "rubocop", "~> 1.76"
 
 gem "rufo", "~> 0.18.1"
 
