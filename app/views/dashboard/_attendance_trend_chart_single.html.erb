@@ -1,0 +1,59 @@
+<%# app/views/dashboard/_attendance_trend_chart_single.html.erb %>
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold" style="color: #1779BF;"><%= title %></h6>
+  </div>
+  <div class="card-body">
+    <div class="chart-container">
+      <canvas id="<%= chart_id %>"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('<%= chart_id %>').getContext('2d');
+        var myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: <%= raw labels.to_json %>,
+            datasets: [{
+              label: '<%= dataset_label %>',
+              data: <%= raw data.to_json %>,
+              borderColor: '<%= border_color %>',
+              backgroundColor: '<%= border_color %>',
+              fill: false,
+              pointBackgroundColor: '<%= point_background_color %>',
+              pointHoverBackgroundColor: '<%= point_hover_background_color %>',
+              tension: 0.3
+            }]
+          },
+          options: {
+            scales: {
+              x: { // Changed from xAxes
+                title: {
+                  display: true,
+                  text: 'Time (Hour)'
+                }
+              },
+              y: { // Changed from yAxes
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Count'
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                display: <%= controls.nil? ? true : controls %>
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false
+              }
+            }
+          }
+        });
+      });
+    </script>

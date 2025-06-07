@@ -1,36 +1,41 @@
 <div class="container mt-5">
-  <div class="card shadow">
+  <div class="card shadow-lg border-warning">
     <div class="card-header bg-warning text-dark">
-      <h2 class="mb-0">Check Out</h2>
+      <h2 class="mb-0 fw-semibold"><i class="bi bi-box-arrow-right me-2"></i> Check Out</h2>
     </div>
     <div class="card-body">
       <%= form_with(model: @record, local: true) do |form| %>
         <div class="mb-3">
-          <%= form.label :name, class: "form-label" %>
-          <%= form.text_field :name, class: "form-control" %>
+          <%= form.label :name, 'Name', class: 'form-label fw-semibold' %>
+          <%= form.text_field :name, class: 'form-control', readonly: true %>
+          <small class="form-text text-muted">Name cannot be edited here.</small>
         </div>
         <div class="mb-3">
           <% if @record.photo.attached? %>
-            <div class="mt-3 text-center">
-              <%= image_tag @record.photo, class: "img-fluid rounded border", style: "max-height: 300px;" %>
+            <p class="fw-semibold text-muted"><i class="bi bi-image-fill me-2"></i> Current Photo</p>
+            <div class="mt-2 text-center border rounded overflow-hidden" style="max-width: 200px; margin: 0 auto;">
+              <%= image_tag @record.photo, class: 'img-fluid', style: 'object-fit: cover; width: 100%; height: auto;' %>
             </div>
           <% end %>
         </div>
-        <div class="mb-3">
-          <div class="card-body">
-            <p>Current time: <%= Time.current.strftime('%B %d, %Y %I:%M %p') %></p>
-            <div class="mb-3">
+        <div class="mb-3 border rounded p-3">
+          <p class="fw-semibold"><i class="bi bi-clock-fill me-2"></i> Current Time: <%= Time.current.strftime('%B %d, %Y %I:%M %p') %></p>
+          <div class="mb-3">
+            <%= form.label :out_photo, '<i class="bi bi-camera-fill me-2"></i> Capture Check-Out Photo'.html_safe, class: 'form-label fw-semibold' %>
+            <div class="border rounded p-2">
               <%= webcam_capture(form, :out_photo) %>
-              <% if @record.errors[:out_photo].any? %>
-                <div class="text-danger"><%= @record.errors[:out_photo].join(", ") %></div>
-              <% end %>
             </div>
+            <% if @record.errors[:out_photo].any? %>
+              <div class="text-danger small mt-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> <%= @record.errors[:out_photo].join(', ') %></div>
+            <% end %>
+            <small class="form-text text-muted">Please capture a photo for check-out verification.</small>
           </div>
-          <div class="d-flex justify-content-between">
-            <%= form.submit "Update Record", class: "btn btn-success" %>
-            <%= link_to "Back", record_path(@record), class: "btn btn-secondary" %>
-          </div>
-        <% end %>
-      </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+          <%= form.submit 'Update Record', class: 'btn btn-warning rounded-pill shadow-sm' %>
+          <%= link_to 'Back', record_path(@record), class: 'btn btn-outline-secondary rounded-pill shadow-sm' %>
+        </div>
+      <% end %>
     </div>
   </div>
+</div>

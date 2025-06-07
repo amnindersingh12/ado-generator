@@ -42,6 +42,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_131312) do
   create_table "attendances", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "record_id", null: false
+    t.string "purpose"
     t.datetime "in_time"
     t.datetime "out_time"
     t.datetime "created_at", null: false
@@ -52,6 +53,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_131312) do
 
   create_table "records", force: :cascade do |t|
     t.string "name"
+    t.string "email"
     t.string "contact_number"
     t.string "address"
     t.integer "pincode"

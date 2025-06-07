@@ -4,8 +4,8 @@
   <%= render "devise/shared/error_messages", resource: resource %>
 
   <div class="mb-3">
-    <%= f.label :email, class: "form-label" %>
-    <%= f.email_field :email, class: "form-control", autofocus: true, autocomplete: "email", required: true %>
+    <%= f.label :email, class: 'form-label' %>
+    <%= f.email_field :email, class: 'form-control', autofocus: true, autocomplete: 'email', required: true %>
   </div>
 
   <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
@@ -15,26 +15,26 @@
   <% end %>
 
   <div class="mb-3">
-    <%= f.label :password, class: "form-label" %> <small class="text-muted">(Leave blank if you don't want to change it)</small>
-    <%= f.password_field :password, class: "form-control", id: "edit_password", autocomplete: "new-password" %>
+    <%= f.label :password, class: 'form-label' %> <small class="text-muted">(Leave blank if you don't want to change it)</small>
+    <%= f.password_field :password, class: 'form-control', id: 'edit_password', autocomplete: 'new-password' %>
     <% if @minimum_password_length %>
       <small class="form-text text-muted"><%= @minimum_password_length %> characters minimum</small>
     <% end %>
   </div>
 
   <div class="mb-3">
-    <%= f.label :password_confirmation, class: "form-label" %>
-    <%= f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password" %>
+    <%= f.label :password_confirmation, class: 'form-label' %>
+    <%= f.password_field :password_confirmation, class: 'form-control', autocomplete: 'new-password' %>
   </div>
 
   <div class="mb-3 position-relative">
-    <%= f.label :current_password, class: "form-label" %>
+    <%= f.label :current_password, class: 'form-label' %>
     <small class="text-muted d-block">(We need your current password to confirm your changes)</small>
-    <%= f.password_field :current_password, class: "form-control", id: "current_password", autocomplete: "current-password", required: true %>
+    <%= f.password_field :current_password, class: 'form-control', id: 'current_password', autocomplete: 'current-password', required: true %>
   </div>
 
   <div class="d-grid mb-3">
-    <%= f.submit "Update", class: "btn btn-primary" %>
+    <%= f.submit 'Update', class: 'btn btn-primary' %>
   </div>
 <% end %>
 
@@ -42,7 +42,7 @@
 <p>Unhappy?</p>
 
 <div class="mb-3">
-  <%= button_to "Cancel my account", registration_path(resource_name), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-outline-danger" %>
+  <%= button_to 'Cancel my account', registration_path(resource_name), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-danger' %>
 </div>
 
-<%= link_to "Back", request.referer || root_path, class: "btn btn-secondary" %>
+<%= link_to 'Back', request.referer || root_path, class: 'btn btn-secondary' %>

@@ -1,18 +1,109 @@
-<h1 class="mb-4">Create New Record</h1>
+<h1 class="mb-4 display-6 fw-bold text-primary"><i class="bi bi-person-plus-fill me-2"></i> Create New Record</h1>
+
+<style>
+  input:focus, select:focus, textarea:focus {
+    border-color: #0d6efd; /* Bootstrap primary color */
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    transition: box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  }
+
+  .form-label {
+    font-weight: 500; /* Slightly less bold for a modern feel */
+    
+  }
+
+  .text-danger {
+    font-size: 0.875rem;
+    color: #dc3545 !important; /* Bootstrap danger color */
+  }
+
+  .btn-lg {
+    padding: 0.8rem 1.75rem; /* Slightly more padding */
+    font-size: 1.1rem;
+    border-radius: 0.3rem; /* Slightly more rounded */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.08); /* Subtle shadow */
+    transition: box-shadow 0.15s ease-in-out;
+  }
+
+  .btn-lg:hover {
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+  }
+
+  .form-control {
+    border: 1px solid #ced4da;
+    border-radius: 0.3rem;
+  }
+
+  .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 0.3rem;
+  }
+
+  .webcam-capture-container {
+    border: 1px solid #ced4da;
+    border-radius: 0.3rem;
+    overflow: hidden; /* To contain rounded corners of video */
+  }
+
+  .webcam-capture-video {
+    display: block;
+    width: 100%;
+    max-height: 300px; /* Adjust as needed */
+    object-fit: cover;
+  }
+
+  .webcam-capture-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #0d6efd; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+  }
+
+  .webcam-capture-button:hover {
+    background-color: #0b5ed7;
+  }
+
+  .webcam-capture-preview {
+    margin-top: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.3rem;
+    overflow: hidden;
+    max-height: 200px;
+  }
+
+  .webcam-capture-preview img {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+    max-height: 200px;
+  }
+</style>
 
 <%= form_with model: @record, local: true, html: { class: "needs-validation", novalidate: true } do |form| %>
-  <div class="row g-3">
+  <div class="row g-4">
     <div class="col-md-6">
       <%= form.label :name, class: "form-label" %>
-      <%= form.text_field :name, class: "form-control", required: true %>
+      <%= form.text_field :name, class: "form-control form-control-lg", required: true %>
       <% @record.errors[:name].each do |err| %>
         <div class="text-danger"><%= err %></div>
       <% end %>
     </div>
 
     <div class="col-md-6">
+      <%= form.label :email, class: "form-label" %>
+      <%= form.email_field :email, class: "form-control form-control-lg", required: true %>
+      <% @record.errors[:email].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
+    </div>
+
+    <div class="col-md-6">
       <%= form.label :contact_number, class: "form-label" %>
-      <%= form.telephone_field :contact_number, class: "form-control" %>
+      <%= form.telephone_field :contact_number, class: "form-control form-control-lg" %>
       <% @record.errors[:contact_number].each do |err| %>
         <div class="text-danger"><%= err %></div>
       <% end %>
@@ -20,55 +111,129 @@
 
     <div class="col-12">
       <%= form.label :address, class: "form-label" %>
-      <%= form.text_field :address, class: "form-control" %>
+      <%= form.text_field :address, class: "form-control form-control-lg" %>
     </div>
 
     <div class="col-md-4">
       <%= form.label :pincode, class: "form-label" %>
-      <%= form.number_field :pincode, class: "form-control" %>
+      <%= form.number_field :pincode, class: "form-control form-control-lg" %>
     </div>
 
     <div class="col-md-4">
       <%= form.label :city, class: "form-label" %>
-      <%= form.text_field :city, class: "form-control" %>
+      <%= form.text_field :city, class: "form-control form-control-lg" %>
     </div>
 
     <div class="col-md-4">
       <%= form.label :state, class: "form-label" %>
-      <%= form.text_field :state, class: "form-control" %>
+      <%= form.text_field :state, class: "form-control form-control-lg" %>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :date_of_birth, class: "form-label" %>
-      <%= form.date_field :date_of_birth, class: "form-control" %>
+      <%= form.label :date_of_birth, class: 'form-label' %>
+      <%= form.date_field :date_of_birth, class: 'form-control form-control-lg' %>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :father_name, class: "form-label" %>
-      <%= form.text_field :father_name, class: "form-control" %>
+      <%= form.label :father_name, class: 'form-label' %>
+      <%= form.text_field :father_name, class: 'form-control form-control-lg' %>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :government_id_number, class: "form-label" %>
-      <%= form.text_field :government_id_number, class: "form-control" %>
+      <%= form.label :government_id_number, class: 'form-label' %>
+      <%= form.text_field :government_id_number, class: 'form-control form-control-lg' %>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :government_id_photo, class: "form-label" %>
-      <%= form.file_field :government_id_photo, class: "form-control" %>
+      <%= form.label :government_id_photo, class: 'form-label' %>
+      <%= form.file_field :government_id_photo, class: 'form-control form-control-lg', accept: 'image/*' %>
     </div>
 
     <div class="col-12 mt-3">
-      <%= form.label :photo, "Face Photo", class: "form-label" %>
-      <%= webcam_capture(form, :photo) %>
+      <%= form.label :photo, 'Face Photo', class: 'form-label' %>
+      <div class="webcam-capture-container">
+
+        <%= webcam_capture(form, :photo) %>
+        <button type="button" class="webcam-capture-button mt-2" onclick="triggerWebcamCapture()">Capture Photo</button>
+        <div id="photo-preview" class="webcam-capture-preview mt-2" style="display: none;">
+          <img id="captured-image" src="#" alt="Captured Photo">
+        </div>
+        <%= form.hidden_field :photo_data %>
+      </div>
       <% @record.errors[:photo].each do |err| %>
         <div class="text-danger"><%= err %></div>
       <% end %>
+      <small class="form-text text-muted mt-1">Please ensure your face is clearly visible in the photo.</small>
     </div>
   </div>
 
-  <div class="mt-4 d-flex gap-2">
-    <%= form.submit "Create Record", class: "btn btn-primary" %>
-    <%= link_to "Back", records_path, class: "btn btn-secondary" %>
+  <div class="mt-5 d-flex gap-3">
+    <%= form.submit 'Create Record', class: 'btn btn-lg btn-success' %>
+    <%= link_to 'Back', records_path, class: 'btn btn-lg btn-outline-secondary' %>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const forms = document.querySelectorAll(".needs-validation");
+    Array.from(forms).forEach(form => {
+      form.addEventListener("submit", event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add("was-validated");
+      }, false);
+    });
+
+    // Enhanced Webcam Capture Handling (Illustrative - Adapt to your webcam_capture helper)
+    const videoElement = document.querySelector('.webcam-capture-video');
+    const captureButton = document.querySelector('.webcam-capture-button');
+    const photoPreview = document.getElementById('photo-preview');
+    const capturedImage = document.getElementById('captured-image');
+    const photoDataField = document.querySelector('input[name="record[photo_data]"]');
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          if (videoElement) {
+            videoElement.srcObject = stream;
+          }
+        })
+        .catch(error => {
+          console.error('Error accessing webcam:', error);
+          if (captureButton) {
+            captureButton.textContent = 'Webcam Not Available';
+            captureButton.disabled = true;
+          }
+        });
+    } else {
+      if (captureButton) {
+        captureButton.textContent = 'Webcam Not Supported';
+        captureButton.disabled = true;
+      }
+    }
+
+    window.triggerWebcamCapture = () => {
+      if (videoElement) {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        canvas.getContext('2d').drawImage(videoElement, 0, 0);
+        const imageDataURL = canvas.toDataURL('image/png');
+
+        if (capturedImage && photoPreview && photoDataField) {
+          capturedImage.src = imageDataURL;
+          photoPreview.style.display = 'block';
+          photoDataField.value = imageDataURL; // Send this data to the server
+        }
+
+        // Optionally stop the video stream after capturing (if you don't need continuous preview)
+        // const stream = videoElement.srcObject;
+        // const tracks = stream.getTracks();
+        // tracks.forEach(track => track.stop());
+        // videoElement.srcObject = null;
+      }
+    };
+  });
+</script>

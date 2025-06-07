@@ -1,0 +1,42 @@
+<div class="section user-info-container">
+  <div class="user-info-details">
+    <p><span class="label" style="font-weight: bold;">Name:</span> <%= @record.name %></p>
+    <p><span class="label" style="font-weight: bold;">Age:</span>
+      <%= @record.date_of_birth.present? ? "#{Time.zone.now.year - @record.date_of_birth.year} years" : 'N/A' %>
+    </p>
+    <p><span class="label" style="font-weight: bold;">Father's Name:</span> <%= @record.father_name.presence || 'N/A' %></p>
+    <p><span class="label" style="font-weight: bold;">Contact Number:</span> <%= @record.contact_number %></p>
+    <p><span class="label" style="font-weight: bold;">Address:</span> <%= [@record.address, @record.city, @record.state, @record.pincode].compact.join(', ') %></p>
+    <p><span class="label" style="font-weight: bold;">Government ID:</span> <%= @record.government_id_number.presence || 'N/A' %></p>
+    <p><span class="label" style="font-weight: bold;">Email:</span> <%= @record.email.presence || "Unknown" %></p>
+    <p><span class="label" style="font-weight: bold;">Created By:</span> <%= @attendance.user.email %></p>
+  </div>
+</div>
+
+<style>
+  .user-info-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px; /* Adjust spacing as needed */
+    margin-bottom: 10px; /* Add some margin below the section */
+  }
+
+  .user-info-details {
+    flex: 1; /* Allows details to take up remaining space */
+    font-size: 12px; /* Adjust font size for PDF */
+    line-height: 1.4;
+  }
+
+  .label {
+    display: inline-block;
+    width: 100px; /* Adjust width for better alignment */
+    font-weight: bold; /* Make labels bold */
+    margin-right: 5px;
+    color: #333; /* Darker color for labels */
+  }
+
+  .field {
+    display: inline;
+    color: #555; /* Slightly lighter color for values */
+  }
+</style>

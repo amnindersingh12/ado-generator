@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Attendance Report</title>
+  <style>
+    body { font-family: sans-serif; font-size: 10pt; }
+    h1, h2, h3 { color: #333; }
+    .section { margin-bottom: 20px; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .table th, .table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    .table th { background-color: #f0f0f0; font-weight: bold; }
+    .blank-line { margin-top: 15px; }
+    .note { font-size: 9pt; color: #777; }
+    .chart-container {
+        width: 100%; /* Ensure it takes full width of the card body */
+        height: auto; /* Adjust height as needed or set a fixed height */
+    }
+  </style>
+</head>
+<body>
+  <h1>Attendance Report - <%= Date.today.strftime('%B %d, %Y') %></h1>
+
+  <div class="section">
+    <h2>Detailed Daily Attendance Records</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>User Email</th>
+          <th>Check-In Time</th>
+          <th>Check-Out Time</th>
+          <th>Hours Spent</th>
+          <th>Record Created At</th>
+          </tr>
+      </thead>
+      <tbody>
+        <% @daily_records.each do |record| %>
+          <tr>
+            <td><%= record.in_time&.to_date %></td>
+            <td><%= record.user&.email %></td>
+            <td><%= record.in_time&.strftime('%Y-%m-%d %H:%M:%S') %></td>
+            <td><%= record.out_time&.strftime('%Y-%m-%d %H:%M:%S') %></td>
+            <td><%= ((record.out_time - record.in_time) / 1.hour).round(2) if record.in_time && record.out_time %></td>
+            <td><%= record.created_at&.strftime('%Y-%m-%d %H:%M:%S') %></td>
+            </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Summary of Daily Check-In/Out Counts</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Total Check-In Count</th>
+          <th>Total Check-Out Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @daily_attendance_summary.each do |date, counts| %>
+          <tr>
+            <td><%= date %></td>
+            <td><%= counts[:in] %></td>
+            <td><%= counts[:out] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>User Activity Analysis</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>User Email</th>
+          <th>Total Check-In/Out Actions</th>
+          <th>First Check-In</th>
+          <th>Last Check-Out</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @user_activity_summary.each do |email, summary| %>
+          <tr>
+            <td><%= email %></td>
+            <td><%= summary[:total_actions] %></td>
+            <td><%= summary[:first_check_in]&.strftime('%Y-%m-%d %H:%M:%S') %></td>
+            <td><%= summary[:last_check_out]&.strftime('%Y-%m-%d %H:%M:%S') %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Peak Time Analysis</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Time (Hour)</th>
+          <th>Peak Check-In Count</th>
+          <th>Peak Check-Out Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @peak_time_labels.each_with_index do |time, index| %>
+          <tr>
+            <td><%= time %></td>
+            <td><%= @peak_time_in_values[index] %></td>
+            <td><%= @peak_time_out_values[index] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+ </body>
+</html>

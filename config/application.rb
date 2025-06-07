@@ -1,6 +1,8 @@
-require_relative "boot"
+# frozen_string_literal: true
 
-require "rails/all"
+require_relative 'boot'
+
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -10,7 +12,7 @@ module AdoGenerator
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
-
+    config.autoload_paths += %W(#{config.root}/lib)
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
@@ -22,7 +24,7 @@ module AdoGenerator
     # in config/environments, which are processed later.
     #
     # updating time zone to indian standard time
-    config.time_zone = "Asia/Kolkata"
+    config.time_zone = 'Asia/Kolkata'
     config.active_record.default_timezone = :local
     # config.eager_load_paths << Rails.root.join("extras")
   end

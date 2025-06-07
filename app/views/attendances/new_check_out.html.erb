@@ -1,0 +1,31 @@
+<div class="container mt-5">
+  <h1 class="text-center mb-4" style="color: #28a745;"><i class="bi bi-door-open-fill me-2"></i> Check-Out for <%= @record.name %></h1>
+
+  <%= form_with model: [@record, @attendance], url: create_check_out_record_attendance_path(@record), local: true, html: { class: 'card p-4 shadow-sm border-success' } do |form| %>
+    <div class="mb-3">
+      <% if @attendance.purpose.blank? %>
+        <%= form.label :purpose, 'Purpose of Visit', class: 'form-label fw-semibold' %>
+        <%= form.text_area :purpose, class: 'form-control', rows: 3, required: true, placeholder: 'Briefly describe the purpose of the visit' %>
+      <% else %>
+        <p class="mb-1"><strong class="fw-semibold">Purpose of Visit:</strong></p>
+        <div class="alert alert-light border rounded"><%= @attendance.purpose %></div>
+      <% end %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :out_photo, '<i class="bi bi-camera-fill me-2"></i> Capture Check-Out Photo'.html_safe, class: 'form-label fw-semibold' %>
+      <div class="mb-2 border rounded p-2">
+        <%= render partial: 'shared/webcam_capture', locals: { form: form, field: :out_photo } %>
+      </div>
+      <% if @attendance.errors[:out_photo].any? %>
+        <div class="text-danger small"><%= @attendance.errors[:out_photo].join(', ') %></div>
+      <% end %>
+      <small class="form-text text-muted">Please ensure your face is clearly visible.</small>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <%= link_to 'Back'.html_safe, record_path(@record), class: 'btn btn-outline-secondary rounded-pill shadow-sm' %>
+      <%= form.submit 'Check Out'.html_safe, class: 'btn btn-success rounded-pill shadow-sm' %>
+    </div>
+  <% end %>
+</div>

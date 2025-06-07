@@ -4,12 +4,21 @@
 # belong in git's global ignore instead:
 # `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`
 
+
+/config/credentials/development.yml.enc
+/config/credentials/*.key
+/config/*.key
+
+
+
 # Ignore bundler config.
 /.bundle
 
 # Ignore all environment files.
-/.env
-/db/seeds/images/*
+ 
+/.env*
+
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
@@ -30,9 +39,4 @@
 
 /public/assets
 
-# Ignore master key for decrypting credentials and more.
-/config/master.key
-
-/config/credentials/production.key
-
-/config/credentials/development.key
+ 

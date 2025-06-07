@@ -1,0 +1,92 @@
+<h1>Monthly Attendance Summary - <%= Date::MONTHNAMES[@month] %> <%= @year %></h1>
+<% if @monthly_attendances.empty? %>
+  <p>No attendance records found for this month.</p>
+<% else %>
+  <p>
+    <strong>Total Check-Ins:</strong> <%= @monthly_summary[:total_check_ins] %><br>
+    <strong>Total Check-Outs:</strong> <%= @monthly_summary[:total_check_outs] %><br>
+    <strong>Unique Users:</strong> <%= @monthly_summary[:unique_users] %><br>
+    <strong>Total Records with Activity:</strong> <%= @monthly_summary[:total_records] %>
+  </p>
+  <h2>Daily Breakdown</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Check-Ins</th>
+        <th>Check-Outs</th>
+        <th>Pending</th>
+        <th>Unique Users</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @monthly_summary[:daily_breakdown].each do |day| %>
+        <tr>
+          <td><%= day[:date].strftime('%Y-%m-%d') %></td>
+          <td><%= day[:check_ins] %></td>
+          <td><%= day[:check_outs] %></td>
+          <td><%= day[:pending] %></td>
+          <td><%= day[:unique_users] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <h2>Record Activity</h2>
+  <% if @monthly_summary[:record_activity][:most_time] %>
+    <p>
+      <strong>Record with Most Time Spent:</strong> <%= @monthly_summary[:record_activity][:most_time][:record].try(:name) || @monthly_summary[:record_activity][:most_time][:record].try(:id) %>
+      (<%= time_spent_cal(@monthly_summary[:record_activity][:most_time][:total_time_seconds]) %>)
+      <% if @monthly_summary[:record_activity][:most_time][:attendance] %>
+        <br>
+        <small>
+          <strong>Last Interaction:</strong> <%= @monthly_summary[:record_activity][:most_time][:attendance].in_time.strftime('%Y-%m-%d %H:%M') %>
+          - <%= @monthly_summary[:record_activity][:most_time][:attendance].out_time.try(:strftime, '%Y-%m-%d %H:%M') || 'Pending' %>
+        </small>
+      <% end %>
+    </p>
+  <% else %>
+    <p>No records with both check-in and check-out times found for time analysis.</p>
+  <% end %>
+  <% if @monthly_summary[:record_activity][:least_time] %>
+    <p>
+      <strong>Record with Least Time Spent:</strong> <%= @monthly_summary[:record_activity][:least_time][:record].try(:name) || @monthly_summary[:record_activity][:least_time][:record].try(:id) %>
+      (<%= time_spent_cal(@monthly_summary[:record_activity][:least_time][:total_time_seconds]) %>)
+      <% if @monthly_summary[:record_activity][:least_time][:attendance] %>
+        <br>
+        <small>
+          <strong>Last Interaction:</strong> <%= @monthly_summary[:record_activity][:least_time][:attendance].in_time.strftime('%Y-%m-%d %H:%M') %>
+          - <%= @monthly_summary[:record_activity][:least_time][:attendance].out_time.try(:strftime, '%Y-%m-%d %H:%M') || 'Pending' %>
+        </small>
+      <% end %>
+    </p>
+  <% else %>
+    <p>No records with both check-in and check-out times found for time analysis.</p>
+  <% end %>
+  <h3>Most Frequent Records</h3>
+  <% if @monthly_summary[:record_activity][:frequent].present? %>
+    <ul>
+      <% @monthly_summary[:record_activity][:frequent].each do |item| %>
+        <li>
+          <%= item[:record].try(:name) || item[:record].try(:id) %> (Frequency: <%= item[:frequency] %>)
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No record activity found for frequency analysis.</p>
+  <% end %>
+<% end %>
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+</style>
