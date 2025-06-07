@@ -65,12 +65,13 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-
-gem "concurrent-ruby"
+ 
+gem 'dotenv'
+ 
 
 gem "faker"
 
-gem "rubocop", "~> 1.75"
+gem "rubocop", "~> 1.76"
 
 gem "rufo", "~> 0.18.1"
 
