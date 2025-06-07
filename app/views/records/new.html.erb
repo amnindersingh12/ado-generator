@@ -9,12 +9,16 @@
 
   .form-label {
     font-weight: 500; /* Slightly less bold for a modern feel */
-    
   }
 
   .text-danger {
     font-size: 0.875rem;
     color: #dc3545 !important; /* Bootstrap danger color */
+  }
+
+  /* Specific style for client-side invalid feedback to ensure it's visible */
+  .form-control:invalid ~ .invalid-feedback {
+    display: block; /* Ensures custom invalid feedback is shown */
   }
 
   .btn-lg {
@@ -87,7 +91,10 @@
   <div class="row g-4">
     <div class="col-md-6">
       <%= form.label :name, class: "form-label" %>
-      <%= form.text_field :name, class: "form-control form-control-lg", required: true %>
+      <%= form.text_field :name, class: "form-control form-control-lg", required: true, maxlength: 100 %>
+      <div class="invalid-feedback">
+        Please provide a valid name.
+      </div>
       <% @record.errors[:name].each do |err| %>
         <div class="text-danger"><%= err %></div>
       <% end %>
@@ -95,7 +102,10 @@
 
     <div class="col-md-6">
       <%= form.label :email, class: "form-label" %>
-      <%= form.email_field :email, class: "form-control form-control-lg", required: true %>
+      <%= form.email_field :email, class: "form-control form-control-lg", required: true, pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$" %>
+      <div class="invalid-feedback">
+        Please enter a valid email address.
+      </div>
       <% @record.errors[:email].each do |err| %>
         <div class="text-danger"><%= err %></div>
       <% end %>
@@ -103,7 +113,10 @@
 
     <div class="col-md-6">
       <%= form.label :contact_number, class: "form-label" %>
-      <%= form.telephone_field :contact_number, class: "form-control form-control-lg" %>
+      <%= form.telephone_field :contact_number, class: "form-control form-control-lg", required: true, pattern: "[6-9]{1}[0-9]{9}", maxlength: 10, minlength: 10 %>
+      <div class="invalid-feedback">
+        Please enter a valid 10-digit mobile number.
+      </div>
       <% @record.errors[:contact_number].each do |err| %>
         <div class="text-danger"><%= err %></div>
       <% end %>
@@ -111,54 +124,104 @@
 
     <div class="col-12">
       <%= form.label :address, class: "form-label" %>
-      <%= form.text_field :address, class: "form-control form-control-lg" %>
+      <%= form.text_field :address, class: "form-control form-control-lg", maxlength: 255 %>
+      <div class="invalid-feedback">
+        Please provide an address.
+      </div>
+      <%# No server-side error loop for address if it's not validated for presence %>
     </div>
 
     <div class="col-md-4">
       <%= form.label :pincode, class: "form-label" %>
-      <%= form.number_field :pincode, class: "form-control form-control-lg" %>
+      <%= form.text_field :pincode, class: "form-control form-control-lg", required: true, pattern: "[0-9]{6}", maxlength: 6, minlength: 6, inputmode: "numeric" %>
+      <div class="invalid-feedback">
+        Please enter a valid 6-digit pincode.
+      </div>
+      <% @record.errors[:pincode].each do |err| %>
+        <div class="text-danger">
+        <%= err %>
+        </div>
+      <% end %>
     </div>
 
     <div class="col-md-4">
       <%= form.label :city, class: "form-label" %>
-      <%= form.text_field :city, class: "form-control form-control-lg" %>
+      <%= form.text_field :city, class: "form-control form-control-lg", required: true, maxlength: 100 %>
+      <div class="invalid-feedback">
+        Please enter a city.
+      </div>
+      <% @record.errors[:city].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
     </div>
 
     <div class="col-md-4">
       <%= form.label :state, class: "form-label" %>
-      <%= form.text_field :state, class: "form-control form-control-lg" %>
+      <%= form.text_field :state, class: "form-control form-control-lg", required: true, maxlength: 100 %>
+      <div class="invalid-feedback">
+        Please enter a state.
+      </div>
+      <% @record.errors[:state].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
     </div>
 
     <div class="col-md-6">
       <%= form.label :date_of_birth, class: 'form-label' %>
-      <%= form.date_field :date_of_birth, class: 'form-control form-control-lg' %>
+      <%= form.date_field :date_of_birth, class: 'form-control form-control-lg', required: true, max: Date.current.to_s %>
+      <div class="invalid-feedback">
+        Please select a valid date of birth (cannot be in the future).
+      </div>
+      <% @record.errors[:date_of_birth].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
     </div>
 
     <div class="col-md-6">
       <%= form.label :father_name, class: 'form-label' %>
-      <%= form.text_field :father_name, class: 'form-control form-control-lg' %>
+      <%= form.text_field :father_name, class: 'form-control form-control-lg', required: true, maxlength: 100 %>
+      <div class="invalid-feedback">
+        Please enter your father's name.
+      </div>
+      <% @record.errors[:father_name].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
     </div>
 
     <div class="col-md-6">
       <%= form.label :government_id_number, class: 'form-label' %>
-      <%= form.text_field :government_id_number, class: 'form-control form-control-lg' %>
+      <%= form.text_field :government_id_number, class: "form-control form-control-lg", required: true, minlength: 5, maxlength: 20 %>
+      <div class="invalid-feedback">
+        Please enter a valid Government ID number (5-20 characters).
+      </div>
+      <% @record.errors[:government_id_number].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
     </div>
 
     <div class="col-md-6">
       <%= form.label :government_id_photo, class: 'form-label' %>
-      <%= form.file_field :government_id_photo, class: 'form-control form-control-lg', accept: 'image/*' %>
+      <%= form.file_field :government_id_photo, class: 'form-control form-control-lg', accept: 'image/*', required: true %>
+      <div class="invalid-feedback">
+        Please upload your Government ID photo.
+      </div>
+      <% @record.errors[:government_id_photo].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
     </div>
 
     <div class="col-12 mt-3">
       <%= form.label :photo, 'Face Photo', class: 'form-label' %>
       <div class="webcam-capture-container">
-
         <%= webcam_capture(form, :photo) %>
-        <button type="button" class="webcam-capture-button mt-2" onclick="triggerWebcamCapture()">Capture Photo</button>
-        <div id="photo-preview" class="webcam-capture-preview mt-2" style="display: none;">
-          <img id="captured-image" src="#" alt="Captured Photo">
+        <div id="photo-preview" class="webcam-capture-preview mt-2" style="display: <%= @record.photo.attached? ? 'block' : 'none' %>;">
+          <img id="captured-image" src="<%= @record.photo.attached? ? url_for(@record.photo) : '#' %>" alt="Captured Photo">
         </div>
-        <%= form.hidden_field :photo_data %>
+        <%= form.hidden_field :photo_data, id: "photo_data_field" %>
+        <%# Placeholder for client-side webcam errors if photo_data is empty %>
+        <div class="invalid-feedback webcam-invalid-feedback">
+          Face photo is required. Please capture it.
+        </div>
       </div>
       <% @record.errors[:photo].each do |err| %>
         <div class="text-danger"><%= err %></div>
@@ -178,26 +241,90 @@
     const forms = document.querySelectorAll(".needs-validation");
     Array.from(forms).forEach(form => {
       form.addEventListener("submit", event => {
+        // --- Custom validation for webcam photo before Bootstrap's checkValidity ---
+        const photoDataField = document.getElementById('photo_data_field');
+        const photoInvalidFeedback = photoDataField.closest('.webcam-capture-container').querySelector('.webcam-invalid-feedback');
+        const webcamVideo = document.querySelector('.webcam-capture-video');
+
+        // Check if photo_data is empty AND webcam is potentially active (stream might exist)
+        if (photoDataField && photoDataField.value === "" && webcamVideo && webcamVideo.srcObject) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (photoInvalidFeedback) {
+            photoInvalidFeedback.style.display = 'block'; // Show the custom feedback
+            photoInvalidFeedback.textContent = "Face photo is required. Please capture it.";
+            photoInvalidFeedback.classList.add('d-block'); // Ensure Bootstrap shows it
+          }
+          // Scroll to the webcam section
+          photoDataField.closest('.col-12').scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+           // Hide the custom feedback if photo is captured or webcam is not active
+           if (photoInvalidFeedback) {
+             photoInvalidFeedback.style.display = 'none';
+             photoInvalidFeedback.classList.remove('d-block');
+           }
+        }
+        // --- End custom validation for webcam photo ---
+
+        // Bootstrap's client-side validation
         if (!form.checkValidity()) {
           event.preventDefault();
           event.stopPropagation();
+          // Scroll to the first invalid field
+          const firstInvalidField = form.querySelector(":invalid");
+          if (firstInvalidField) {
+            firstInvalidField.focus(); // Focus on the field
+            firstInvalidField.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
         }
         form.classList.add("was-validated");
       }, false);
     });
 
-    // Enhanced Webcam Capture Handling (Illustrative - Adapt to your webcam_capture helper)
+    // --- Server-side error scrolling ---
+    // Check if there are server-side errors on page load (after form submission failed)
+    <% if @record.errors.any? %>
+      const firstErrorElement = document.querySelector('.text-danger'); // Finds the very first server-side error message
+      if (firstErrorElement) {
+        // Find the input field associated with this error.
+        // It's usually the sibling of the label or a child of the immediate parent div.
+        const parentColumn = firstErrorElement.closest('.col-md-6, .col-12');
+        if (parentColumn) {
+          const inputField = parentColumn.querySelector('.form-control, .form-select');
+          if (inputField) {
+            inputField.focus(); // Focus on the field
+            inputField.scrollIntoView({ behavior: "smooth", block: "center" });
+          } else {
+            // Fallback if no specific input field found in the column (e.g., error for webcam area)
+            firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+      }
+    <% end %>
+    // --- End of server-side error scrolling block ---
+
+    // Enhanced Webcam Capture Handling
     const videoElement = document.querySelector('.webcam-capture-video');
-    const captureButton = document.querySelector('.webcam-capture-button');
+    const captureButton = document.getElementById('captureWebcamBtn');
     const photoPreview = document.getElementById('photo-preview');
     const capturedImage = document.getElementById('captured-image');
-    const photoDataField = document.querySelector('input[name="record[photo_data]"]');
+    const photoDataField = document.getElementById('photo_data_field');
+    const webcamInvalidFeedback = document.querySelector('.webcam-invalid-feedback'); // Get the specific feedback div
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
           if (videoElement) {
             videoElement.srcObject = stream;
+            // Add event listener to remove webcam error when photo is captured
+            captureButton.addEventListener('click', () => {
+              if (photoDataField.value !== "") { // Only remove if a photo was actually captured
+                if (webcamInvalidFeedback) {
+                  webcamInvalidFeedback.style.display = 'none';
+                  webcamInvalidFeedback.classList.remove('d-block');
+                }
+              }
+            });
           }
         })
         .catch(error => {
@@ -206,16 +333,28 @@
             captureButton.textContent = 'Webcam Not Available';
             captureButton.disabled = true;
           }
+          // Also indicate webcam required error if no webcam
+          if (webcamInvalidFeedback) {
+            webcamInvalidFeedback.style.display = 'block';
+            webcamInvalidFeedback.classList.add('d-block');
+            webcamInvalidFeedback.textContent = "Webcam is required to capture face photo but is not available or permissions denied.";
+          }
         });
     } else {
       if (captureButton) {
         captureButton.textContent = 'Webcam Not Supported';
         captureButton.disabled = true;
       }
+      // Indicate webcam required error if browser doesn't support
+      if (webcamInvalidFeedback) {
+        webcamInvalidFeedback.style.display = 'block';
+        webcamInvalidFeedback.classList.add('d-block');
+        webcamInvalidFeedback.textContent = "Webcam is required to capture face photo but is not supported by your browser.";
+      }
     }
 
     window.triggerWebcamCapture = () => {
-      if (videoElement) {
+      if (videoElement && videoElement.srcObject) { // Ensure stream is active
         const canvas = document.createElement('canvas');
         canvas.width = videoElement.videoWidth;
         canvas.height = videoElement.videoHeight;
@@ -226,13 +365,19 @@
           capturedImage.src = imageDataURL;
           photoPreview.style.display = 'block';
           photoDataField.value = imageDataURL; // Send this data to the server
+          // Remove client-side error message if photo captured successfully
+          if (webcamInvalidFeedback) {
+            webcamInvalidFeedback.style.display = 'none';
+            webcamInvalidFeedback.classList.remove('d-block');
+          }
         }
-
-        // Optionally stop the video stream after capturing (if you don't need continuous preview)
-        // const stream = videoElement.srcObject;
-        // const tracks = stream.getTracks();
-        // tracks.forEach(track => track.stop());
-        // videoElement.srcObject = null;
+      } else {
+        alert("Webcam not active. Please ensure permissions are granted and try again.");
+        if (webcamInvalidFeedback) {
+          webcamInvalidFeedback.style.display = 'block';
+          webcamInvalidFeedback.classList.add('d-block');
+          webcamInvalidFeedback.textContent = "Webcam not active. Please ensure permissions are granted.";
+        }
       }
     };
   });
