@@ -27,9 +27,9 @@ end
 records = 10.times.map do |_i|
   record = Record.create!(
     name: Faker::Name.name,
-    contact_number: Faker::PhoneNumber.phone_number,
+    contact_number: Faker::Number.number(digits: 10).to_i,
     address: Faker::Address.full_address,
-    pincode: Faker::Address.zip_code,
+    pincode: Faker::Number.number(digits: 6).to_i,
     city: Faker::Address.city,
     state: Faker::Address.state,
     date_of_birth: Faker::Date.birthday(min_age: 18, max_age: 65),
