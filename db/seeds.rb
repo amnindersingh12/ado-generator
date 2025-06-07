@@ -60,7 +60,7 @@ users.each do |user|
   10.times do
     in_time = Faker::Time.between(from: 90.days.ago, to: 1.day.ago)
     out_time = Faker::Time.between(from: in_time + 1.hour, to: in_time + 12.hours)
-    purpose = Faker::Lorem.sentence(word_count: 3)
+    purpose = Faker::Lorem.sentence(word_count: 13)
     attendance = Attendance.new(
       user_id: user.id,
       record_id: records.sample.id,
