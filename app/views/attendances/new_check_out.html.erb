@@ -12,17 +12,6 @@
       <% end %>
     </div>
 
-    <div class="mb-3">
-      <%= form.label :out_photo, '<i class="bi bi-camera-fill me-2"></i> Capture Check-Out Photo'.html_safe, class: 'form-label fw-semibold' %>
-      <div class="mb-2 border rounded p-2">
-        <%= render partial: 'shared/webcam_capture', locals: { form: form, field: :out_photo } %>
-      </div>
-      <% if @attendance.errors[:out_photo].any? %>
-        <div class="text-danger small"><%= @attendance.errors[:out_photo].join(', ') %></div>
-      <% end %>
-      <small class="form-text text-muted">Please ensure your face is clearly visible.</small>
-    </div>
-
     <div class="d-flex justify-content-end gap-2">
       <%= link_to 'Back'.html_safe, record_path(@record), class: 'btn btn-outline-secondary rounded-pill shadow-sm' %>
       <%= form.submit 'Check Out'.html_safe, class: 'btn btn-success rounded-pill shadow-sm' %>

@@ -69,30 +69,7 @@ users.each do |user|
       purpose: purpose
     )
 
-    begin
-      # Randomly attach either in_photo, out_photo, or both
-      attach_type = %i[both].sample
 
-      case attach_type
-      when :in
-        attendance.in_photo.attach(
-          io: sample_image_io,
-          filename: "in_photo_#{attendance.id}.png"
-        )
-      when :out
-        attendance.out_photo.attach(
-          io: sample_image_io,
-          filename: "out_photo_#{attendance.id}.png"
-        )
-      when :both
-        attendance.in_photo.attach(
-          io: sample_image_io,
-          filename: "in_photo_#{attendance.id}.png"
-        )
-        attendance.out_photo.attach(
-          io: sample_image_io,
-          filename: "out_photo_#{attendance.id}.png"
-        )
       end
 
       attendance.save!

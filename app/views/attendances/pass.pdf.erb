@@ -165,10 +165,7 @@
     <div class="title" style="font-size: 16px;">(<%= format_datetime(@attendance.out_time || @attendance.in_time || Time.current) %>)</div>
     <div class="token">Token ID: <span style="font-weight: bold;"><%= display_token(@attendance) %></span></div>
 
-    <div class="photo-container">
-      <%= base64_image_tag(@attendance.out_time.present? ? @attendance.out_photo : @attendance.in_photo, width: 120, height: 120, class: 'rounded-photo') %>
-    </div>
-
+  
     <%= render 'user_info' %>
 
     <div class="section">

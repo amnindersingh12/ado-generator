@@ -8,30 +8,22 @@
     <div class="card-body">
       <%= form_with model: [@record, @attendance], local: true, html: { class: 'needs-validation' } do |form| %>
         <div class="mb-4">
-          <% if @attendance.purpose.blank? %>
-            <%= form.label :purpose, 'Purpose', class: 'form-label' %>
-      <%= form.text_area :purpose, class: 'form-control', rows: 3, required: true %>
-          <% else %>
-            <strong>Purpose:</strong>
-            <%= @attendance.purpose %>
-          <% end %>
+          <%= form.label :purpose, 'Purpose', class: 'form-label' %>
+          <%# Always render the text_area. Use 'readonly: true' if you don't want it editable on check-out. %>
+          <%# If you want it editable only if it was blank, keep your original 'if' condition,
+              but add a hidden field for purpose in the 'else' block.
+              The simpler approach below is usually better for 'update' actions. %>
+          <%= form.text_area :purpose, class: 'form-control', rows: 3,
+            readonly: @attendance.purpose.present?, # Makes it read-only if purpose exists
+            placeholder: 'Briefly describe the purpose of the visit' %>
         </div>
-        <!-- Check In time and Capture Check-Out Photo Section -->
-          <p class="fw-semibold">
-            <i class="bi bi-calendar-check me-2"></i> Check In Time:
-            <%= @attendance.in_time.strftime('%B %d, %Y %I:%M %p') %>
-            <br>
-          </p>
-          <%= form.label :out_photo, 'Capture Check-Out Photo', class: 'form-label' %>
-    <%= render partial: 'shared/webcam_capture', locals: { form: form, field: :out_photo } %>
-          <% if @attendance.errors[:out_photo].any? %>
-            <div class="text-danger small mt-2">
-              <i class="bi bi-exclamation-circle-fill me-2"></i>
-              <%= @attendance.errors[:out_photo].join(', ') %>
-            </div>
-          <% end %>
-        </div>
-        <!-- Display Original Photo Section -->
+
+        <p class="fw-semibold">
+          <i class="bi bi-calendar-check me-2"></i> Check In Time:
+          <%= @attendance.in_time.strftime('%B %d, %Y %I:%M %p') %>
+          <br>
+        </p>
+        
         <% if @record.photo.attached? %>
           <div class="mb-4">
             <p class="fw-semibold">
@@ -42,12 +34,15 @@
             </div>
           </div>
         <% end %>
-              <% if @attendance.errors[:out_photo].any? %>
-        <div class="text-danger small">
-          <%= @attendance.errors[:out_photo].join(', ') %>
-        </div>
-      <% end %>
-        <!-- Form Buttons: Check Out and Back -->
+
+        <%# Removed the image upload section as per your earlier comment about not using in/out photos %>
+        <%# If you still have out_photo validations, you might need to remove them from the model %>
+        <% if @attendance.errors[:out_photo].any? %>
+          <div class="text-danger small">
+            <%= @attendance.errors[:out_photo].join(', ') %>
+          </div>
+        <% end %>
+
         <div class="d-flex justify-content-between">
           <%= form.submit 'Check Out', class: 'btn btn-success px-4' %>
           <%= link_to 'Back', record_path(@record), class: 'btn btn-secondary px-4' %>

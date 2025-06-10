@@ -10,19 +10,7 @@
         <p class="mb-1"><strong class="fw-semibold">Purpose of Visit:</strong></p>
         <div class="alert alert-light border rounded"><%= @attendance.purpose %></div>
       <% end %>
-    </div>
-
-    <div class="mb-3">
-      <%= form.label :in_photo, '<i class="bi bi-camera-fill me-2"></i> Capture Check-In Photo'.html_safe, class: 'form-label fw-semibold', required: true %>
-      <div class="mb-2 border rounded p-2">
-        <%= render partial: 'shared/webcam_capture', locals: { form: form, field: :in_photo } %>
-      </div>
-      <% if @attendance.errors[:in_photo].any? %>
-        <div class="text-danger small"><%= @attendance.errors[:in_photo].join(', ') %></div>
-      <% end %>
-      <small class="form-text text-muted">Please ensure your face is clearly visible.</small>
-    </div>
-
+    </div> 
     <div class="d-flex justify-content-end gap-2">
       <%= link_to 'Back'.html_safe, record_path(@record), class: 'btn btn-outline-secondary rounded-pill shadow-sm' %>
       <%= form.submit 'Check In'.html_safe, class: 'btn btn-primary rounded-pill shadow-sm' %>

@@ -3,65 +3,24 @@
 
   <%= form_with model: [@record, @attendance], url: update_check_in_record_attendance_path(@record, @attendance), local: true, html: { class: 'card p-4 shadow-sm border-success', id: 'checkInForm' } do |form| %>
     <div class="mb-3">
-      <% if @attendance.purpose.blank? %>
-        <%= form.label :purpose, 'Purpose of Visit', class: 'form-label fw-semibold' %>
-        <%= form.text_area :purpose, class: 'form-control', rows: 3, required: true, placeholder: 'Briefly describe the purpose of the visit' %>
-      <% else %>
-        <p class="mb-1"><strong class="fw-semibold">Purpose of Visit:</strong></p>
-        <div class="alert alert-light border rounded"><%= @attendance.purpose %></div>
-                  <p class="fw-semibold">
+      <%= form.label :purpose, 'Purpose of Visit', class: 'form-label fw-semibold' %>
+      <%# Always render the text_area. Add 'readonly: true' if you don't want it editable %>
+      <%= form.text_area :purpose, class: 'form-control', rows: 3, placeholder: 'Briefly describe the purpose of the visit', readonly: @attendance.purpose.present? %>
+      
+      <% if @attendance.purpose.present? %>
+        <p class="fw-semibold mt-2">
             <i class="bi bi-calendar-check me-2"></i> Check Out Time:
-            <%= @attendance.out_time.strftime('%B %d, %Y %I:%M %p') %>
+            <%= @attendance.out_time.present? ? @attendance.out_time.strftime('%B %d, %Y %I:%M %p') : 'N/A' %>
             <br>
-          </p>
+        </p>
       <% end %>
-    </div>
-
-    <div class="mb-3">
-      <%= form.label :in_photo, '<i class="bi bi-camera-fill me-2"></i> Capture Check-In Photo'.html_safe, class: 'form-label fw-semibold', required: true %>
-      <div class="mb-2 border rounded p-2">
-        <%= render partial: 'shared/webcam_capture', locals: { form: form, field: :in_photo } %>
-      </div>
-      <% if @attendance.errors[:in_photo].any? %>
-        <div class="text-danger small"><%= @attendance.errors[:in_photo].join(', ') %></div>
-      <% end %>
-      <small class="form-text text-muted">Please ensure your face is clearly visible.</small>
     </div>
 
     <div class="d-flex justify-content-end gap-2 align-items-center">
       <div>
-        <%= form.submit 'Complete Check-In'.html_safe, class: 'btn btn-success rounded-pill shadow-sm', id: 'submitBtn', disabled: true %>
-        <span id="photoWarning" class="text-danger ms-3 small"><i class="bi bi-exclamation-triangle-fill me-1"></i> Please take a photo to enable submission</span>
+        <%= form.submit 'Complete Check-In'.html_safe, class: 'btn btn-success rounded-pill shadow-sm', id: 'submitBtn'%>
       </div>
       <%= link_to 'Back'.html_safe, record_path(@record), class: 'btn btn-outline-secondary rounded-pill shadow-sm' %>
     </div>
   <% end %>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const submitBtn = document.getElementById('submitBtn');
-    const photoWarning = document.getElementById('photoWarning');
-    const inPhotoInput = document.getElementById('in_photo_base64'); // Assuming your webcam capture updates this hidden field
-
-    function checkPhotoCaptured() {
-      if (inPhotoInput && inPhotoInput.value) {
-        submitBtn.removeAttribute('disabled');
-        photoWarning.style.display = 'none';
-      } else {
-        submitBtn.setAttribute('disabled', 'disabled');
-        photoWarning.style.display = 'inline';
-      }
-    }
-
-    // Initial check in case there was a previously captured photo
-    checkPhotoCaptured();
-
-    // Listen for the custom webcam image captured event (assuming your partial dispatches this)
-    document.addEventListener('webcamImageCaptured', function(event) {
-      if (event.detail.field === 'in_photo') {
-        checkPhotoCaptured();
-      }
-    });
-  });
-</script>

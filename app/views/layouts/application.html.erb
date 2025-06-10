@@ -6,12 +6,19 @@
   <title>AdoGenerator - Your Attendance Hub</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-  <%= stylesheet_link_tag 'application', 'data-turbo-track': 'reload' %>
+
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
   <%= javascript_include_tag 'application', 'data-turbo-track': 'reload', defer: true %>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <%# Correctly link to your downloaded Bootstrap and Bootstrap Icons CSS %>
+  <%= stylesheet_link_tag 'bootstrap.min', media: 'all', 'data-turbo-track': 'reload' %>
+  <%= stylesheet_link_tag 'bootstrap-icons', media: 'all', 'data-turbo-track': 'reload' %>
+
+  <%# Link to your downloaded Chart.js and Bootstrap Bundle JS (using asset_path is fine for JS) %>
+  <script src="<%= asset_path 'chart.umd.js' %>" defer></script>
+  <script src="<%= asset_path 'bootstrap.bundle.min.js' %>" defer></script>
+
+
   <style>
     /* Modern UI & Elegant Tone - Base Styles with Theme Variables */
     body {

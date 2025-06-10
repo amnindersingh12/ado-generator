@@ -50,7 +50,7 @@ class RecordsController < ApplicationController
 
     @records = @q.result(distinct: true)
                  .includes(:photo_attachment, :government_id_photo_attachment,
-                           attendances: %i[in_photo_attachment out_photo_attachment])
+                           attendances: %i[])
                  .order(created_at: :desc)
 
     calculate_attendance_statistics
@@ -114,7 +114,7 @@ class RecordsController < ApplicationController
   def record_params
     params.require(:record).permit(:government_id_photo, :name, :photo, :contact_number, :address, :pincode,
                                    :city, :state, :date_of_birth, :father_name, :government_id_number,
-                                   :in_time, :out_time, :in_photo, :out_photo, :user_id, :email)
+                                   :in_time, :out_time, :user_id, :email)
   end
 
   def authorize_admin!
