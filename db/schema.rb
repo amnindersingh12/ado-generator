@@ -62,9 +62,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_131312) do
     t.datetime "date_of_birth"
     t.string "father_name"
     t.integer "government_id_number"
+    t.boolean "is_guest", default: false
+    t.integer "records_id"
+    t.integer "parent_record_id"
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["parent_record_id"], name: "index_records_on_parent_record_id"
+    t.index ["records_id"], name: "index_records_on_records_id"
     t.index ["user_id"], name: "index_records_on_user_id"
   end
 
@@ -85,5 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_131312) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "attendances", "records"
   add_foreign_key "attendances", "users"
+  add_foreign_key "records", "records", column: "parent_record_id"
+  add_foreign_key "records", "records", column: "records_id"
   add_foreign_key "records", "users"
 end

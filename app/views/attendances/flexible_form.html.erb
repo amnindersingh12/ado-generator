@@ -1,0 +1,91 @@
+<%# app/views/attendances/flexible_form.html.erb %>
+<%# This form handles both creating a new attendance or completing an existing one. %>
+
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h1 class="card-title mb-0">
+            <% if @form_action == :create_new_attendance %>
+              <i class="bi bi-calendar-plus me-2"></i> Start New Attendance for <%= @record.name %>
+            <% else %>
+              <i class="bi bi-calendar-check me-2"></i> Complete Attendance for <%= @record.name %>
+              <span class="badge bg-light text-primary ms-2">ID: <%= @attendance.id %></span>
+            <% end %>
+          </h1>
+        </div>
+        <div class="card-body">
+          <% if @attendance.errors.any? %>
+            <div id="error_explanation" class="alert alert-danger">
+              <h2><%= pluralize(@attendance.errors.count, "error") %> prohibited this attendance from being saved:</h2>
+              <ul>
+                <% @attendance.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <%= form_with(model: [@record, @attendance],
+                        url: create_or_update_visit_record_attendances_path(@record, id: @attendance.id),
+                        method: (@form_action == :create_new_attendance ? :post : :patch),
+                        local: true,
+                        html: { class: "needs-validation", novalidate: true }) do |form| %>
+
+            <div class="mb-3">
+              <%= form.label :purpose, class: "form-label" %>
+              <%# Added 'disabled' attribute if @attendance.purpose is already present %>
+              <%= form.text_area :purpose, class: "form-control", rows: 3, required: true,
+                                  placeholder: "e.g., Meeting with John Doe, Interview, Delivery, etc.",
+                                  disabled: @attendance.purpose.present? %>
+              <div class="invalid-feedback">
+                Please provide a purpose for the visit.
+              </div>
+              <% @attendance.errors[:purpose].each do |err| %>
+                <div class="text-danger"><%= err %></div>
+              <% end %>
+            </div>
+
+            <div class="mb-3 form-check">
+              <%= form.check_box :set_in_time, { class: "form-check-input", checked: @attendance.in_time.present?, disabled: @attendance.in_time.present? } %>
+              <%= form.label :set_in_time, "Set In Time Now", class: "form-check-label" %>
+              <% if @attendance.in_time.present? %>
+                <small class="text-muted ms-2">(Already set: <%= l @attendance.in_time, format: :long_datetime %>)</small>
+              <% end %>
+            </div>
+
+            <div class="mb-3 form-check">
+              <%= form.check_box :set_out_time, { class: "form-check-input", checked: @attendance.out_time.present?, disabled: @attendance.out_time.present? } %>
+              <%= form.label :set_out_time, "Set Out Time Now", class: "form-check-label" %>
+              <% if @attendance.out_time.present? %>
+                <small class="text-muted ms-2">(Already set: <%= l @attendance.out_time, format: :long_datetime %>)</small>
+              <% end %>
+            </div>
+
+            <%# Display current times if available %>
+            <% if @attendance.in_time.present? || @attendance.out_time.present? %>
+              <h5 class="mt-4">Current Times:</h5>
+              <% if @attendance.in_time.present? %>
+                <p class="mb-1"><strong>In Time:</strong> <%= l @attendance.in_time, format: :long_datetime %></p>
+              <% else %>
+                <p class="mb-1 text-muted"><strong>In Time:</strong> Not Set</p>
+              <% end %>
+              <% if @attendance.out_time.present? %>
+                <p><strong>Out Time:</strong> <%= l @attendance.out_time, format: :long_datetime %></p>
+              <% else %>
+                <p class="text-muted"><strong>Out Time:</strong> Not Set</p>
+              <% end %>
+            <% end %>
+
+
+            <div class="d-flex justify-content-between mt-4">
+              <%= form.submit (@form_action == :create_new_attendance ? 'Start Visit' : 'Complete Visit'), class: 'btn btn-primary btn-lg' %>
+              <%= link_to 'Cancel', record_path(@record), class: 'btn btn-outline-secondary btn-lg' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

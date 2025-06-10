@@ -1,89 +1,79 @@
 # frozen_string_literal: true
 
 class AttendancesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_record
-  before_action :ensure_same_user_checking_out, only: %i[edit update]
-  before_action :ensure_same_user_checking_in, only: %i[complete_check_in update_check_in]
+  before_action :ensure_same_user_permission, only: %i[create_or_update_visit]
 
-  def new
-    unless valid_state_for_check_in?(@record)
-      redirect_to record_path(@record),
-                  alert: 'Must complete previous attendance (check-out required) before starting a new check-in.'
+  # GET /records/:record_id/attendances/new_visit
+  # This acts as the flexible entry point for attendance.
+  # It finds a *truly pending* attendance or initializes a new one.
+  def new_visit
+    # Find the most recent attendance for this record by the current user
+    # that is explicitly INCOMPLETE:
+    # (has an in_time AND a NULL out_time) OR (has an out_time AND a NULL in_time).
+    # This query will ignore fully completed records AND records where both times are NULL (effectively "blank" records).
+    @attendance = @record.attendances
+                         .where(user: current_user)
+                         .where("
+                            (in_time IS NOT NULL AND out_time IS NULL) OR
+                            (in_time IS NULL AND out_time IS NOT NULL)
+                          ")
+                         .order(created_at: :desc)
+                         .first
+
+    if @attendance.nil?
+      # This block executes if:
+      # 1. There are NO pending (partially filled) attendance records.
+      # 2. All previous attendance records are fully completed.
+      # 3. Any "blank" attendance records (both times NULL) are ignored, leading to a new record.
+      @attendance = @record.attendances.build(user: current_user)
+      @form_action = :create_new_attendance # Flag for view to show "Start New Attendance"
+    else
+      # Found an existing, partially filled attendance record.
+      # The user is then directed to complete that specific record.
+      @form_action = :complete_existing_attendance # Flag for view to show "Complete Attendance"
+    end
+
+    render 'attendances/flexible_form'
+  end
+
+  # POST/PATCH /records/:record_id/attendances/create_or_update_visit
+  def create_or_update_visit
+    if params[:id].present?
+      @attendance = @record.attendances.find(params[:id])
+      unless @attendance.user == current_user
+        redirect_to record_path(@record), alert: "You are not authorized to modify this attendance."
+        return
+      end
+      new_purpose = @attendance.purpose.present? ? @attendance.purpose : attendance_params[:purpose]
+    else
+      @attendance = @record.attendances.build(user: current_user)
+      new_purpose = attendance_params[:purpose]
+    end
+
+    in_time_to_set = attendance_params[:set_in_time] == '1' ? Time.current : @attendance.in_time
+    out_time_to_set = attendance_params[:set_out_time] == '1' ? Time.current : @attendance.out_time
+
+    # Validate that at least one time or purpose is being set for a new record
+    if @attendance.new_record? && in_time_to_set.blank? && out_time_to_set.blank? && new_purpose.blank?
+      @attendance.errors.add(:base, "An attendance record must have a purpose and at least one time set.")
+      @form_action = :create_new_attendance
+      render 'attendances/flexible_form', status: :unprocessable_entity
       return
     end
-    @attendance = @record.attendances.build(user: current_user)
-  end
 
-  def edit
-    @attendance = @record.attendances.find(params[:id])
-    return if @attendance.in_time && !@attendance.out_time
-
-    redirect_to record_path(@record), alert: 'This attendance cannot be checked out.'
-  end
-
-  def create
-    unless valid_state_for_check_in?(@record)
-      redirect_to record_path(@record),
-                  alert: 'Must complete previous attendance (check-out required) before starting a new check-in.'
-      return
-    end
-
-    @attendance = @record.attendances.build(attendance_params.merge(user: current_user, in_time: Time.current))
-
-    if @attendance.save
-      redirect_to print_pass_record_attendance_path(@record, @attendance, format: :pdf)
+    if @attendance.update(purpose: new_purpose, in_time: in_time_to_set, out_time: out_time_to_set)
+      if @attendance.in_time.present? && @attendance.out_time.present?
+        redirect_to print_pass_record_attendance_path(@record, @attendance, format: :pdf),
+                    notice: "#{@record.name}'s attendance completed successfully!"
+      else
+        redirect_to record_path(@record),
+                    notice: "#{@record.name}'s attendance updated (still pending completion)."
+      end
     else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
-  def new_check_out
-    unless valid_state_for_check_out?(@record)
-      redirect_to record_path(@record),
-                  alert: 'Must complete previous attendance (check-in required) before starting a new check-out.'
-      return
-    end
-    @attendance = @record.attendances.build(user: current_user)
-  end
-
-  def create_check_out
-    unless valid_state_for_check_out?(@record)
-      redirect_to record_path(@record),
-                  alert: 'Must complete previous attendance (check-in required) before starting a new check-out.'
-      return
-    end
-
-    @attendance = @record.attendances.build(attendance_params.merge(user: current_user, out_time: Time.current))
-
-    if @attendance.save
-      redirect_to print_pass_record_attendance_path(@record, @attendance, format: :pdf)
-    else
-      render :new_check_out, status: :unprocessable_entity
-    end
-  end
-
-  def complete_check_in
-    @attendance = @record.attendances.find(params[:id])
-    return if !@attendance.in_time && @attendance.out_time
-
-    redirect_to record_path(@record), alert: 'This attendance cannot be updated with a check-in.'
-  end
-
-  def update_check_in
-    @attendance = @record.attendances.find(params[:id])
-    if @attendance.update(attendance_params.merge(in_time: Time.current))
-      redirect_to record_path(@record), notice: 'Check-in recorded.'
-    else
-      render :complete_check_in, status: :unprocessable_entity
-    end
-  end
-
-  def update
-    @attendance = @record.attendances.find(params[:id])
-    if @attendance.update(attendance_params.merge(out_time: Time.current))
-      redirect_to record_path(@record), notice: 'Check-out recorded.'
-    else
-      render :edit, status: :unprocessable_entity
+      @form_action = params[:id].present? ? :complete_existing_attendance : :create_new_attendance
+      render 'attendances/flexible_form', status: :unprocessable_entity
     end
   end
 
@@ -123,30 +113,14 @@ class AttendancesController < ApplicationController
 
   private
 
-  def ensure_same_user_checking_out
-    @attendance = Attendance.find(params[:id])
-    return if @attendance.user_id == current_user.id
-
-    redirect_to record_path(@attendance.record), alert: 'You are not authorized to check out this attendance.'
-  end
-
-  def ensure_same_user_checking_in
-    @attendance = Attendance.find(params[:id])
-    return if @attendance.user_id == current_user.id
-
-    redirect_to record_path(@attendance.record), alert: 'You are not authorized to check in this attendance.'
-  end
-
-  def valid_state_for_check_in?(record)
-    last_attendance = record.attendances.where(user: current_user).last
-    # Allow check-in if: no previous attendance, or last attendance is complete (both in_time and out_time)
-    last_attendance.nil? || (last_attendance.in_time && last_attendance.out_time)
-  end
-
-  def valid_state_for_check_out?(record)
-    last_attendance = record.attendances.where(user: current_user).last
-    # Allow check-out if: no previous attendance, or last attendance is complete (both in_time and out_time)
-    last_attendance.nil? || (last_attendance.in_time && last_attendance.out_time)
+  def ensure_same_user_permission
+    if params[:id].present?
+      @attendance = Attendance.find(params[:id])
+      unless @attendance.user == current_user
+        redirect_to record_path(@record), alert: 'You are not authorized to modify this attendance.'
+        return
+      end
+    end
   end
 
   def set_record
@@ -154,16 +128,11 @@ class AttendancesController < ApplicationController
   end
 
   def attendance_params
-    permitted = []
-    permitted << :purpose if params[:attendance]&.key?(:purpose)
-    permitted << :in_time if params[:attendance]&.key?(:in_time) # This line will likely not be true if in_time is only set by merge
-    permitted << :out_time if params[:attendance]&.key?(:out_time)
-    params.require(:attendance).permit(*permitted) # <--- The error is here!
+    params.require(:attendance).permit(:purpose, :set_in_time, :set_out_time)
   end
 
   def image_to_base64(image)
     return nil unless image.attached?
-
     file = image.download
     base64 = Base64.encode64(file).gsub(/\s+/, '')
     "data:#{image.content_type};base64,#{base64}"

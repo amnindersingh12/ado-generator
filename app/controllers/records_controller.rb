@@ -1,57 +1,29 @@
+# frozen_string_literal: true
+
 class RecordsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_record, only: %i[edit update destroy]
+  # Include `show` action for set_record, as it was in your previous version.
+  before_action :set_record, only: %i[edit update destroy show]
   before_action :authorize_admin!, only: [:destroy]
 
-  def search
-    @q = Record.ransack(params[:q])
-    @records = @q.result(distinct: true)
-  end
-
-  def check_in
-    @record = Record.find(params[:id])
-    @attendance = @record.attendances.new # Prepare a new attendance record
-  end
-
-  def complete_check_in
-    @record = Record.find(params[:record_id]) # Assuming record_id is passed
-    @attendance = @record.attendances.new(in_time: Time.current)
-    if @attendance.save
-      redirect_to @record, notice: "#{@record.name} checked in."
-    else
-      render :check_in, alert: 'Check-in failed.'
+  # Action for dynamic search of hosts (used by guest creation form)
+  def search_records
+    @q = Record.where(is_guest: false).ransack(params[:q]) # Only search for non-guest records as potential hosts
+    @records = @q.result(distinct: true).limit(10) # Limit results for performance
+    # Exclude the current record itself from being chosen as a host if editing
+    if params[:exclude_id].present?
+      @records = @records.where.not(id: params[:exclude_id])
     end
-  end
-
-  def new_check_out
-    @record = Record.find(params[:id])
-    @attendance = @record.attendances.order(created_at: :desc).first # Find the latest attendance
-    if @attendance&.in_time.present? && @attendance.out_time.nil?
-      # Proceed with check-out form
-    else
-      redirect_to @record, alert: "No active check-in found for #{@record.name}."
-    end
-  end
-
-  def create_check_out
-    @record = Record.find(params[:record_id]) # Assuming record_id is passed
-    @attendance = @record.attendances.order(created_at: :desc).first
-    if @attendance&.in_time.present? && @attendance.out_time.nil?
-      @attendance.update(out_time: Time.current)
-      redirect_to @record, notice: "#{@record.name} checked out."
-    else
-      redirect_to @record, alert: "No active check-in found for #{@record.name}."
-    end
+    render json: @records.select(:id, :name, :contact_number) # Only send necessary data
   end
 
   def index
     @q = Record.ransack(params[:q])
     filter_by_date(params[:created_at]) if params[:created_at].present?
 
-    @records = @q.result(distinct: true)
-                 .includes(:photo_attachment, :government_id_photo_attachment,
-                           attendances: %i[])
-                 .order(created_at: :desc)
+    @records = Record.search_by_query(params[:query])
+      .includes(:photo_attachment, :government_id_photo_attachment, :host, :guests) # Keep includes for performance if you display these
+      .order(created_at: :desc)
 
     calculate_attendance_statistics
     @record_not_found = @records.empty? if params[:q].present?
@@ -75,8 +47,10 @@ class RecordsController < ApplicationController
   end
 
   def show
-    @record = Record.find(params[:id])
-    @has_pending_checkout = @record.attendances.any? { |a| a.out_time.nil? }
+    @record = Record.includes(:host, :guests).find(params[:id])
+    # Fetch the last attendance record for the current user for this record
+    # This is used to determine if a pass can be generated.
+    @last_attendance_for_current_user = @record.attendances.where(user: current_user).order(created_at: :desc).first
   end
 
   def new
@@ -93,7 +67,13 @@ class RecordsController < ApplicationController
   end
 
   def update
-    if @record.update(record_params)
+    # Prepare params before update based on checkbox state
+    update_params = record_params
+    if update_params[:is_guest] == "0" # Checkbox is unchecked (string "0" from form)
+      update_params[:parent_record_id] = nil # Clear parent_record_id
+    end
+
+    if @record.update(update_params)
       redirect_to records_path, notice: 'Record updated successfully'
     else
       render :edit
@@ -112,9 +92,11 @@ class RecordsController < ApplicationController
   end
 
   def record_params
-    params.require(:record).permit(:government_id_photo, :name, :photo, :contact_number, :address, :pincode,
-                                   :city, :state, :date_of_birth, :father_name, :government_id_number,
-                                   :in_time, :out_time, :user_id, :email)
+    params.require(:record).permit(
+      :government_id_photo, :name, :photo, :contact_number, :address, :pincode,
+      :city, :state, :date_of_birth, :father_name, :government_id_number,
+      :user_id, :email, :is_guest, :parent_record_id, :photo_data # photo_data for webcam capture
+    )
   end
 
   def authorize_admin!
@@ -124,11 +106,13 @@ class RecordsController < ApplicationController
   def filter_by_date(filter)
     case filter
     when 'today'
-      @q = @q.result.where(created_at: Time.zone.today.all_day)
+      @q.result.where(created_at: Time.zone.today.all_day)
     when 'week'
-      @q = @q.result.where(created_at: Time.zone.today.all_week)
+      @q.result.where(created_at: Time.zone.today.all_week)
     when 'month'
-      @q = @q.result.where(created_at: Time.zone.today.all_month)
+      @q.result.where(created_at: Time.zone.today.all_month)
+    else
+      @q.result
     end
   end
 

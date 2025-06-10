@@ -1,27 +1,35 @@
-<div class="container mt-5">
-  <h1 class="mb-4" style="color: #343a40;"><i class="bi bi-clock-history me-2"></i> Attendance History for <span class="fw-semibold text-primary"><%= @record.name %></span></h1>
+<div class="container my-5">
+  <header class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-6 fw-bold text-primary">
+      <i class="bi bi bi-clock-history me-3"></i> Attendance History for
+      <span class="text-secondary"><%= @record.name %></span>
+    </h1>
+    <%= link_to '<i class="bi bi-arrow-left-circle me-2"></i> Back to Record'.html_safe, record_path(@record), class: 'btn btn-outline-secondary btn-lg rounded-pill shadow-sm' %>
+  </header>
 
-  <%= form_with url: history_record_attendances_path(@record), method: :get, local: true, class: "row g-3 mb-4" do |f| %>
+  <hr class="mb-4">
+
+  <%= form_with url: history_record_attendances_path(@record), method: :get, local: true, class: "row g-3 mb-5 p-4 bg-light rounded-4 shadow-sm" do |f| %>
     <div class="col-md-4">
-      <%= f.label :from, "From Date", class: "form-label text-muted" %>
-      <%= f.date_field :from, value: params[:from], class: "form-control form-control-lg rounded-pill" %>
+      <%= f.label :from, "From Date", class: "form-label fw-semibold text-muted" %>
+      <%= f.date_field :from, value: params[:from], class: "form-control form-control-lg rounded-3 border-0 shadow-sm" %>
     </div>
     <div class="col-md-4">
-      <%= f.label :to, 'To Date', class: 'form-label text-muted' %>
-      <%= f.date_field :to, value: params[:to], class: 'form-control form-control-lg rounded-pill' %>
+      <%= f.label :to, 'To Date', class: 'form-label fw-semibold text-muted' %>
+      <%= f.date_field :to, value: params[:to], class: 'form-control form-control-lg rounded-3 border-0 shadow-sm' %>
     </div>
-    <div class="col-md-4 d-flex align-items-end">
-      <%= f.submit 'Generate Report', class: 'btn btn-primary btn-lg rounded-pill me-2 shadow-sm' %>
+    <div class="col-md-4 d-flex align-items-end justify-content-end">
+      <%= f.submit 'Generate Report', class: 'btn btn-primary btn-lg rounded-pill me-3 px-4 shadow-hover' %>
       <%= link_to 'Print PDF',
                   history_record_attendances_path(@record, format: :pdf, from: params[:from], to: params[:to]),
-                  class: 'btn btn-success btn-lg rounded-pill shadow-sm',
+                  class: 'btn btn-success btn-lg rounded-pill px-4 shadow-hover',
                   target: '_blank',
                   rel: 'noopener' %>
     </div>
   <% end %>
 
   <% if @attendances.any? %>
-    <div class="mb-4">
+    <div class="mb-5">
       <%= render partial: 'shared/summary_card', locals: {
         attendances: @attendances,
         record: @record,
@@ -29,73 +37,150 @@
       } %>
     </div>
 
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered align-middle text-center shadow-sm rounded-lg">
-        <thead class="table-light">
-          <tr>
-            <th scope="col" class="text-secondary">#</th>
-            <th scope="col" class="text-secondary">Purpose of Visit</th>
-            <th scope="col" class="text-success"><i class="bi bi-arrow-right-circle-fill me-1"></i> In Time</th>
-            <th scope="col" class="text-danger"><i class="bi bi-arrow-left-circle-fill me-1"></i> Out Time</th>
-            <th scope="col" class="text-info"><i class="bi bi-hourglass-split me-1"></i> Time Spent</th>
-            <th scope="col" class="text-muted"><i class="bi bi-person-fill me-1"></i> Created By</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @attendances.each_with_index do |attendance, index| %>
-            <% needs_checkout = attendance.out_time.nil? %>
-            <tr class="<%= 'table-warning bg-opacity-25' if needs_checkout %>">
-              <td><%= index + 1 %></td>
-              <td class="fw-semibold"><%= attendance.purpose %></td>
-              <td>
-                <% if attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') %>
-                  <%= attendance.in_time&.strftime('%B %d, %Y %H:%M:%S') %>
-                <% else %>
-                  <%= link_to 'Check-In', complete_check_in_record_attendance_path(@record, attendance), class: 'btn btn-success btn-sm rounded-pill' %>
-                <% end %>
-              </td>
-              <td><%= attendance.out_time&.strftime('%B %d, %Y %H:%M:%S') || '<span class="badge bg-warning text-dark rounded-pill"><i class="bi bi-hourglass-half me-1"></i> Pending</span>'.html_safe %></td>
-              <td class="fw-semibold"><%= time_spent(attendance) %></td>
-              <td class="text-muted"><%= attendance.user&.email || 'Unknown' %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle text-center mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="text-muted text-uppercase fw-normal">#</th>
+                <th scope="col" class="text-muted text-uppercase fw-normal">Purpose of Visit</th>
+                <th scope="col" class="text-success text-uppercase fw-normal"><i class="bi bi-box-arrow-in-right me-1"></i> In Time</th>
+                <th scope="col" class="text-danger text-uppercase fw-normal"><i class="bi bi-box-arrow-left me-1"></i> Out Time</th>
+                <th scope="col" class="text-info text-uppercase fw-normal"><i class="bi bi-hourglass-split me-1"></i> Time Spent</th>
+                <th scope="col" class="text-muted text-uppercase fw-normal"><i class="bi bi-person-fill me-1"></i> Created By</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @attendances.each_with_index do |attendance, index| %>
+                <% needs_checkout = attendance.out_time.nil? %>
+                <tr class="<%= 'table-warning bg-opacity-25' if needs_checkout %>">
+                  <td><%= index + 1 %></td>
+                  <td class="fw-semibold text-break"><%= attendance.purpose %></td>
+                  <td>
+                    <% if attendance.in_time.present? %>
+                      <%= l attendance.in_time, format: :long_datetime %>
+                    <% else %>
+                      <%# Removed the "Check-In Now" link. User should go to flexible form via record page. %>
+                      <span class="text-muted fst-italic">Pending Check-In</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if attendance.out_time.present? %>
+                      <%= l attendance.out_time, format: :long_datetime %>
+                    <% else %>
+                      <span class="badge bg-warning text-dark rounded-pill py-2 px-3"><i class="bi bi-hourglass-half me-1"></i> Pending</span>
+                    <% end %>
+                  </td>
+                  <td class="fw-bold"><%= time_spent(attendance) %></td>
+                  <td class="text-muted"><%= attendance.user&.email || 'Unknown' %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   <% else %>
-    <div class="alert alert-info text-center rounded-lg shadow-sm mt-4">
-      <i class="bi bi-info-circle-fill me-2"></i> No attendance records found for <%= @record.name %>.
+    <div class="alert alert-info text-center rounded-4 shadow-sm py-4 mt-5">
+      <h4 class="alert-heading fw-bold mb-2">No Attendance Records Yet!</h4>
+      <p class="mb-0">It looks like there's no attendance history available for **<%= @record.name %>** for the selected period. Perhaps try a different date range?</p>
     </div>
   <% end %>
-
-  <%= link_to 'Back to Record'.html_safe, record_path(@record), class: 'btn btn-outline-secondary rounded-pill mt-3 shadow-sm' %>
 </div>
 
 <style>
-  .form-label {
-    font-weight: 500;
+  /* General body styling for a cleaner look */
+  body {
+    background-color: #f8f9fa; /* Light gray background */
   }
+
+  /* Custom shadow for buttons on hover */
+  .shadow-hover {
+    transition: all 0.2s ease-in-out;
+  }
+  .shadow-hover:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-2px);
+  }
+
+  /* Form control specific styling */
+  .form-control-lg.rounded-3 {
+    padding: 0.85rem 1.25rem;
+    font-size: 1.1rem;
+  }
+
+  /* Table specific styling */
+  .table {
+    border-collapse: separate;
+    border-spacing: 0 0.75rem; /* Adds space between rows visually */
+  }
+
+  .table thead th {
+    border-bottom: none; /* Remove default border */
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  .table tbody tr {
+    background-color: #ffffff; /* White background for rows */
+    border-radius: 0.75rem; /* Rounded corners for rows */
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.05); /* Subtle shadow for rows */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  .table tbody tr:hover {
+    transform: translateY(-3px); /* Lift effect on hover */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  }
+
+  .table tbody td {
+    padding: 1.25rem 1rem;
+    border-top: none; /* Remove default border between cells */
+    border-bottom: none;
+  }
+
+  .table-responsive {
+    border-radius: 0.75rem; /* Match card border radius */
+    overflow: hidden; /* Ensures shadows and rounded corners are contained */
+  }
+
+  /* Specific color adjustments */
+  .text-primary { color: #007bff !important; } /* A vibrant blue */
+  .text-secondary { color: #6c757d !important; } /* A balanced grey */
+  .text-success { color: #28a745 !important; } /* Standard green */
+  .text-danger { color: #dc3545 !important; } /* Standard red */
+  .text-info { color: #17a2b8 !important; }   /* Standard cyan */
+
+  .btn-primary { background-color: #007bff; border-color: #007bff; }
+  .btn-primary:hover { background-color: #0056b3; border-color: #0056b3; }
+
+  .btn-success { background-color: #28a745; border-color: #28a745; }
+  .btn-success:hover { background-color: #1e7e34; border-color: #1e7e34; }
 
   .btn-outline-secondary {
     color: #6c757d;
     border-color: #6c757d;
   }
-
   .btn-outline-secondary:hover {
     background-color: #6c757d;
     color: white;
   }
 
-  .table th {
-    font-weight: bold;
+  .badge {
+    font-size: 0.85em;
+    padding: 0.6em 0.9em;
   }
 
-  .img-thumbnail {
-    max-width: 80px;
-    height: auto;
+  .table-warning.bg-opacity-25 {
+    background-color: rgba(255, 193, 7, 0.15) !important; /* Lighter warning background */
   }
 
-  .table-warning {
-    --bs-table-bg: rgba(var(--bs-warning-rgb), 0.15) !important;
+  /* Custom Bi-directional arrow icons for In/Out */
+  /* Using bi-box-arrow-in-right and bi-box-arrow-left for a modern feel */
+  .bi-box-arrow-in-right, .bi-box-arrow-left {
+    font-size: 1.1em;
   }
 </style>

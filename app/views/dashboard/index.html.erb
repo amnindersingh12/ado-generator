@@ -124,15 +124,15 @@
     <h2 class="h4 mb-3" style="color: #1779BF;"><i class="bi bi-sliders me-2" style="color: #8A2BE2;"></i> Dive Deeper: Timeframe Explorer</h2>
     <div class="row mb-3">
       <div class="col-md-3">
-        <%= form_with url: dashboard_path, method: :get, local: true, class: 'd-flex align-items-center' do |f| %>
+        <%= form_with url: dashboard_index_path, method: :get, local: true, class: 'd-flex align-items-center' do |f| %>
           <%= f.select :timeframe, options_for_select([['Last 7 Days', 'week'], ['Last 30 Days', 'month']]), { prompt: 'Select Timeframe' }, class: 'form-select form-select-sm me-2' %>
           <%= f.submit 'View', class: 'btn btn-outline-primary btn-sm' %>
         <% end %>
       </div>
       <div class="col-md-9 text-end">
-        <%= link_to 'Download Data (CSV)', dashboard_path(format: :csv), class: 'btn btn-outline-success btn-sm' %>
+        <%= link_to 'Download Data (CSV)', dashboard_index_path(format: :csv), class: 'btn btn-outline-success btn-sm' %>
 
-      <%= link_to "Download PDF Report", dashboard_path(format: :pdf) , class: "btn btn-outline-success btn-sm ms-2", target: "_blank" %>
+      <%= link_to "Download PDF Report", dashboard_index_path(format: :pdf) , class: "btn btn-outline-success btn-sm ms-2", target: "_blank" %>
     </div>
   </div>
 </div>
