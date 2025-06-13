@@ -95,7 +95,7 @@ class RecordsController < ApplicationController
     params.require(:record).permit(
       :government_id_photo, :name, :photo, :contact_number, :address, :pincode,
       :city, :state, :date_of_birth, :father_name, :government_id_number,
-      :user_id, :email, :is_guest, :parent_record_id, :photo_data # photo_data for webcam capture
+      :user_id, :email, :is_guest, :parent_record_id, :host_id, :guest_ids => []
     )
   end
 

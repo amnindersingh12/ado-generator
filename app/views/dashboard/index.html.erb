@@ -1,17 +1,28 @@
 <%# app/views/dashboard/index.html.erb %>
-<div class="container-fluid p-4" style="background-color: #F0F8FF;">
-  <h1 class="mb-4" style="color: #29ABE2;"><span style="color: #FFDA63;">Ado</span>Generator !! <i class="bi bi-stars" style="color: #90EE90;"></i></h1>
-  <h2 class="h4 mb-3" style="color: #1779BF;"><i class="bi bi-bar-chart-line me-2" style="color: #ADFF2F;"></i> Quick Stats Glance</h2>
+<div class="container-fluid p-4">
+  <h1 class="mb-4 text-primary">
+    <span class="text-accent">Ado</span>Generator !!
+    <i class="bi bi-stars text-success"></i>
+  </h1>
+
+  <h2 class="h4 mb-3 text-secondary">
+    <i class="bi bi-bar-chart-line me-2 text-info"></i> Quick Stats Glance
+  </h2>
   <div class="row">
     <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card shadow h-100 py-2" style="border-left: 0.5rem solid #29ABE2; background-color: #fff; border-radius: 0.7rem;">
+      <div class="card shadow h-100 py-2 border-left-primary">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1" style="color: #29ABE2 !important;">Total Records <i class="bi bi-journal-bookmark-fill" style="color: #87CEFA;"></i></div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= link_to records_path(filter: 'all') do %><%= @total_records %><% end %></div>            </div>
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                Total Records <i class="bi bi-journal-bookmark-fill text-info"></i>
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-body-text">
+                <%= link_to @total_records, records_path(filter: 'all'), class: 'text-decoration-none text-body-text' %>
+              </div>
+            </div>
             <div class="col-auto">
-              <i class="bi bi-journal-bookmark-fill" style="color: #87CEFA;"></i>
+              <i class="bi bi-journal-bookmark-fill text-info icon-large"></i>
             </div>
           </div>
         </div>
@@ -19,15 +30,17 @@
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card shadow h-100 py-2" style="border-left: 0.5rem solid #228B22; background-color: #fff; border-radius: 0.7rem;">
+      <div class="card shadow h-100 py-2 border-left-success">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-success text-uppercase mb-1" style="color: #228B22 !important;">Total Check-Ins <i class="bi bi-arrow-right-square-fill" style="color: #90EE90;"></i></div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= @total_check_ins %></div>
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                Total Check-Ins <i class="bi bi-arrow-right-square-fill text-success"></i>
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-body-text"><%= @total_check_ins %></div>
             </div>
             <div class="col-auto">
-              <i class="bi bi-arrow-right-square-fill" style="color: #90EE90;"></i>
+              <i class="bi bi-arrow-right-square-fill text-success icon-large"></i>
             </div>
           </div>
         </div>
@@ -35,40 +48,46 @@
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card shadow h-100 py-2" style="border-left: 0.5rem solid #C71585; background-color: #fff; border-radius: 0.7rem;">
+      <div class="card shadow h-100 py-2 border-left-info">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-info text-uppercase mb-1" style="color: #C71585 !important;">Total Check-Outs <i class="bi bi-arrow-left-square-fill" style="color: #FF69B4;"></i></div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= @total_check_outs %></div>
+              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                Total Check-Outs <i class="bi bi-arrow-left-square-fill text-info"></i>
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-body-text"><%= @total_check_outs %></div>
             </div>
             <div class="col-auto">
-              <i class="bi bi-arrow-left-square-fill" style="color: #FF69B4;"></i>
+              <i class="bi bi-arrow-left-square-fill text-info icon-large"></i>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card shadow h-100 py-2" style="border-left: 0.5rem solid #FF69B4; background-color: #fff; border-radius: 0.7rem;">
+      <div class="card shadow h-100 py-2 border-left-danger">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-danger text-uppercase mb-1" style="color: #FF69B4 !important;">Pending Check-Outs <i class="bi bi-hourglass-split" style="color: #FFA07A;"></i></div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800"><%= link_to records_path(filter: 'pending') do %><%= @pending_check_outs %><% end %></div>
+              <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                Pending Check-Outs <i class="bi bi-hourglass-split text-warning"></i>
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-body-text">
+                <%= link_to @pending_check_outs, records_path(filter: 'pending'), class: 'text-decoration-none text-body-text' %>
+              </div>
             </div>
             <div class="col-auto">
-              <i class="bi bi-hourglass-split" style="color: #FFA07A;"></i>
+              <i class="bi bi-hourglass-split text-warning icon-large"></i>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <%# You could add another card for Pending Check-Outs if you calculate @pending_check_outs %>
   </div>
 
-  <h2 class="h4 mb-3 mt-4" style="color: #1779BF;"><i class="bi bi-activity me-2" style="color: #FFA07A;"></i> Attendance Flow (Last 7 Days)</h2>
+  <h2 class="h4 mb-3 mt-4 text-secondary">
+    <i class="bi bi-activity me-2 text-accent"></i> Attendance Flow (Last 7 Days)
+  </h2>
   <div class="row">
     <div class="col-12 mb-4">
       <%= render partial: 'dashboard/attendance_trend_chart_dual', locals: {
@@ -79,18 +98,20 @@
         out_data: @daily_check_out_values,
         dataset_in_label: 'Check-Ins',
         dataset_out_label: 'Check-Outs',
-        border_color_in: '29ABE2',
-        border_color_out: '#C71585',
-        point_background_color_in: '29ABE2',
-        point_background_color_out: '#C71585',
-        point_hover_background_color_in: '1779BF',
-        point_hover_background_color_out: '#FF69B4',
+        border_color_in: 'var(--color-primary)', # Use CSS variable
+        border_color_out: 'var(--color-info)',   # Use CSS variable
+        point_background_color_in: 'var(--color-primary)',
+        point_background_color_out: 'var(--color-info)',
+        point_hover_background_color_in: 'var(--color-primary)', # Or a slightly darker primary
+        point_hover_background_color_out: 'var(--color-info)',   # Or a slightly darker info
         controls: false
       } %>
     </div>
   </div>
 
-  <h2 class="h4 mb-3 mt-4" style="color: #1779BF;"><i class="bi bi-hourglass-split me-2" style="color: #FFA07A;"></i> Peak Time Insights (Last 24 Hours)</h2>
+  <h2 class="h4 mb-3 mt-4 text-secondary">
+    <i class="bi bi-hourglass-split me-2 text-warning"></i> Peak Time Insights (Last 24 Hours)
+  </h2>
   <div class="row">
     <div class="col-md-6 mb-4">
       <%= render partial: 'dashboard/attendance_trend_chart_single', locals: {
@@ -99,9 +120,9 @@
         labels: @peak_time_labels,
         data: @peak_time_in_values,
         dataset_label: 'Check-Ins',
-        border_color: '#228B22',
-        point_background_color: '#228B22',
-        point_hover_background_color: '#90EE90',
+        border_color: 'var(--color-success)', # Use CSS variable
+        point_background_color: 'var(--color-success)',
+        point_hover_background_color: 'var(--color-success)', # Or a slightly darker success
         controls: false
       } %>
     </div>
@@ -112,34 +133,39 @@
         labels: @peak_time_labels,
         data: @peak_time_out_values,
         dataset_label: 'Check-Outs',
-        border_color: '#FF6347',
-        point_background_color: '#FF6347',
-        point_hover_background_color: '#FFA07A',
+        border_color: 'var(--color-danger)', # Use CSS variable
+        point_background_color: 'var(--color-danger)',
+        point_hover_background_color: 'var(--color-danger)', # Or a slightly darker danger
         controls: false
       } %>
     </div>
   </div>
 
   <div class="mt-4">
-    <h2 class="h4 mb-3" style="color: #1779BF;"><i class="bi bi-sliders me-2" style="color: #8A2BE2;"></i> Dive Deeper: Timeframe Explorer</h2>
-    <div class="row mb-3">
-      <div class="col-md-3">
+    <h2 class="h4 mb-3 text-secondary">
+      <i class="bi bi-sliders me-2 text-secondary"></i> Dive Deeper: Timeframe Explorer
+    </h2>
+    <div class="row mb-3 align-items-center">
+      <div class="col-md-4 col-lg-3">
         <%= form_with url: dashboard_index_path, method: :get, local: true, class: 'd-flex align-items-center' do |f| %>
-          <%= f.select :timeframe, options_for_select([['Last 7 Days', 'week'], ['Last 30 Days', 'month']]), { prompt: 'Select Timeframe' }, class: 'form-select form-select-sm me-2' %>
-          <%= f.submit 'View', class: 'btn btn-outline-primary btn-sm' %>
+          <%= f.select :timeframe, options_for_select([['Last 7 Days', 'week'], ['Last 30 Days', 'month']], selected: params[:timeframe]), { prompt: 'Select Timeframe' }, class: 'form-select form-select-sm me-2' %>
+          <%= f.submit 'View', class: 'btn btn-primary btn-sm' %>
         <% end %>
       </div>
-      <div class="col-md-9 text-end">
-        <%= link_to 'Download Data (CSV)', dashboard_index_path(format: :csv), class: 'btn btn-outline-success btn-sm' %>
-
-      <%= link_to "Download PDF Report", dashboard_index_path(format: :pdf) , class: "btn btn-outline-success btn-sm ms-2", target: "_blank" %>
+      <div class="col-md-8 col-lg-9 text-end mt-3 mt-md-0">
+        <%= link_to 'Download Data (CSV)', dashboard_index_path(format: :csv, timeframe: params[:timeframe]), class: 'btn btn-outline-success btn-sm me-2' %>
+        <%= link_to "Download PDF Report", dashboard_index_path(format: :pdf, timeframe: params[:timeframe]), class: "btn btn-outline-success btn-sm", target: "_blank" %>
+      </div>
     </div>
   </div>
 </div>
-</div>
+
 <style>
+  /* Base card styling, now using theme variables */
   .card {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+    border-left: 0.5rem solid; /* This will be overridden by specific border colors */
+    background-color: var(--color-card-bg);
+    border-radius: 0.7rem;
     transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
 
@@ -148,6 +174,13 @@
     box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12) !important;
   }
 
+  /* Specific border colors for cards based on their data type */
+  .border-left-primary { border-left-color: var(--color-primary) !important; }
+  .border-left-success { border-left-color: var(--color-success) !important; }
+  .border-left-info    { border-left-color: var(--color-info) !important; }
+  .border-left-danger  { border-left-color: var(--color-danger) !important; }
+
+  /* Small text and bold utility classes */
   .text-xs {
     font-size: 0.75rem;
   }
@@ -156,19 +189,18 @@
     font-weight: 700 !important;
   }
 
-  .text-primary {
-    color: #29ABE2 !important; /* Primary Color */
+  /* Large icons for the stats cards */
+  .icon-large {
+    font-size: 2.5rem; /* Adjust size as needed */
+    opacity: 0.7; /* Slightly muted */
   }
 
-  .text-success {
-    color: #228B22 !important; /* A nice green */
+  /* Ensure text link in cards uses body text color but allows hover */
+  .card-body .h5 a {
+    color: var(--color-body-text) !important;
   }
 
-  .text-info {
-    color: #C71585 !important; /* A vibrant magenta */
-  }
-
-  .text-gray-800 {
-    color: #4a5568 !important;
+  .card-body .h5 a:hover {
+    color: var(--color-primary) !important; /* Example hover color */
   }
 </style>
