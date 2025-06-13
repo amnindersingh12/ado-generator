@@ -1,7 +1,6 @@
 <h1 class="mb-4 display-6 fw-bold text-primary"><i class="bi bi-person-plus-fill me-2"></i> Create New Record</h1>
 
 <style>
-  /* General Form Styling */
   input:focus, select:focus, textarea:focus {
     border-color: #0d6efd; /* Bootstrap primary color */
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
@@ -18,8 +17,7 @@
   }
 
   /* Specific style for client-side invalid feedback to ensure it's visible */
-  .form-control:invalid ~ .invalid-feedback,
-  .form-select:invalid ~ .invalid-feedback {
+  .form-control:invalid ~ .invalid-feedback {
     display: block; /* Ensures custom invalid feedback is shown */
   }
 
@@ -35,18 +33,20 @@
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
   }
 
-  .form-control, .form-select {
+  .form-control {
     border: 1px solid #ced4da;
     border-radius: 0.3rem;
   }
 
-  /* Webcam Specific Styles */
+  .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 0.3rem;
+  }
+
   .webcam-capture-container {
     border: 1px solid #ced4da;
     border-radius: 0.3rem;
     overflow: hidden; /* To contain rounded corners of video */
-    padding: 1rem; /* Add some padding inside the container */
-    background-color: #f8f9fa; /* Light background */
   }
 
   .webcam-capture-video {
@@ -54,8 +54,6 @@
     width: 100%;
     max-height: 300px; /* Adjust as needed */
     object-fit: cover;
-    background-color: #000; /* Black background for video area */
-    border-radius: 0.25rem;
   }
 
   .webcam-capture-button {
@@ -67,7 +65,6 @@
     border-radius: 0.3rem;
     cursor: pointer;
     transition: background-color 0.15s ease-in-out;
-    margin-top: 1rem; /* Space between video and button */
   }
 
   .webcam-capture-button:hover {
@@ -75,7 +72,7 @@
   }
 
   .webcam-capture-preview {
-    margin-top: 1rem; /* Space between button and preview */
+    margin-top: 0.5rem;
     border: 1px solid #ced4da;
     border-radius: 0.3rem;
     overflow: hidden;
@@ -87,16 +84,6 @@
     width: 100%;
     object-fit: cover;
     max-height: 200px;
-  }
-
-  /* Custom styles for guest functionality */
-  .hidden {
-    display: none !important;
-  }
-
-  .is-invalid-border {
-    border: 1px solid #dc3545 !important;
-    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
   }
 </style>
 
@@ -226,73 +213,21 @@
     <div class="col-12 mt-3">
       <%= form.label :photo, 'Face Photo', class: 'form-label' %>
       <div class="webcam-capture-container">
-        <%# Display webcam video stream %>
-        <video id="webcam-video" class="webcam-capture-video" autoplay playsinline></video>
-        <%# Capture button %>
-        <button type="button" id="captureWebcamBtn" class="webcam-capture-button" onclick="triggerWebcamCapture()">Capture Photo</button>
-
-        <%# Preview area %>
+        <%= webcam_capture(form, :photo) %>
         <div id="photo-preview" class="webcam-capture-preview mt-2" style="display: <%= @record.photo.attached? ? 'block' : 'none' %>;">
-          <img id="captured-image" src="<%= @record.photo.attached? ? url_for(@record.photo) : '#' %>" alt="Captured Photo">
+          <img id="captured-image" src="<%=  @record.photo.persisted?? url_for(@record.photo) : '#' %>" >
         </div>
-
-        <%# Hidden file input for ActiveStorage. This is where the captured photo data will be stored. %>
-        <%# The value will be set by JavaScript from the webcam capture %>
-        <%= form.file_field :photo, class: 'd-none', id: 'record_photo_file_input' %>
-
-        <%# Custom invalid feedback for the webcam photo %>
+        <%= form.hidden_field :photo_data, id: "photo_data_field" %>
+        <%# Placeholder for client-side webcam errors if photo_data is empty %>
         <div class="invalid-feedback webcam-invalid-feedback">
           Face photo is required. Please capture it.
         </div>
       </div>
       <% @record.errors[:photo].each do |err| %>
-        <div class="text-danger mt-1"><%= err %></div>
+        <div class="text-danger"><%= err %></div>
       <% end %>
       <small class="form-text text-muted mt-1">Please ensure your face is clearly visible in the photo.</small>
     </div>
-
-    <%# --- New: Guest Functionality Fields --- %>
-    <div class="col-12 mt-4">
-      <div class="form-check form-check-lg">
-        <%= form.check_box :is_guest, class: "form-check-input", id: "record_is_guest" %>
-        <%= form.label :is_guest, "Is this person a guest?", class: "form-check-label ms-2" %>
-      </div>
-    </div>
-
-    <div id="host-selection-container" class="col-12 mb-3 border p-4 rounded bg-light shadow-sm <%= 'hidden' unless @record.is_guest? %>">
-      <h4 class="mb-3 text-primary"><i class="bi bi-person-fill-up me-2"></i> Host Information</h4>
-      <label class="form-label fw-bold">Select Host Record:</label>
-      <div class="input-group mb-2">
-        <%= text_field_tag :host_search_input, nil,
-                           class: "form-control form-control-lg",
-                           placeholder: "Search host by name or contact number (min 3 characters)",
-                           id: "host-search-input" %>
-        <button type="button" class="btn btn-outline-secondary <%= 'hidden' unless @record.parent_record_id.present? %>" id="clear-host-selection-btn">Clear Selection</button>
-      </div>
-
-      <div id="host-search-results" class="mb-2 list-group">
-        <%# Search results will be injected here by JavaScript %>
-      </div>
-
-      <div id="selected-host-info" class="alert alert-success py-2 px-3 mb-2 <%= 'hidden' unless @record.parent_record_id.present? %> d-flex align-items-center justify-content-between">
-        <% if @record.parent_record_id.present? && @record.host.present? %>
-          <strong>Selected Host:</strong> <%= @record.host.name %> (<%= @record.host.contact_number %>)
-        <% end %>
-      </div>
-
-      <%# Hidden field to store the selected parent_record_id %>
-      <%= form.hidden_field :parent_record_id,
-                             id: "record_parent_record_id",
-                             data: {
-                               parent_record_name: @record.host&.name,
-                               parent_record_contact: @record.host&.contact_number
-                             } %>
-      <% @record.errors[:parent_record_id].each do |err| %>
-        <div class="text-danger"><%= err %></div>
-      <% end %>
-    </div>
-    <%# --- End Guest Functionality Fields --- %>
-
   </div>
 
   <div class="mt-5 d-flex gap-3">
@@ -305,64 +240,40 @@
   document.addEventListener("DOMContentLoaded", () => {
     const forms = document.querySelectorAll(".needs-validation");
     Array.from(forms).forEach(form => {
-      form.addEventListener("submit", async event => { // Make function async to await file conversion
-
+      form.addEventListener("submit", event => {
         // --- Custom validation for webcam photo before Bootstrap's checkValidity ---
-        const photoFileInput = document.getElementById('record_photo_file_input');
-        const webcamInvalidFeedback = document.querySelector('.webcam-invalid-feedback');
-        const webcamVideo = document.getElementById('webcam-video');
+        const photoDataField = document.getElementById('photo_data_field');
+        const photoInvalidFeedback = photoDataField.closest('.webcam-capture-container').querySelector('.webcam-invalid-feedback');
+        const webcamVideo = document.querySelector('.webcam-capture-video');
 
-        // Check if webcam is active but no photo has been attached to the hidden file input
-        if (webcamVideo && webcamVideo.srcObject && !photoFileInput.files.length) {
+        // Check if photo_data is empty AND webcam is potentially active (stream might exist)
+        if (photoDataField && photoDataField.value === "" && webcamVideo && webcamVideo.srcObject) {
           event.preventDefault();
           event.stopPropagation();
-          if (webcamInvalidFeedback) {
-            webcamInvalidFeedback.style.display = 'block';
-            webcamInvalidFeedback.textContent = "Face photo is required. Please capture it.";
-            webcamInvalidFeedback.classList.add('d-block');
+          if (photoInvalidFeedback) {
+            photoInvalidFeedback.style.display = 'block'; // Show the custom feedback
+            photoInvalidFeedback.textContent = "Face photo is required. Please capture it.";
+            photoInvalidFeedback.classList.add('d-block'); // Ensure Bootstrap shows it
           }
-          photoFileInput.closest('.col-12').scrollIntoView({ behavior: "smooth", block: "center" });
+          // Scroll to the webcam section
+          photoDataField.closest('.col-12').scrollIntoView({ behavior: "smooth", block: "center" });
         } else {
-          if (webcamInvalidFeedback) {
-            webcamInvalidFeedback.style.display = 'none';
-            webcamInvalidFeedback.classList.remove('d-block');
-          }
+           // Hide the custom feedback if photo is captured or webcam is not active
+           if (photoInvalidFeedback) {
+             photoInvalidFeedback.style.display = 'none';
+             photoInvalidFeedback.classList.remove('d-block');
+           }
         }
         // --- End custom validation for webcam photo ---
-
-        // --- Custom validation for parent_record_id if is_guest is checked ---
-        const isGuestCheckbox = document.getElementById('record_is_guest');
-        const parentRecordIdField = document.getElementById('record_parent_record_id');
-        const hostSelectionContainer = document.getElementById('host-selection-container');
-
-        if (isGuestCheckbox && isGuestCheckbox.checked && parentRecordIdField && parentRecordIdField.value === "") {
-          event.preventDefault();
-          event.stopPropagation();
-          hostSelectionContainer.classList.add('is-invalid-border');
-          let existingFeedback = hostSelectionContainer.querySelector('.text-danger');
-          if (!existingFeedback) {
-            existingFeedback = document.createElement('div');
-            existingFeedback.classList.add('text-danger', 'mt-2'); // Added mt-2 for spacing
-            hostSelectionContainer.appendChild(existingFeedback);
-          }
-          existingFeedback.textContent = "Please select a host for the guest.";
-          hostSelectionContainer.scrollIntoView({ behavior: "smooth", block: "center" });
-        } else if (hostSelectionContainer) {
-          hostSelectionContainer.classList.remove('is-invalid-border');
-          const existingFeedback = hostSelectionContainer.querySelector('.text-danger');
-          if (existingFeedback && existingFeedback.textContent === "Please select a host for the guest.") {
-            existingFeedback.remove();
-          }
-        }
-        // --- End custom validation for parent_record_id ---
 
         // Bootstrap's client-side validation
         if (!form.checkValidity()) {
           event.preventDefault();
           event.stopPropagation();
+          // Scroll to the first invalid field
           const firstInvalidField = form.querySelector(":invalid");
           if (firstInvalidField) {
-            firstInvalidField.focus();
+            firstInvalidField.focus(); // Focus on the field
             firstInvalidField.scrollIntoView({ behavior: "smooth", block: "center" });
           }
         }
@@ -371,18 +282,20 @@
     });
 
     // --- Server-side error scrolling ---
+    // Check if there are server-side errors on page load (after form submission failed)
     <% if @record.errors.any? %>
-      const firstErrorElement = document.querySelector('.text-danger');
+      const firstErrorElement = document.querySelector('.text-danger'); // Finds the very first server-side error message
       if (firstErrorElement) {
-        const parentColumn = firstErrorElement.closest('.col-md-6, .col-12, #host-selection-container');
+        // Find the input field associated with this error.
+        // It's usually the sibling of the label or a child of the immediate parent div.
+        const parentColumn = firstErrorElement.closest('.col-md-6, .col-12');
         if (parentColumn) {
-          // Attempt to find an input field within the column
-          const inputField = parentColumn.querySelector('.form-control, .form-select, #host-search-input');
+          const inputField = parentColumn.querySelector('.form-control, .form-select');
           if (inputField) {
-            inputField.focus();
+            inputField.focus(); // Focus on the field
             inputField.scrollIntoView({ behavior: "smooth", block: "center" });
           } else {
-            // Fallback for elements without a direct input (e.g., webcam container or host selection container itself)
+            // Fallback if no specific input field found in the column (e.g., error for webcam area)
             firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
           }
         }
@@ -391,23 +304,27 @@
     // --- End of server-side error scrolling block ---
 
     // Enhanced Webcam Capture Handling
-    const videoElement = document.getElementById('webcam-video');
+    const videoElement = document.querySelector('.webcam-capture-video');
     const captureButton = document.getElementById('captureWebcamBtn');
     const photoPreview = document.getElementById('photo-preview');
     const capturedImage = document.getElementById('captured-image');
-    const photoFileInput = document.getElementById('record_photo_file_input'); // Renamed from photo_data_field
-    const webcamInvalidFeedback = document.querySelector('.webcam-invalid-feedback');
-
-    let stream; // Declare stream in a broader scope for stop access
+    const photoDataField = document.getElementById('photo_data_field');
+    const webcamInvalidFeedback = document.querySelector('.webcam-invalid-feedback'); // Get the specific feedback div
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }) // Prefer front camera
-        .then(activeStream => {
-          stream = activeStream; // Assign to outer scope stream
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
           if (videoElement) {
             videoElement.srcObject = stream;
-            videoElement.play(); // Start playing the video stream
-            // No need to add event listener here, it's handled by triggerWebcamCapture
+            // Add event listener to remove webcam error when photo is captured
+            captureButton.addEventListener('click', () => {
+              if (photoDataField.value !== "") { // Only remove if a photo was actually captured
+                if (webcamInvalidFeedback) {
+                  webcamInvalidFeedback.style.display = 'none';
+                  webcamInvalidFeedback.classList.remove('d-block');
+                }
+              }
+            });
           }
         })
         .catch(error => {
@@ -416,6 +333,7 @@
             captureButton.textContent = 'Webcam Not Available';
             captureButton.disabled = true;
           }
+          // Also indicate webcam required error if no webcam
           if (webcamInvalidFeedback) {
             webcamInvalidFeedback.style.display = 'block';
             webcamInvalidFeedback.classList.add('d-block');
@@ -427,6 +345,7 @@
         captureButton.textContent = 'Webcam Not Supported';
         captureButton.disabled = true;
       }
+      // Indicate webcam required error if browser doesn't support
       if (webcamInvalidFeedback) {
         webcamInvalidFeedback.style.display = 'block';
         webcamInvalidFeedback.classList.add('d-block');
@@ -434,48 +353,22 @@
       }
     }
 
-    // Function to stop webcam stream when navigating away or on form submission
-    window.addEventListener('beforeunload', () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-    });
-
-    window.triggerWebcamCapture = async () => {
-      if (videoElement && videoElement.srcObject) {
+    window.triggerWebcamCapture = () => {
+      if (videoElement && videoElement.srcObject) { // Ensure stream is active
         const canvas = document.createElement('canvas');
         canvas.width = videoElement.videoWidth;
         canvas.height = videoElement.videoHeight;
-        canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height); // Draw entire video frame
-        const imageDataURL = canvas.toDataURL('image/jpeg', 0.9); // Use JPEG for smaller size, 0.9 quality
+        canvas.getContext('2d').drawImage(videoElement, 0, 0);
+        const imageDataURL = canvas.toDataURL('image/png');
 
-        if (capturedImage && photoPreview && photoFileInput) {
+        if (capturedImage && photoPreview && photoDataField) {
           capturedImage.src = imageDataURL;
           photoPreview.style.display = 'block';
-
-          // Convert Data URL to File object and assign to the hidden file input
-          try {
-            const response = await fetch(imageDataURL);
-            const blob = await response.blob();
-            const file = new File([blob], "captured_photo.jpeg", { type: "image/jpeg" });
-
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            photoFileInput.files = dataTransfer.files;
-
-            // Remove client-side error message if photo captured successfully
-            if (webcamInvalidFeedback) {
-              webcamInvalidFeedback.style.display = 'none';
-              webcamInvalidFeedback.classList.remove('d-block');
-            }
-            console.log("Photo captured and attached to file input.");
-          } catch (error) {
-            console.error("Error converting data URL to file:", error);
-            if (webcamInvalidFeedback) {
-              webcamInvalidFeedback.style.display = 'block';
-              webcamInvalidFeedback.classList.add('d-block');
-              webcamInvalidFeedback.textContent = "Failed to process captured photo. Please try again.";
-            }
+          photoDataField.value = imageDataURL; // Send this data to the server
+          // Remove client-side error message if photo captured successfully
+          if (webcamInvalidFeedback) {
+            webcamInvalidFeedback.style.display = 'none';
+            webcamInvalidFeedback.classList.remove('d-block');
           }
         }
       } else {
@@ -487,129 +380,5 @@
         }
       }
     };
-
-    // --- Guest Functionality JavaScript ---
-    const isGuestCheckbox = document.getElementById('record_is_guest');
-    const hostSelectionContainer = document.getElementById('host-selection-container');
-    const hostSearchInput = document.getElementById('host-search-input');
-    const hostSearchResults = document.getElementById('host-search-results');
-    const selectedHostInfo = document.getElementById('selected-host-info');
-    const recordParentRecordId = document.getElementById('record_parent_record_id');
-    const clearHostSelectionBtn = document.getElementById('clear-host-selection-btn');
-
-    function toggleHostSelection() {
-      if (isGuestCheckbox.checked) {
-        hostSelectionContainer.classList.remove('hidden');
-        // If a host was already selected (e.g., on form re-render with errors), show it
-        if (recordParentRecordId.value && recordParentRecordId.dataset.parentRecordName) {
-            selectedHostInfo.classList.remove('hidden');
-            selectedHostInfo.innerHTML = `<strong>Selected Host:</strong> ${recordParentRecordId.dataset.parentRecordName} (${recordParentRecordId.dataset.parentRecordContact}) <i class="bi bi-check-circle-fill text-success ms-2"></i>`;
-            clearHostSelectionBtn.classList.remove('hidden');
-        } else {
-            // Ensure fields are reset if re-checked without previous selection
-            selectedHostInfo.classList.add('hidden');
-            selectedHostInfo.innerHTML = '';
-            recordParentRecordId.value = '';
-            hostSearchInput.value = '';
-            clearHostSelectionBtn.classList.add('hidden');
-        }
-      } else {
-        hostSelectionContainer.classList.add('hidden');
-        selectedHostInfo.classList.add('hidden');
-        selectedHostInfo.innerHTML = '';
-        recordParentRecordId.value = '';
-        hostSearchInput.value = '';
-        hostSearchResults.innerHTML = ''; // Clear search results too
-        clearHostSelectionBtn.classList.add('hidden');
-        // Remove client-side host selection error if checkbox is unchecked
-        hostSelectionContainer.classList.remove('is-invalid-border');
-        const existingFeedback = hostSelectionContainer.querySelector('.text-danger');
-        if (existingFeedback && existingFeedback.textContent === "Please select a host for the guest.") {
-          existingFeedback.remove();
-        }
-      }
-    }
-
-    // Initial call to set visibility based on current @record.is_guest? value
-    toggleHostSelection();
-
-    isGuestCheckbox.addEventListener('change', toggleHostSelection);
-
-    let searchTimeout;
-    hostSearchInput.addEventListener('input', () => {
-      clearTimeout(searchTimeout);
-      const query = hostSearchInput.value.trim();
-
-      if (query.length >= 3) {
-        searchTimeout = setTimeout(() => {
-          fetch(`/records/search_records?q[name_or_contact_number_cont]=${query}`)
-            .then(response => response.json())
-            .then(data => {
-              hostSearchResults.innerHTML = ''; // Clear previous results
-              if (data.length > 0) {
-                data.forEach(record => {
-                  const listItem = document.createElement('a');
-                  listItem.href = '#'; // Prevent actual navigation
-                  listItem.classList.add('list-group-item', 'list-group-item-action');
-                  listItem.innerHTML = `<strong>${record.name}</strong> (Contact: ${record.contact_number})`;
-                  listItem.dataset.id = record.id;
-                  listItem.dataset.name = record.name;
-                  listItem.dataset.contact = record.contact_number;
-                  listItem.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    recordParentRecordId.value = record.id;
-                    recordParentRecordId.dataset.parentRecordName = record.name;
-                    recordParentRecordId.dataset.parentRecordContact = record.contact_number;
-                    selectedHostInfo.classList.remove('hidden');
-                    selectedHostInfo.innerHTML = `<strong>Selected Host:</strong> ${record.name} (${record.contact_number}) <i class="bi bi-check-circle-fill text-success ms-2"></i>`;
-                    hostSearchResults.innerHTML = ''; // Clear results after selection
-                    clearHostSelectionBtn.classList.remove('hidden'); // Show clear button
-                    hostSelectionContainer.classList.remove('is-invalid-border'); // Remove error border if any
-                    const existingFeedback = hostSelectionContainer.querySelector('.text-danger');
-                    if (existingFeedback && existingFeedback.textContent === "Please select a host for the guest.") {
-                      existingFeedback.remove();
-                    }
-                  });
-                  hostSearchResults.appendChild(listItem);
-                });
-              } else {
-                hostSearchResults.innerHTML = '<div class="alert alert-warning mb-0">No hosts found.</div>';
-              }
-            })
-            .catch(error => {
-              console.error('Error fetching host records:', error);
-              hostSearchResults.innerHTML = '<div class="alert alert-danger mb-0">Error searching for hosts.</div>';
-            });
-        }, 300); // Debounce search
-      } else {
-        hostSearchResults.innerHTML = ''; // Clear results if query too short
-      }
-    });
-
-    clearHostSelectionBtn.addEventListener('click', () => {
-      recordParentRecordId.value = '';
-      recordParentRecordId.dataset.parentRecordName = '';
-      recordParentRecordId.dataset.parentRecordContact = '';
-      selectedHostInfo.classList.add('hidden');
-      selectedHostInfo.innerHTML = '';
-      hostSearchInput.value = '';
-      hostSearchResults.innerHTML = '';
-      clearHostSelectionBtn.classList.add('hidden');
-      // Remove client-side host selection error if clear is clicked
-      hostSelectionContainer.classList.remove('is-invalid-border');
-      const existingFeedback = hostSelectionContainer.querySelector('.text-danger');
-      if (existingFeedback && existingFeedback.textContent === "Please select a host for the guest.") {
-        existingFeedback.remove();
-      }
-    });
-
-    // Handle initial state if form is re-rendered with errors and is_guest was checked
-    if (isGuestCheckbox.checked && recordParentRecordId.value === "") {
-        hostSelectionContainer.classList.add('is-invalid-border');
-        const feedbackDiv = document.createElement('div');
-        feedbackDiv.classList.add('text-danger', 'mt-2');
-        feedbackDiv.textContent = "Please select a host for the guest.";
-        hostSelectionContainer.appendChild(feedbackDiv);
-    }
   });
 </script>
