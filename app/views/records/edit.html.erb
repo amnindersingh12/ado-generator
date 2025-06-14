@@ -1,41 +1,807 @@
-<div class="container mt-5">
-  <div class="card shadow-lg border-warning">
-    <div class="card-header bg-warning text-dark">
-      <h2 class="mb-0 fw-semibold"><i class="bi bi-box-arrow-right me-2"></i> Check Out</h2>
-    </div>
+<%# app/views/records/edit.html.erb - Enhanced Edit/Check-out UI %>
+
+<div class="container my-5 py-4">
+  <div class="card shadow-lg border-0 rounded-4 p-lg-5 p-md-4 p-3 animate__animated animate__fadeInDown animate__faster">
     <div class="card-body">
-      <%= form_with(model: @record, local: true) do |form| %>
-        <div class="mb-3">
-          <%= form.label :name, 'Name', class: 'form-label fw-semibold' %>
-          <%= form.text_field :name, class: 'form-control', readonly: true %>
-          <small class="form-text text-muted">Name cannot be edited here.</small>
-        </div>
-        <div class="mb-3">
-          <% if @record.photo.attached? %>
-            <p class="fw-semibold text-muted"><i class="bi bi-image-fill me-2"></i> Current Photo</p>
-            <div class="mt-2 text-center border rounded overflow-hidden" style="max-width: 200px; margin: 0 auto;">
-              <%= image_tag @record.photo, class: 'img-fluid', style: 'object-fit: cover; width: 100%; height: auto;' %>
+      <h1 class="mb-5 display-6 fw-bold text-primary text-center">
+        <i class="bi bi-pencil-square me-3"></i> Edit Record: <%= @record.name %>
+      </h1>
+
+      <%= form_with model: @record, local: true, html: { class: "needs-validation", novalidate: true } do |form| %>
+        <div class="row g-4">
+
+          <%# Personal Details Section (Mostly Read-only or editable for non-guests) %>
+          <div class="col-12 mb-4">
+            <h3 class="section-heading text-secondary mb-4"><i class="bi bi-person-vcard me-2"></i> Personal Information</h3>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <%= form.label :name, class: "form-label" %>
+                <%= form.text_field :name, class: "form-control form-control-lg", required: true, maxlength: 100 %>
+                <div class="invalid-feedback">
+                  Please provide a valid name.
+                </div>
+                <% @record.errors[:name].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
+
+              <div class="col-md-6">
+                <%= form.label :email, class: "form-label" %>
+                <%= form.email_field :email, class: "form-control form-control-lg", required: true, pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$" %>
+                <div class="invalid-feedback">
+                  Please enter a valid email address.
+                </div>
+                <% @record.errors[:email].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
+
+              <div class="col-md-6">
+                <%= form.label :contact_number, class: "form-label" %>
+                <%= form.telephone_field :contact_number, class: "form-control form-control-lg", required: true, pattern: "[6-9]{1}[0-9]{9}", maxlength: 10, minlength: 10 %>
+                <div class="invalid-feedback">
+                  Please enter a valid 10-digit mobile number.
+                </div>
+                <% @record.errors[:contact_number].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
+
+              <div class="col-md-6">
+                <%= form.label :date_of_birth, class: 'form-label' %>
+                <%= form.date_field :date_of_birth, class: 'form-control form-control-lg', required: true, max: Date.current.to_s %>
+                <div class="invalid-feedback">
+                  Please select a valid date of birth (cannot be in the future).
+                </div>
+                <% @record.errors[:date_of_birth].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
+
+              <div class="col-12">
+                <%= form.label :address, class: "form-label" %>
+                <%= form.text_field :address, class: "form-control form-control-lg", maxlength: 255 %>
+                <div class="invalid-feedback">
+                  Please provide an address.
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <%= form.label :pincode, class: "form-label" %>
+                <%= form.text_field :pincode, class: "form-control form-control-lg", required: true, pattern: "[0-9]{6}", maxlength: 6, minlength: 6, inputmode: "numeric" %>
+                <div class="invalid-feedback">
+                  Please enter a valid 6-digit pincode.
+                </div>
+                <% @record.errors[:pincode].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
+
+              <div class="col-md-4">
+                <%= form.label :city, class: "form-label" %>
+                <%= form.text_field :city, class: "form-control form-control-lg", required: true, maxlength: 100 %>
+                <div class="invalid-feedback">
+                  Please enter a city.
+                </div>
+                <% @record.errors[:city].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
+
+              <div class="col-md-4">
+                <%= form.label :state, class: "form-label" %>
+                <%= form.text_field :state, class: "form-control form-control-lg", required: true, maxlength: 100 %>
+                <div class="invalid-feedback">
+                  Please enter a state.
+                </div>
+                <% @record.errors[:state].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
+
+              <div class="col-12">
+                <%= form.label :father_name, class: 'form-label' %>
+                <%= form.text_field :father_name, class: 'form-control form-control-lg', required: true, maxlength: 100 %>
+                <div class="invalid-feedback">
+                  Please enter your father's name.
+                </div>
+                <% @record.errors[:father_name].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
             </div>
-          <% end %>
-        </div>
-        <div class="mb-3 border rounded p-3">
-          <p class="fw-semibold"><i class="bi bi-clock-fill me-2"></i> Current Time: <%= Time.current.strftime('%B %d, %Y %I:%M %p') %></p>
-          <div class="mb-3">
-            <%= form.label :out_photo, '<i class="bi bi-camera-fill me-2"></i> Capture Check-Out Photo'.html_safe, class: 'form-label fw-semibold' %>
-            <div class="border rounded p-2">
-              <%= webcam_capture(form, :out_photo) %>
-            </div>
-            <% if @record.errors[:out_photo].any? %>
-              <div class="text-danger small mt-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> <%= @record.errors[:out_photo].join(', ') %></div>
-            <% end %>
-            <small class="form-text text-muted">Please capture a photo for check-out verification.</small>
           </div>
+
+          <%# Government ID Section %>
+          <div class="col-12 mb-4">
+            <h3 class="section-heading text-secondary mb-4"><i class="bi bi-fingerprint me-2"></i> Government Identification</h3>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <%= form.label :government_id_number, class: 'form-label' %>
+                <%= form.text_field :government_id_number, class: "form-control form-control-lg", required: true, minlength: 5, maxlength: 20 %>
+                <div class="invalid-feedback">
+                  Please enter a valid Government ID number (5-20 characters).
+                </div>
+                <% @record.errors[:government_id_number].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
+
+              <div class="col-md-6">
+                <%= form.label :government_id_photo, class: 'form-label' %>
+                <%= form.file_field :government_id_photo, class: 'form-control form-control-lg', accept: 'image/*' %>
+                <div class="invalid-feedback">
+                  Please upload your Government ID photo.
+                </div>
+                <% if @record.government_id_photo.attached? %>
+                  <div class="mt-2 text-center border rounded overflow-hidden" style="max-width: 200px; margin: 0 auto;">
+                    <%= image_tag @record.government_id_photo, class: 'img-fluid', style: 'object-fit: cover; width: 100%; height: auto;' %>
+                  </div>
+                  <small class="form-text text-muted d-block mt-1">Current ID Photo. Upload a new one to replace.</small>
+                <% else %>
+                   <small class="form-text text-muted d-block mt-1">No ID photo uploaded yet.</small>
+                <% end %>
+                <% @record.errors[:government_id_photo].each do |err| %>
+                  <div class="text-danger"><%= err %></div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <%# Face Photo Section (Webcam) %>
+          <div class="col-12 mb-4">
+            <h3 class="section-heading text-secondary mb-4"><i class="bi bi-camera-fill me-2"></i> Face Photo (Webcam)</h3>
+            <div class="webcam-capture-wrapper p-3 border rounded-3 bg-light">
+              <p class="fw-semibold mb-2"><i class="bi bi-person-circle me-2"></i> Current Face Photo:</p>
+              <% if @record.photo.attached? %>
+                <div class="mt-2 text-center border rounded overflow-hidden" style="max-width: 200px; margin: 0 auto 1.5rem auto;">
+                  <%= image_tag @record.photo, class: 'img-fluid', style: 'object-fit: cover; width: 100%; height: auto;' %>
+                </div>
+              <% else %>
+                <div class="alert alert-info text-center py-2 px-3 mb-3">No face photo uploaded yet.</div>
+              <% end %>
+
+              <p class="fw-semibold mb-2"><i class="bi bi-arrow-right-circle me-2"></i> Capture New Face Photo:</p>
+              <div class="webcam-capture-container border border-dashed rounded-3 overflow-hidden mb-3">
+                <video id="webcamVideo" class="webcam-capture-video" autoplay playsinline></video>
+              </div>
+              <button type="button" id="captureWebcamBtn" class="btn btn-primary w-100 py-3 rounded-pill hover-lift" onclick="triggerWebcamCapture()">
+                Capture New Photo
+              </button>
+              <%# Photo Preview with Inline Styles %>
+              <div id="photo-preview" class="webcam-capture-preview mt-3" style="display: none; width: 200px; height: 200px; margin: 0.5rem auto; border: 1px solid #ced4da; border-radius: 0.3rem; overflow: hidden; background-color: #f0f2f5; display: flex; align-items: center; justify-content: center;">
+                <img id="captured-image" src="" alt="Captured Face Photo Preview" style="display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0.5rem;">
+              </div>
+              <%= form.hidden_field :photo_data, id: "photo_data_field" %>
+              <div class="invalid-feedback webcam-invalid-feedback mt-2">
+                Face photo is required. Please capture it.
+              </div>
+              <% @record.errors[:photo].each do |err| %>
+                <div class="text-danger mt-1"><%= err %></div>
+              <% end %>
+              <small class="form-text text-muted mt-2 d-block">Capture a new photo to update the current one. Ensure your face is clearly visible and well-lit.</small>
+            </div>
+          </div>
+
+          <%# --- Guest Functionality Fields --- %>
+          <div class="col-12 mb-4">
+            <h3 class="section-heading text-secondary mb-4"><i class="bi bi-link-45deg me-2"></i> Relationship Status</h3>
+            <div class="form-check form-check-lg mb-3">
+              <%= form.check_box :is_guest, class: "form-check-input", id: "record_is_guest" %>
+              <%= form.label :is_guest, "Is this person a guest?", class: "form-check-label ms-2" %>
+            </div>
+
+            <div id="host-selection-container" class="border p-4 rounded-3 bg-light shadow-sm <%= 'hidden' unless @record.is_guest? %>">
+              <h4 class="mb-3 text-primary"><i class="bi bi-person-fill-up me-2"></i> Host Information</h4>
+              <label for="host-search-input" class="form-label fw-bold">Search and Select Host:</label>
+              <div class="input-group mb-3">
+                <%= text_field_tag :host_search_input, nil,
+                                   class: "form-control form-control-lg border-end-0",
+                                   placeholder: "Search host by name or contact number (min 3 characters)",
+                                   id: "host-search-input",
+                                   value: @record.host&.name # Pre-fill with current host's name
+                                    %>
+                <button type="button" class="btn btn-outline-secondary border-start-0 <%= 'hidden' unless @record.parent_record_id.present? %>" id="clear-host-selection-btn">
+                  <i class="bi bi-x-circle me-1"></i> Clear Selection
+                </button>
+              </div>
+
+              <div id="host-search-results" class="mb-3 list-group custom-scroll-y">
+                <%# Search results will be injected here by JavaScript %>
+              </div>
+
+              <div id="selected-host-info" class="alert alert-success py-2 px-3 mb-0 <%= 'd-none' unless @record.parent_record_id.present? %> d-flex align-items-center justify-content-between animate__animated animate__fadeIn">
+                <% if @record.parent_record_id.present? && @record.host.present? %>
+                  <strong>Selected Host:</strong> <%= @record.host.name %> (<%= @record.host.contact_number %>) <i class="bi bi-check-circle-fill text-success ms-2"></i>
+                <% end %>
+              </div>
+
+              <%# Hidden field to store the selected parent_record_id %>
+              <%= form.hidden_field :parent_record_id,
+                                    id: "record_parent_record_id",
+                                    data: {
+                                      parent_record_name: @record.host&.name,
+                                      parent_record_contact: @record.host&.contact_number
+                                    } %>
+              <% @record.errors[:parent_record_id].each do |err| %>
+                <div class="text-danger mt-1"><%= err %></div>
+              <% end %>
+            </div>
+          </div>
+          <%# --- End Guest Functionality Fields --- %>
+
         </div>
-        <div class="d-flex justify-content-end gap-2">
-          <%= form.submit 'Update Record', class: 'btn btn-warning rounded-pill shadow-sm' %>
-          <%= link_to 'Back', record_path(@record), class: 'btn btn-outline-secondary rounded-pill shadow-sm' %>
+
+        <div class="mt-5 pt-3 d-flex justify-content-end gap-3 border-top">
+          <%= form.submit 'Update Record', class: 'btn btn-lg btn-primary hover-lift' %>
+          <%= link_to 'Cancel', record_path(@record), class: 'btn btn-lg btn-outline-secondary hover-lift' %>
         </div>
       <% end %>
     </div>
   </div>
 </div>
+
+<%#
+  --- Custom Styles ---
+  IMPORTANT: These styles are intended for `app/assets/stylesheets/application.scss`
+  or a dedicated partial like `_records_form.scss` imported into `application.scss`.
+  Only the webcam preview styles were moved inline as requested.
+%>
+<style>
+  /* Base Variables - Re-using from Show page for consistency */
+  :root {
+    --bs-primary-rgb: 0, 123, 255;
+    --bs-secondary-rgb: 108, 117, 125;
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --text-dark: #212529;
+    --text-muted: #6c757d;
+    --bg-light: #f8f9fa;
+    --card-bg: #ffffff;
+    --border-light: rgba(0, 0, 0, 0.08);
+    --shadow-light: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 1rem 2rem rgba(0, 0, 0, 0.12);
+    --shadow-large: 0 1.5rem 3rem rgba(0, 0, 0, 0.15);
+    --hover-lift: -5px;
+    --border-radius-lg: 1.25rem;
+    --border-radius-xl: 1.5rem;
+  }
+
+  body {
+    background-color: #eef2f6; /* Consistent with show page */
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-dark);
+  }
+
+  .container {
+    max-width: 960px; /* Slightly narrower for forms to feel focused */
+  }
+
+  .card {
+    border-radius: var(--border-radius-xl); /* More rounded main card */
+    box-shadow: var(--shadow-large) !important;
+  }
+
+  .section-heading {
+    font-size: 1.75rem;
+    font-weight: 700; /* Bolder for section titles */
+    color: var(--primary-color); /* Primary color for section headings */
+    border-bottom: 2px solid rgba(var(--bs-primary-rgb), 0.1);
+    padding-bottom: 0.75rem;
+    margin-bottom: 2.5rem !important; /* More space below headings */
+  }
+  .section-heading i {
+    color: var(--secondary-color); /* Icon in secondary color for contrast */
+  }
+
+  /* Form Control Overrides */
+  .form-control, .form-select {
+    border-color: rgba(var(--bs-secondary-rgb), 0.25); /* Lighter border initially */
+    border-radius: 0.75rem; /* More rounded inputs */
+    padding: 0.9rem 1.25rem; /* Increased padding */
+    font-size: 1.05rem; /* Slightly larger text in inputs */
+    transition: all 0.2s ease-in-out;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.2); /* Softer focus ring */
+  }
+
+  .form-label {
+    font-weight: 600; /* Stronger labels */
+    color: var(--text-dark);
+    margin-bottom: 0.6rem; /* Space below labels */
+  }
+
+  /* Validation Feedback */
+  .invalid-feedback {
+    font-size: 0.9rem;
+    margin-top: 0.25rem; /* Space from input */
+    color: #dc3545; /* Bootstrap danger */
+  }
+
+  .text-danger { /* For server-side errors */
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+    color: #dc3545 !important;
+  }
+
+  /* Button Styling */
+  .btn-lg {
+    padding: 0.9rem 2rem;
+    font-size: 1.15rem;
+    border-radius: 0.75rem; /* Consistent rounding */
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1); /* More pronounced initial shadow */
+  }
+
+  .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+
+  .btn-outline-secondary {
+    border-color: rgba(var(--bs-secondary-rgb), 0.5);
+    color: var(--secondary-color);
+  }
+  .btn-outline-secondary:hover {
+    background-color: rgba(var(--bs-secondary-rgb), 0.1);
+    color: var(--text-dark);
+    border-color: var(--secondary-color);
+  }
+
+  .hover-lift {
+    transition: all 0.2s ease-in-out;
+  }
+  .hover-lift:hover {
+    transform: translateY(var(--hover-lift));
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Webcam Capture Specifics */
+  .webcam-capture-wrapper {
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.03); /* Inner shadow for depth */
+  }
+  .webcam-capture-container {
+    border: 2px solid rgba(var(--bs-secondary-rgb), 0.2); /* More defined border */
+    background-color: #f0f2f5; /* Lighter background for video */
+    min-height: 200px; /* Ensure visibility even without stream */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .webcam-capture-container video {
+    border-radius: 0.5rem; /* Rounded video corners inside container */
+    max-height: 350px; /* Slightly taller video area */
+  }
+
+  /* .webcam-capture-preview and .webcam-capture-preview img styles are inline */
+
+  .webcam-invalid-feedback {
+    display: none; /* Hidden by default, controlled by JS */
+    color: #dc3545;
+  }
+
+  /* Guest Functionality Styling */
+  #host-selection-container {
+    transition: all 0.3s ease-out; /* Smooth transition for hidden state */
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-light);
+  }
+  #host-selection-container.is-invalid-border {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+  }
+
+  .input-group .btn-outline-secondary {
+    border-left-width: 1px; /* Ensure border is visible */
+  }
+
+  #host-search-results {
+    max-height: 200px; /* Limit height of search results */
+    overflow-y: auto; /* Enable scrolling */
+    border: 1px solid rgba(var(--bs-secondary-rgb), 0.2);
+    border-radius: 0.75rem;
+  }
+  #host-search-results .list-group-item {
+    border: none; /* No individual borders between search results */
+    padding: 0.75rem 1.25rem;
+  }
+  #host-search-results .list-group-item:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.1); /* Light hover effect */
+  }
+  #host-search-results .list-group-item:first-child {
+      border-top-left-radius: 0.75rem;
+      border-top-right-radius: 0.75rem;
+  }
+  #host-search-results .list-group-item:last-child {
+      border-bottom-left-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+  }
+
+
+  #selected-host-info {
+    border-radius: 0.75rem;
+    font-weight: 500;
+  }
+  #selected-host-info strong {
+    color: var(--text-dark);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  /* Animate.css Overrides */
+  .animate__animated {
+    --animate-duration: 0.7s;
+  }
+  .animate__faster {
+    --animate-duration: 0.5s;
+  }
+  .animate__delay-0-1s { animation-delay: 0.1s; }
+  .animate__delay-0-2s { animation-delay: 0.2s; }
+  .animate__delay-0-3s { animation-delay: 0.3s; }
+  .animate__delay-0-4s { animation-delay: 0.4s; }
+  .animate__delay-0-5s { animation-delay: 0.5s; }
+  .animate__delay-0-6s { animation-delay: 0.6s; }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const forms = document.querySelectorAll(".needs-validation");
+    Array.from(forms).forEach(form => {
+      form.addEventListener("submit", event => {
+        // --- Custom validation for webcam photo before Bootstrap's checkValidity ---
+        const photoDataField = document.getElementById('photo_data_field');
+        const webcamInvalidFeedback = document.querySelector('.webcam-invalid-feedback');
+        const webcamVideo = document.getElementById('webcamVideo');
+
+        // For EDIT, webcam photo is NOT required unless a new one is captured.
+        // It's required if the field has no existing photo AND no new one is provided.
+        // Or if webcam is not supported/available and no photo data is provided.
+        // Only trigger client-side validation if a new photo *should* be there,
+        // or if the record initially had no photo and a new one isn't captured.
+
+        let isWebcamRequiredAndNotCaptured = false;
+        // If there's no existing photo AND no new photo data has been captured.
+        // (Note: @record.photo.attached? is ERB, so it's resolved on server render.
+        // The JS needs to know if photo_data_field should be mandatory)
+        const hasExistingPhoto = '<%= @record.photo.attached? %>'; // This will be "true" or "false" string
+
+        if (hasExistingPhoto === 'false' && photoDataField.value === "") {
+          // If no existing photo, then a new photo capture might be implied as required by the form
+          // This behavior might need to be refined based on your exact requirements for editing.
+          // For now, if no old photo and no new one, we'll mark as required.
+          isWebcamRequiredAndNotCaptured = true;
+        } else if (photoDataField.value !== "") {
+          // If a new photo is actually captured, clear any previous webcam errors
+          if (webcamInvalidFeedback) {
+            webcamInvalidFeedback.style.display = 'none';
+            webcamInvalidFeedback.classList.remove('d-block');
+          }
+        }
+        // If webcam is not available and a photo is required (i.e. no existing photo, and no new one could be captured)
+        if (!webcamVideo || !webcamVideo.srcObject && hasExistingPhoto === 'false' && photoDataField.value === "") {
+             isWebcamRequiredAndNotCaptured = true;
+        }
+
+
+        if (isWebcamRequiredAndNotCaptured) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (webcamInvalidFeedback) {
+            webcamInvalidFeedback.style.display = 'block';
+            webcamInvalidFeedback.classList.add('d-block');
+            if (hasExistingPhoto === 'false' && photoDataField.value === "") {
+              webcamInvalidFeedback.textContent = "A face photo is required for this record. Please capture it.";
+            } else if (!webcamVideo || !webcamVideo.srcObject) {
+              webcamInvalidFeedback.textContent = "Webcam is required to capture face photo but is not available or permissions denied.";
+            }
+          }
+          photoDataField.closest('.col-12').scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+           if (webcamInvalidFeedback) {
+             webcamInvalidFeedback.style.display = 'none';
+             webcamInvalidFeedback.classList.remove('d-block');
+           }
+        }
+        // --- End custom validation for webcam photo ---
+
+        // --- Custom validation for parent_record_id if is_guest is checked ---
+        const isGuestCheckbox = document.getElementById('record_is_guest');
+        const parentRecordIdField = document.getElementById('record_parent_record_id');
+        const hostSelectionContainer = document.getElementById('host-selection-container');
+        let hostSelectionErrorAdded = false;
+
+        if (isGuestCheckbox && isGuestCheckbox.checked && parentRecordIdField && parentRecordIdField.value === "") {
+          event.preventDefault();
+          event.stopPropagation();
+          hostSelectionContainer.classList.add('is-invalid-border');
+          let existingFeedback = hostSelectionContainer.querySelector('.text-danger.guest-host-error');
+          if (!existingFeedback) {
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.classList.add('text-danger', 'mt-2', 'guest-host-error');
+            feedbackDiv.textContent = "Please select a host for the guest.";
+            hostSelectionContainer.appendChild(feedbackDiv);
+            existingFeedback = feedbackDiv; // Update reference
+          }
+          hostSelectionContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+          hostSelectionErrorAdded = true;
+        } else if (hostSelectionContainer) {
+          hostSelectionContainer.classList.remove('is-invalid-border');
+          const existingFeedback = hostSelectionContainer.querySelector('.text-danger.guest-host-error');
+          if (existingFeedback) {
+            existingFeedback.remove();
+          }
+        }
+        // --- End custom validation for parent_record_id ---
+
+        // Bootstrap's client-side validation
+        if (!form.checkValidity() || isWebcamRequiredAndNotCaptured || hostSelectionErrorAdded) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (!isWebcamRequiredAndNotCaptured && !hostSelectionErrorAdded) {
+            const firstInvalidField = form.querySelector(":invalid:not(.form-control-file)");
+            if (firstInvalidField) {
+              firstInvalidField.focus();
+              firstInvalidField.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          }
+        }
+        form.classList.add("was-validated");
+      }, false);
+    });
+
+    // --- Server-side error scrolling on page load ---
+    <% if @record.errors.any? %>
+      document.addEventListener("DOMContentLoaded", () => {
+        const guestHostError = document.querySelector('.host-selection-container .text-danger');
+        if (guestHostError) {
+          guestHostError.closest('.host-selection-container').scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+
+        const webcamError = document.querySelector('.webcam-invalid-feedback.d-block');
+        if (webcamError) {
+          webcamError.closest('.col-12').scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+
+        const firstErrorElement = document.querySelector('.text-danger');
+        if (firstErrorElement) {
+          const parentColumn = firstErrorElement.closest('.col-md-6, .col-12');
+          if (parentColumn) {
+            const inputField = parentColumn.querySelector('.form-control, .form-select');
+            if (inputField) {
+              inputField.focus();
+              inputField.scrollIntoView({ behavior: "smooth", block: "center" });
+            } else {
+              firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          }
+        }
+      });
+    <% end %>
+    // --- End of server-side error scrolling block ---
+
+    // Enhanced Webcam Capture Handling
+    const videoElement = document.getElementById('webcamVideo');
+    const captureButton = document.getElementById('captureWebcamBtn');
+    const photoPreview = document.getElementById('photo-preview');
+    const capturedImage = document.getElementById('captured-image');
+    const photoDataField = document.getElementById('photo_data_field');
+    const webcamInvalidFeedback = document.querySelector('.webcam-invalid-feedback');
+
+    let streamActive = false;
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
+        .then(stream => {
+          videoElement.srcObject = stream;
+          streamActive = true;
+          if (webcamInvalidFeedback) { // Clear feedback if webcam now active
+            webcamInvalidFeedback.style.display = 'none';
+            webcamInvalidFeedback.classList.remove('d-block');
+          }
+        })
+        .catch(error => {
+          console.error('Error accessing webcam:', error);
+          if (captureButton) {
+            captureButton.textContent = 'Webcam Not Available';
+            captureButton.disabled = true;
+          }
+          if (webcamInvalidFeedback) {
+            webcamInvalidFeedback.style.display = 'block';
+            webcamInvalidFeedback.classList.add('d-block');
+            webcamInvalidFeedback.textContent = "Webcam is required to capture face photo but is not available or permissions denied.";
+          }
+          streamActive = false;
+        });
+    } else {
+      if (captureButton) {
+        captureButton.textContent = 'Webcam Not Supported';
+        captureButton.disabled = true;
+      }
+      if (webcamInvalidFeedback) {
+        webcamInvalidFeedback.style.display = 'block';
+        webcamInvalidFeedback.classList.add('d-block');
+        webcamInvalidFeedback.textContent = "Webcam is required to capture face photo but is not supported by your browser.";
+      }
+      streamActive = false;
+    }
+
+    window.triggerWebcamCapture = () => {
+      if (videoElement && streamActive) {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        const imageDataURL = canvas.toDataURL('image/png');
+
+        if (capturedImage && photoPreview && photoDataField) {
+          capturedImage.src = imageDataURL;
+          photoPreview.style.display = 'flex'; // Use flex to center image
+          photoDataField.value = imageDataURL;
+          if (webcamInvalidFeedback) {
+            webcamInvalidFeedback.style.display = 'none';
+            webcamInvalidFeedback.classList.remove('d-block');
+          }
+        }
+      } else {
+        alert("Webcam not active. Please ensure permissions are granted and try again.");
+        if (webcamInvalidFeedback) {
+          webcamInvalidFeedback.style.display = 'block';
+          webcamInvalidFeedback.classList.add('d-block');
+          webcamInvalidFeedback.textContent = "Webcam not active. Please ensure permissions are granted.";
+        }
+      }
+    };
+
+    // --- Guest Functionality JavaScript ---
+    const isGuestCheckbox = document.getElementById('record_is_guest');
+    const hostSelectionContainer = document.getElementById('host-selection-container');
+    const hostSearchInput = document.getElementById('host-search-input');
+    const hostSearchResults = document.getElementById('host-search-results');
+    const selectedHostInfo = document.getElementById('selected-host-info');
+    const recordParentRecordId = document.getElementById('record_parent_record_id');
+    const clearHostSelectionBtn = document.getElementById('clear-host-selection-btn');
+
+    function toggleHostSelection() {
+      if (isGuestCheckbox.checked) {
+        hostSelectionContainer.classList.remove('hidden');
+        if (recordParentRecordId.value && recordParentRecordId.dataset.parentRecordName) {
+            selectedHostInfo.classList.remove('d-none');
+            selectedHostInfo.innerHTML = `<strong>Selected Host:</strong> ${recordParentRecordId.dataset.parentRecordName} (${recordParentRecordId.dataset.parentRecordContact}) <i class="bi bi-check-circle-fill text-success ms-2"></i>`;
+            clearHostSelectionBtn.classList.remove('hidden');
+        } else {
+            selectedHostInfo.classList.add('d-none');
+            selectedHostInfo.innerHTML = '';
+            // Don't clear recordParentRecordId.value here if it was set
+            // to allow existing guest without selected host to be edited.
+            // If the user unchecks and re-checks, it should reset.
+            hostSearchInput.value = '';
+            clearHostSelectionBtn.classList.add('hidden');
+        }
+      } else {
+        hostSelectionContainer.classList.add('hidden');
+        selectedHostInfo.classList.add('d-none');
+        selectedHostInfo.innerHTML = '';
+        recordParentRecordId.value = ''; // Clear parent_record_id when switching back to non-guest
+        recordParentRecordId.dataset.parentRecordName = '';
+        recordParentRecordId.dataset.parentRecordContact = '';
+        hostSearchInput.value = '';
+        hostSearchResults.innerHTML = '';
+        clearHostSelectionBtn.classList.add('hidden');
+        hostSelectionContainer.classList.remove('is-invalid-border');
+        const existingFeedback = hostSelectionContainer.querySelector('.text-danger.guest-host-error');
+        if (existingFeedback) {
+          existingFeedback.remove();
+        }
+      }
+    }
+
+    toggleHostSelection(); // Initial call
+
+    isGuestCheckbox.addEventListener('change', toggleHostSelection);
+
+    let searchTimeout;
+    hostSearchInput.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      const query = hostSearchInput.value.trim();
+
+      // Clear selection if search input is being typed into and it's different from current host
+      if (recordParentRecordId.value && query !== recordParentRecordId.dataset.parentRecordName) {
+         selectedHostInfo.classList.add('d-none');
+         selectedHostInfo.innerHTML = '';
+         // Do NOT clear recordParentRecordId.value here, only if a new selection is made or cleared explicitly
+      }
+
+      if (query.length >= 3) {
+        searchTimeout = setTimeout(() => {
+          fetch(`/records/search_records?q[name_or_contact_number_cont]=${query}&exclude_id=<%= @record.id %>`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then(data => {
+              hostSearchResults.innerHTML = '';
+              if (data.length > 0) {
+                data.forEach(record => {
+                  const listItem = document.createElement('a');
+                  listItem.href = '#';
+                  listItem.classList.add('list-group-item', 'list-group-item-action');
+                  listItem.innerHTML = `<strong>${record.name}</strong> (Contact: ${record.contact_number})`;
+                  listItem.dataset.id = record.id;
+                  listItem.dataset.name = record.name;
+                  listItem.dataset.contact = record.contact_number;
+                  listItem.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    recordParentRecordId.value = record.id;
+                    recordParentRecordId.dataset.parentRecordName = record.name;
+                    recordParentRecordId.dataset.parentRecordContact = record.contact_number;
+                    selectedHostInfo.classList.remove('d-none');
+                    selectedHostInfo.innerHTML = `<strong>Selected Host:</strong> ${record.name} (${record.contact_number}) <i class="bi bi-check-circle-fill text-success ms-2"></i>`;
+                    hostSearchResults.innerHTML = '';
+                    clearHostSelectionBtn.classList.remove('hidden');
+                    hostSelectionContainer.classList.remove('is-invalid-border');
+                    const existingFeedback = hostSelectionContainer.querySelector('.text-danger.guest-host-error');
+                    if (existingFeedback) {
+                      existingFeedback.remove();
+                    }
+                    hostSearchInput.value = record.name; // Set input to selected name
+                  });
+                  hostSearchResults.appendChild(listItem);
+                });
+              } else {
+                hostSearchResults.innerHTML = '<div class="alert alert-warning mb-0">No hosts found.</div>';
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching host records:', error);
+              hostSearchResults.innerHTML = '<div class="alert alert-danger mb-0">Error searching for hosts.</div>';
+            });
+        }, 300);
+      } else {
+        hostSearchResults.innerHTML = '';
+      }
+    });
+
+    clearHostSelectionBtn.addEventListener('click', () => {
+      recordParentRecordId.value = '';
+      recordParentRecordId.dataset.parentRecordName = '';
+      recordParentRecordId.dataset.parentRecordContact = '';
+      selectedHostInfo.classList.add('d-none');
+      selectedHostInfo.innerHTML = '';
+      hostSearchInput.value = '';
+      hostSearchResults.innerHTML = '';
+      clearHostSelectionBtn.classList.add('hidden');
+      hostSelectionContainer.classList.remove('is-invalid-border');
+      const existingFeedback = hostSelectionContainer.querySelector('.text-danger.guest-host-error');
+      if (existingFeedback) {
+        existingFeedback.remove();
+      }
+    });
+
+    // Handle initial state if form is re-rendered with errors and is_guest was checked
+    // This is already present in your previous snippet, ensuring error state is shown
+    // if guest is checked but no host is selected (e.g., after validation failure)
+    if (isGuestCheckbox.checked && recordParentRecordId.value === "") {
+        hostSelectionContainer.classList.add('is-invalid-border');
+        let existingFeedback = hostSelectionContainer.querySelector('.text-danger.guest-host-error');
+        if (!existingFeedback) {
+          const feedbackDiv = document.createElement('div');
+          feedbackDiv.classList.add('text-danger', 'mt-2', 'guest-host-error');
+          feedbackDiv.textContent = "Please select a host for the guest.";
+          hostSelectionContainer.appendChild(feedbackDiv);
+        }
+    }
+  });
+</script>

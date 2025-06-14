@@ -1,5 +1,6 @@
+<%# app/views/layouts/application.html.erb %>
 <!DOCTYPE html>
-<html lang="en"> <%# Removed data-bs-theme as your custom theming handles it %>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,9 @@
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
+  <%# Dynamically generate CSS Custom Properties for theming %>
+  <%# This could also be a separate .scss.erb file if it gets complex %>
   <style>
-    /*
-     * Dynamically generated CSS Custom Properties from ColorSchemes module.
-     * These define your theme colors globally and allow for dynamic switching.
-     */
     :root {
       <%
         # Assuming ColorSchemes::DEFAULT_THEME and ColorSchemes::SCHEMES are correctly defined
@@ -23,316 +22,34 @@
       <% end %>
 
       /* Define Bootstrap-like contextual colors if not explicitly in ColorSchemes */
-      --color-info: #0dcaf0;    /* Bootstrap default info */
-      --color-success: #198754; /* Bootstrap default success */
-      --color-danger: #dc3545;  /* Bootstrap default danger */
-      --color-warning: #ffc107; /* Bootstrap default warning */
-    }
-
-    /* Base styles for a clean, modern look */
-    body {
-      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Modern, readable font stack */
-      background-color: var(--color-body-bg); /* Use theme background */
-      color: var(--color-body-text); /* Use theme text color */
-      line-height: 1.6;
-      min-height: 100vh; /* Ensure full viewport height */
-      transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transitions */
-    }
-
-    .content-area {
-      padding: 2rem;
-      flex-grow: 1;
-    }
-
-    .alert {
-      margin-bottom: 1.5rem;
-      border-radius: 0.5rem; /* Slightly more rounded alerts */
-      font-weight: 500;
-    }
-
-    /* --- General UI Components (using CSS variables) --- */
-    .card {
-      border: 1px solid var(--color-card-border); /* Subtle border from theme */
-      background-color: var(--color-card-bg); /* Use card background from theme */
-      border-radius: 0.75rem; /* Slightly more rounded corners for modern feel */
-      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* Smooth hover effects */
-      overflow: hidden; /* Ensures rounded corners on images */
-    }
-
-    .card:hover {
-      transform: translateY(-4px); /* Lift effect on hover */
-      box-shadow: 0 0.8rem 1.8rem rgba(0, 0, 0, 0.15), 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08) !important; /* Enhanced shadow */
-    }
-
-    /* Form Elements */
-    .form-control, .form-select {
-      border-radius: 0.4rem; /* Match card rounding */
-      border-color: var(--color-card-border); /* Soft border for inputs */
-      padding: 0.6rem 1rem;
-      background-color: var(--color-card-bg); /* Inputs match card background */
-      color: var(--color-body-text); /* Input text matches body text */
-      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-    .form-control::placeholder {
-      color: var(--color-secondary); /* Muted placeholder text */
-      opacity: 0.7;
-    }
-    .form-control:focus, .form-select:focus {
-        border-color: var(--color-primary); /* Focus border uses primary color */
-        /* Steel Blue: #4682B4 -> RGB: 70, 130, 180 */
-        box-shadow: 0 0 0 0.25rem rgba(70, 130, 180, 0.25); /* Subtle glow on focus */
-    }
-
-    /* Buttons */
-    .btn {
-      border-radius: 0.4rem;
-      transition: all 0.2s ease;
-    }
-    .btn-primary {
-      background-color: var(--color-primary);
-      border-color: var(--color-primary);
-      color: var(--color-text); /* Text on primary button */
-    }
-    .btn-primary:hover {
-      filter: brightness(1.1); /* Subtle brightness increase on hover */
-      transform: translateY(-1px); /* Slight lift */
-    }
-    .btn-outline-primary {
-      color: var(--color-primary);
-      border-color: var(--color-primary);
-    }
-    .btn-outline-primary:hover {
-      background-color: var(--color-primary);
-      color: var(--color-text);
-      transform: translateY(-1px);
-    }
-    /* Add for secondary, accent buttons if needed */
-    .btn-accent {
-      background-color: var(--color-accent);
-      border-color: var(--color-accent);
-      color: var(--color-text);
-    }
-    .btn-accent:hover {
-      filter: brightness(1.1);
-    }
-
-
-    /* Badges */
-    .badge {
-      font-weight: 500; /* Slightly bolder for readability */
-      padding: 0.4em 0.7em;
-      border-radius: 0.35rem;
-      opacity: 0.9; /* Slightly softer than full opacity */
-    }
-
-    /* Sidebar specific styles */
-    .sidebar-header {
-      border-bottom: 2px solid var(--color-border) !important;
-      padding-bottom: 1.5rem;
-    }
-    .nav-link {
-      color: var(--color-text) !important; /* Ensure nav links use theme text */
-      padding: 0.8rem 1rem;
-      border-radius: 0.4rem;
-      transition: background-color 0.15s ease-in-out, transform 0.1s ease-out;
-    }
-    .nav-link:hover {
-      background-color: var(--color-link-hover);
-      transform: translateX(3px); /* Subtle slide on hover */
-    }
-    .nav-link.active {
-      background-color: var(--color-active-link) !important;
-      color: var(--color-text) !important;
-      font-weight: 600; /* Bolder for active state */
-    }
-    .nav-link i {
-      font-size: 1.1rem;
-    }
-    .dropdown-menu {
-      border: none !important;
-      border-radius: 0.5rem !important;
-      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-      background-color: var(--color-dropdown-bg) !important; /* Ensure dropdown uses theme background */
-    }
-    .dropdown-item {
-      padding: 0.7rem 1.2rem;
-      transition: background-color 0.1s ease-in-out;
-      color: var(--color-text) !important; /* Ensure text color in dropdown */
-    }
-    .dropdown-item:hover {
-      background-color: var(--color-dropdown-hover) !important;
-    }
-    .dropdown-divider {
-      border-top-color: var(--color-border) !important;
-    }
-    /* Admin catchphrase input within dropdown */
-    .admin-catchphrase-input {
-        background-color: var(--color-dropdown-bg);
-        border: 1px solid var(--color-border);
-        color: var(--color-text);
-        border-radius: 0.2rem;
-    }
-    .admin-catchphrase-input::placeholder {
-        color: var(--color-secondary);
-        opacity: 0.7;
-    }
-
-    /* --- Custom Utility Classes (OVERRIDE Bootstrap defaults to use theme variables) --- */
-    /* Text colors */
-    .text-primary { color: var(--color-primary) !important; }
-    .text-secondary { color: var(--color-secondary) !important; }
-    .text-accent { color: var(--color-accent) !important; }
-    .text-body-text { color: var(--color-body-text) !important; }
-    .text-text-color { color: var(--color-text) !important; } /* Specifically for text on primary/dropdown bg */
-    .text-info { color: var(--color-info) !important; }
-    .text-success { color: var(--color-success) !important; }
-    .text-danger { color: var(--color-danger) !important; }
-    .text-warning { color: var(--color-warning) !important; }
-    .text-dark { color: var(--color-body-text) !important; } /* Override Bootstrap's .text-dark to use your main text color */
-    .text-muted { color: var(--color-secondary) !important; } /* Override Bootstrap's .text-muted */
-
-    /* Background colors */
-    .bg-primary { background-color: var(--color-primary) !important; }
-    .bg-secondary { background-color: var(--color-secondary) !important; }
-    .bg-accent { background-color: var(--color-accent) !important; }
-    .bg-body-bg { background-color: var(--color-body-bg) !important; }
-    .bg-card-bg { background-color: var(--color-card-bg) !important; }
-    .bg-info { background-color: var(--color-info) !important; }
-    .bg-success { background-color: var(--color-success) !important; }
-    .bg-danger { background-color: var(--color-danger) !important; }
-    .bg-warning { background-color: var(--color-warning) !important; }
-    .bg-dropdown-hover { background-color: var(--color-dropdown-hover) !important; } /* Ensure this utility is defined */
-
-    /* Custom background for the placeholder image div */
-    .bg-card-placeholder {
-      background-color: var(--color-card-border) !important; /* Use a soft border color for the background */
-      color: var(--color-secondary) !important; /* Muted icon color */
-    }
-    /* Overrides for Bootstrap's .bg-light and .text-light to use your theme variables */
-    .bg-light { background-color: var(--color-card-bg) !important; }
-    .text-light { color: var(--color-body-text) !important; } /* You might want this to be a light color from your theme, not body-text */
-
-    /* New CSS for Navbar Specifics */
-    .border-border { border-color: var(--color-border) !important; } /* For the hr divider */
-
-    .collapse-icon {
-      transition: transform 0.3s ease; /* Smooth rotation for arrow */
-    }
-    .collapse-icon.bi-chevron-up {
-      transform: rotate(180deg);
-    }
-
-    .admin-access-box {
-      border-radius: 0.5rem; /* Rounded box for admin section */
-      margin-top: 0.5rem;
-    }
-
-    /* Additional overrides for badge opacity if needed */
-    .badge.bg-info.bg-opacity-75,
-    .badge.bg-success.bg-opacity-75,
-    .badge.bg-danger.bg-opacity-75 {
-      /* Bootstrap's opacity classes apply a direct opacity property.
-         If your theme colors already account for desired opacity,
-         you might remove 'bg-opacity-75' from the HTML,
-         or explicitly set opacity here.
-         For now, keeping them separate so Bootstrap's opacity still works on top of your theme color.
-         If you want to bake opacity into your theme colors, you'd use rgba values in ColorSchemes.
-      */
-    }
-  </style>
-
-  <%# Local Asset Links %>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AdoGenerator - Your Attendance Hub</title>
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
-
-  <style>
-    /* Your existing CSS variables and custom styles here */
-    :root {
-      <%
-        current_theme_name = cookies[:theme]&.to_sym || ColorSchemes::DEFAULT_THEME
-        current_scheme = ColorSchemes::SCHEMES[current_theme_name]
-      %>
-      <% current_scheme.each do |name, value| %>
-        --color-<%= name.to_s.gsub('_', '-') %>: <%= value %>;
-      <% end %>
-
       --color-info: #0dcaf0;
       --color-success: #198754;
       --color-danger: #dc3545;
       --color-warning: #ffc107;
     }
-    /* ... rest of your <style> block ... */
   </style>
 
+  <%# Asset Links - ORDER MATTERS! %>
+  <%# Bootstrap and Bootstrap Icons first, then your custom application styles %>
   <%= stylesheet_link_tag 'bootstrap.min', media: 'all', 'data-turbo-track': 'reload' %>
-  <%= stylesheet_link_tag 'bootstrap-icons', media: 'all', 'data-turbo-track': 'reload' %>
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
-
-
-  <%# JavaScript includes %>
-  <%= javascript_include_tag 'chart.umd', defer: true, 'data-turbo-track': 'reload' %>
-  <%= javascript_include_tag 'bootstrap.bundle.min', defer: true, 'data-turbo-track': 'reload' %>
+  <%# If you have specific CSS for the theme variables, load it here. E.g., theme_styles.css %>
 </head>
-<body style="background-color: var(--color-body-bg); color: var(--color-body-text);"> <%# Inline style for immediate background/text color applied from theme %>
-  <div class="d-flex">
+<body class="d-flex flex-column min-vh-100" style="background-color: var(--color-body-bg); color: var(--color-body-text);">
+  <div class="d-flex flex-grow-1">
     <%= render 'shared/navbar' %>
     <div class="content-area flex-grow-1">
       <div class="p-4">
-        <% if notice %>
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <%= notice %>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        <% end %>
-        <% if alert %>
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <%= alert %>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        <% end %>
+        <%= render 'shared/flash_messages' %> <%# Moved flash messages to a partial %>
         <%= yield %>
       </div>
     </div>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const themeSwitcherButtons = document.querySelectorAll('.change-theme');
-
-      function setThemeAndReload(themeName) {
-        document.cookie = `theme=${themeName}; path=/; SameSite=Lax`;
-        location.reload(); // Reload to apply new CSS variables
-      }
-
-      themeSwitcherButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const theme = this.dataset.theme;
-          setThemeAndReload(theme);
-        });
-      });
-
-      // Set initial theme name in the dropdown button
-      const initialThemeName = getCookie('theme') || '<%= ColorSchemes::DEFAULT_THEME %>';
-      const themeButton = document.querySelector('.theme-switcher .dropdown-toggle');
-      if (themeButton) {
-        themeButton.textContent = `Theme (${initialThemeName.charAt(0).toUpperCase() + initialThemeName.slice(1)})`;
-      }
-
-      function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-      }
-    });
-
-    // Make ColorSchemes available to inline JS for theme switching (if needed for client-side logic)
-    const ColorSchemes = {
-      SCHEMES: <%= raw ColorSchemes::SCHEMES.to_json %>
-    };
-  </script>
+  <%# JavaScript includes %>
+  <%# Make sure these paths are correct for your asset pipeline (e.g., in app/assets/javascripts or via importmap/webpacker) %>
+  <%= javascript_include_tag 'chart.umd', defer: true, 'data-turbo-track': 'reload' %>
+  <%= javascript_include_tag 'bootstrap.bundle.min', defer: true, 'data-turbo-track': 'reload' %>
+  <%= javascript_include_tag 'application', defer: true, 'data-turbo-track': 'reload' %> <%# Your main JS file %>
 </body>
 </html>

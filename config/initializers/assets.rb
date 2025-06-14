@@ -8,14 +8,12 @@ Rails.application.config.assets.version = '1.0'
 # Add additional assets to the asset load path.
 # Rails.application.config.assets.paths << Emoji.images_path
 Rails.application.config.assets.precompile += %w[authentication.css]
-Rails.application.config.assets.precompile += %w[bootstrap-icons.css]
-Rails.application.config.assets.precompile += %w[applicaiton.css]
 
 # config/initializers/assets.rb
 Rails.application.config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
 Rails.application.config.assets.precompile += %w(
   bootstrap.min.css
-  bootstrap-icons.css
+  application.css
   chart.min.js
   bootstrap.bundle.min.js
 )

@@ -15,7 +15,7 @@ Rails.application.routes.draw do
       # Keep :search. Consider if :search_records is truly necessary or redundant.
       get :search
       # If 'search_records' serves the exact same purpose as 'search', you can remove the line below.
-      # get :search_records
+      get :search_records
     end
 
     # Nested attendance routes for a specific record

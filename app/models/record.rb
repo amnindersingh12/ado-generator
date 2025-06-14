@@ -21,6 +21,8 @@ class Record < ApplicationRecord
     attachable.variant :thumbnail, resize_to_limit: [100, 100]
   end
 
+  attribute :photo_data, :string
+
   # --- Validations ---
 
   # Name: Must be present and can optionally have a length limit
@@ -159,4 +161,48 @@ class Record < ApplicationRecord
       errors.add(:parent_record_id, "cannot be a guest of another guest.")
     end
   end
+
+   # --- START ADDED/REVERTED CODE FOR WEBCAM PHOTO HANDLING ---
+
+  # Helper method to check if photo_data virtual attribute has content
+  def photo_data_present?
+    self.photo_data.present? && self.photo_data.start_with?('data:image/')
+  end
+
+  # This method decodes the base64 string and attaches it to the :photo Active Storage field.
+  def set_photo_from_data
+    return unless photo_data_present?
+
+    # Extract content type (e.g., "image/png") and the base64 data itself
+    content_type = self.photo_data.split(';')[0].split(':')[1]
+    base64_image = self.photo_data.split(',')[1]
+
+    temp_file = nil # Initialize temp_file to nil for ensure block
+    begin
+      decoded_image = Base64.decode64(base64_image)
+
+      # Create a temporary file in memory/disk
+      # `binmode: true` is important for binary data
+      temp_file = Tempfile.new(["webcam_photo_#{SecureRandom.hex}", ".#{content_type.split('/')[1]}"], binmode: true)
+      temp_file.write(decoded_image)
+      temp_file.rewind # Rewind the file pointer to the beginning
+
+      # Attach the temporary file to the Active Storage 'photo' attribute
+      self.photo.attach(
+        io: temp_file,
+        filename: "profile_photo_#{Time.current.to_i}.#{content_type.split('/')[1]}",
+        content_type: content_type
+      )
+    rescue StandardError => e
+      # Add an error to the record if something goes wrong during photo processing
+      errors.add(:photo, "could not be processed: #{e.message}")
+      Rails.logger.error "Error processing webcam photo for Record #{self.id || 'new'}: #{e.message}"
+      false # Return false to halt the saving process if there's an error
+    ensure
+      # Ensure the temporary file is closed and unlinked (deleted)
+      temp_file.close if temp_file
+      temp_file.unlink if temp_file
+    end
+  end
+  # --- END ADDED/REVERTED CODE FOR WEBCAM PHOTO HANDLING ---
 end

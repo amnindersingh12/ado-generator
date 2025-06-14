@@ -159,13 +159,21 @@
       <i class="bi bi-arrow-left-circle-fill me-2"></i> Back to Record
     </a>
   </p>
-
   <div class="receipt-container">
     <div class="title">Attendance <%= @attendance.out_time.present? ? 'Check-Out' : 'Check-In' %> Receipt</div>
     <div class="title" style="font-size: 16px;">(<%= format_datetime(@attendance.out_time || @attendance.in_time || Time.current) %>)</div>
+ 
     <div class="token">Token ID: <span style="font-weight: bold;"><%= display_token(@attendance) %></span></div>
+  <% if @record.photo.attached? %>
+  <div class="mb-4">
 
-  
+    <div class="text-center border rounded overflow-hidden" style="max-width: 200px; margin: 0 auto;">
+      <%= image_tag @record.photo, class: 'img-fluid', style: 'object-fit: cover; width: 100%; height: auto;' %>
+    </div>
+    <small class="form-text text-muted d-block mt-1 text-center">Reference image from registration.</small>
+  </div>
+<% end %>
+
     <%= render 'user_info' %>
 
     <div class="section">
