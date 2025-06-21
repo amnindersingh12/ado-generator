@@ -71,7 +71,7 @@ gem 'dotenv'
 
 gem "faker"
 
-gem "rubocop", "~> 1.76"
+gem "rubocop", "~> 1.77"
 
 gem "rufo", "~> 0.18.1"
 
