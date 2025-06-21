@@ -1,0 +1,121 @@
+<%# app/views/records/_form.html.erb %>
+
+<%# Add a data attribute to the form to easily grab the record ID in JS for exclusion %>
+<%= form_with(model: record, data: { record_id: record.id, turbo: true }) do |form| %>
+  <% if record.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(record.errors.count, "error") %> prohibited this record from being saved:</h2>
+      <ul>
+        <% record.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", placeholder: "Enter full name" %>
+  </div>
+
+  <%# ... other existing fields like contact_number, address, etc. ... %>
+  <div class="mb-3">
+    <%= form.label :contact_number, class: "form-label" %>
+    <%= form.text_field :contact_number, class: "form-control", placeholder: "e.g., 9876543210" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :address, class: "form-label" %>
+    <%= form.text_area :address, class: "form-control", placeholder: "Enter full address" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :pincode, class: "form-label" %>
+    <%= form.text_field :pincode, class: "form-control", placeholder: "e.g., 110001" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :city, class: "form-label" %>
+    <%= form.text_field :city, class: "form-control", placeholder: "e.g., Delhi" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :state, class: "form-label" %>
+    <%= form.text_field :state, class: "form-control", placeholder: "e.g., Delhi" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :date_of_birth, class: "form-label" %>
+    <%= form.date_field :date_of_birth, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :father_name, class: "form-label" %>
+    <%= form.text_field :father_name, class: "form-control", placeholder: "Enter father's name" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :government_id_number, class: "form-label" %>
+    <%= form.text_field :government_id_number, class: "form-control", placeholder: "e.g., XXXXXXXXXX" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :photo, "Upload Photo", class: "form-label" %>
+    <%= form.file_field :photo, class: "form-control" %>
+    <% if record.photo.attached? %>
+      <div class="mt-2">
+        <%= image_tag record.photo.variant(:thumbnail), class: "img-thumbnail" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :government_id_photo, "Upload Government ID Photo", class: "form-label" %>
+    <%= form.file_field :government_id_photo, class: "form-control" %>
+    <% if record.government_id_photo.attached? %>
+      <div class="mt-2">
+        <%= image_tag record.government_id_photo.variant(:thumbnail), class: "img-thumbnail" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# --- New: Guest Checkbox --- %>
+  <div class="mb-3 form-check">
+    <%= form.check_box :is_guest, class: "form-check-input" %>
+    <%= form.label :is_guest, "Is this person a guest?", class: "form-check-label" %>
+  </div>
+
+  <%# --- New: Host Selection Container (initially hidden) --- %>
+<%# --- New: Host Selection Container (initially hidden) --- %>
+<div id="host-selection-container" class="col-12 mb-3 border p-4 rounded bg-light shadow-sm hidden">
+  <h4 class="mb-3 text-primary">Host Information</h4>
+  <label class="form-label fw-bold">Select Host Record:</label>
+  <div class="input-group mb-2">
+    <%= text_field_tag :host_search_input, nil,
+                       class: "form-control form-control-lg",
+                       placeholder: "Search host by name or contact number (min 3 characters)",
+                       id: "host-search-input" %>
+    <button type="button" class="btn btn-outline-secondary hidden" id="clear-host-selection-btn">Clear Selection</button>
+  </div>
+
+  <div id="host-search-results" class="mb-2">
+    <%# Search results will be injected here by JavaScript %>
+  </div>
+
+  <div id="selected-host-info" class="alert alert-info py-2 px-3 mb-2 hidden d-flex align-items-center justify-content-between">
+    <%# Selected host info will be displayed here %>
+  </div>
+
+  <%# Hidden field to store the selected parent_record_id %>
+  <%= form.hidden_field :parent_record_id,
+                        id: "record_parent_record_id",
+                        data: {
+                          parent_record_name: @record.host&.name,
+                          parent_record_contact: @record.host&.contact_number
+                        } %>
+</div>
+
+  <div class="mb-3">
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+<% end %>

@@ -1,15 +1,19 @@
 <div class="container mt-4">
-  <h1 class="text-center mb-4" style="color: #3498db;"><i class="bi bi-people-fill me-2"></i>Records</h1>
+  <h1 class="text-center mb-4 text-primary">
+    <i class="bi bi-people-fill me-2"></i>Records
+  </h1>
 
   <% if @records.present? %>
 
     <div class="card shadow-sm mb-4">
       <div class="card-body">
-        <h5 class="card-title mb-3" style="color: #2ecc71;"><i class="bi bi-search me-2"></i> Looking for Someone?</h5>
+        <h5 class="card-title mb-3 text-accent">
+          <i class="bi bi-search me-2"></i> Looking for Someone?
+        </h5>
         <%= search_form_for @q, url: records_path, method: :get, class: 'row g-3 align-items-end' do |f| %>
           <div class="col-md-6">
-            <%= f.search_field :name_or_email_or_contact_number_or_address_or_city_or_state_or_father_name_or_pincode_str_or_government_id_number_str_cont,
-                                placeholder: "Search by Name, Email, Number, etc...".html_safe, class: "form-control form-control-lg" %>
+            <%= f.search_field :search_all,
+                               placeholder: "Search by Name, Email, Number, etc...", class: "form-control form-control-lg" %>
           </div>
           <div class="col-md-4">
             <%= f.label :created_at, '<i class="bi bi-calendar-event me-2"></i> Filter by Creation Date:'.html_safe, class: 'form-label' %>
@@ -24,7 +28,9 @@
 
     <div class="card shadow-sm mb-4">
       <div class="card-body">
-        <h5 class="card-title text-center mb-3" style="color: #f39c12;"><i class="bi bi-bar-chart-line me-2"></i> Attendance Insights - Tap to Dive In! <i class="bi bi-hand-point-down-fill"></i></h5>
+        <h5 class="card-title text-center mb-3 text-accent">
+          <i class="bi bi-bar-chart-line me-2"></i> Attendance Insights - Tap to Dive In! <i class="bi bi-hand-point-down-fill"></i>
+        </h5>
         <div class="row text-center">
           <div class="col-md-3">
             <%= link_to records_path(filter: 'all'), class: 'text-decoration-none text-info' do %>
@@ -47,7 +53,7 @@
           <div class="col-md-3">
             <%= link_to records_path(filter: 'pending'), class: 'text-decoration-none text-warning' do %>
               <h6><i class="bi bi-hourglass-split me-2"></i> Waiting to Check Out</h6>
-              <p class="fs-4"><span class="badge bg-warning bg-opacity-75 rounded-pill"><%= @pending_records %></span></p>
+              <p class="fs-4"><span class="badge bg-warning text-dark"><%= @pending_records %></span></p>
             <% end %>
           </div>
         </div>
@@ -57,30 +63,30 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
       <% @records.each_with_index do |record, index| %>
         <div class="col">
-          <div class="card h-100 shadow-sm border-primary border-opacity-50" style="border-width: 0.1rem;">
+          <div class="card h-100 shadow-sm">
             <% if record.photo.attached? %>
-              <%= image_tag record.photo, class: 'card-img-top rounded-top', style: 'height: 200px; object-fit: cover;' %>
+              <%= image_tag record.photo, class: 'card-img-top object-fit-cover', style: 'height: 200px;' %> <%# Added object-fit-cover for consistent image scaling %>
             <% else %>
-              <div class="card-img-top bg-light d-flex align-items-center justify-content-center rounded-top" style="height: 200px;">
-                <i class="bi bi-person-bounding-box text-muted fs-1"></i>
+              <div class="card-img-top bg-card-placeholder d-flex align-items-center justify-content-center" style="height: 200px;">
+                <i class="bi bi-person-bounding-box text-secondary fs-1"></i> <%# Used text-secondary for consistency with your custom utilities %>
               </div>
             <% end %>
             <div class="card-body">
-              <h5 class="card-title text-truncate" title="<%= record.name %>" style="color: #2c3e50;"><%= record.name %></h5>
+              <h5 class="card-title text-truncate text-body-text" title="<%= record.name %>"><%= record.name %></h5>
               <div class="mb-2">
                 <span class="badge bg-info bg-opacity-60"><i class="bi bi-tag me-1"></i> #<%= index + 1 %></span>
                 <span class="badge bg-secondary bg-opacity-60"><i class="bi bi-calendar-check me-1"></i> <%= record.created_at.strftime('%b %d, %Y') %></span>
               </div>
               <% latest_attendance = record.attendances.order(created_at: :desc).first %>
               <% if latest_attendance.present? %>
-                <p class="mb-1"><strong style="color: #27ae60;"><i class="bi bi-arrow-right-circle-fill me-1"></i> Last In:</strong>
+                <p class="mb-1 text-body-text"><strong class="text-accent"><i class="bi bi-arrow-right-circle-fill me-1"></i> Last In:</strong> <%# Made strong text use text-accent for clarity %>
                   <% if latest_attendance.in_time&.strftime('%I:%M %p') %>
                     <span class="badge bg-success bg-opacity-75"><%= latest_attendance.in_time&.strftime('%I:%M %p') %></span>
                   <% else %>
                     <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-fill me-1"></i> Pending</span>
                   <% end %>
                 </p>
-                <p class="mb-0"><strong style="color: #c0392b;"><i class="bi bi-arrow-left-circle-fill me-1"></i> Last Out:</strong>
+                <p class="mb-0 text-body-text"><strong class="text-danger"><i class="bi bi-arrow-left-circle-fill me-1"></i> Last Out:</strong> <%# Made strong text use text-danger for clarity %>
                   <% if latest_attendance.out_time.present? %>
                     <span class="badge bg-danger bg-opacity-75"><%= latest_attendance.out_time.strftime('%I:%M %p') %></span>
                   <% else %>
@@ -88,7 +94,7 @@
                   <% end %>
                 </p>
               <% else %>
-                <p class="text-muted"><i class="bi bi-clipboard-x me-1"></i> No attendance history yet.</p>
+                <p class="text-secondary"><i class="bi bi-clipboard-x me-1"></i> No attendance history yet.</p>
               <% end %>
             </div>
             <div class="card-footer bg-transparent border-top text-center">
@@ -102,52 +108,3 @@
     <div class="alert alert-warning text-center mt-4"><i class="bi bi-exclamation-triangle-fill me-2"></i> Hmm, no folks found matching your criteria right now.</div>
   <% end %>
 </div>
-
-<style>
-  /* Modern UI Enhancements - Keeping it Sleek! */
-  .card {
-    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    border-radius: 0.5rem;
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12) !important;
-  }
-
-  .btn-outline-primary {
-    color: #3498db;
-    border-color: #3498db;
-  }
-
-  .btn-outline-primary:hover {
-    background-color: #3498db;
-    color: white;
-  }
-
-  .form-control-lg {
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    border-radius: 0.3rem;
-  }
-
-  .form-select-lg {
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    border-radius: 0.3rem;
-  }
-
-  .btn-primary {
-    background-color: #3498db;
-    border-color: #3498db;
-  }
-
-  .btn-primary:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
-  }
-
-  .text-decoration-none:hover {
-    opacity: 0.9;
-  }
-</style>

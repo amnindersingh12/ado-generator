@@ -85,6 +85,11 @@
     object-fit: cover;
     max-height: 200px;
   }
+
+  /* Custom styles for guest functionality */
+  .hidden {
+    display: none !important;
+  }
 </style>
 
 <%= form_with model: @record, local: true, html: { class: "needs-validation", novalidate: true } do |form| %>
@@ -215,7 +220,7 @@
       <div class="webcam-capture-container">
         <%= webcam_capture(form, :photo) %>
         <div id="photo-preview" class="webcam-capture-preview mt-2" style="display: <%= @record.photo.attached? ? 'block' : 'none' %>;">
-          <img id="captured-image" src="<%= @record.photo.attached? ? url_for(@record.photo) : '#' %>" alt="Captured Photo">
+          <img id="captured-image" src="<%= @record.photo.attached? ? url_for(@record.photo) : ' ' %>" alt="Captured Photo">
         </div>
         <%= form.hidden_field :photo_data, id: "photo_data_field" %>
         <%# Placeholder for client-side webcam errors if photo_data is empty %>
@@ -228,6 +233,49 @@
       <% end %>
       <small class="form-text text-muted mt-1">Please ensure your face is clearly visible in the photo.</small>
     </div>
+
+    <%# --- New: Guest Functionality Fields --- %>
+    <div class="col-12 mt-4">
+      <div class="form-check form-check-lg">
+        <%= form.check_box :is_guest, class: "form-check-input", id: "record_is_guest" %>
+        <%= form.label :is_guest, "Is this person a guest?", class: "form-check-label ms-2" %>
+      </div>
+    </div>
+
+    <div id="host-selection-container" class="col-12 mb-3 border p-4 rounded bg-light shadow-sm <%= 'hidden' unless @record.is_guest? %>">
+      <h4 class="mb-3 text-primary"><i class="bi bi-person-fill-up me-2"></i> Host Information</h4>
+      <label class="form-label fw-bold">Select Host Record:</label>
+      <div class="input-group mb-2">
+        <%= text_field_tag :host_search_input, nil,
+                           class: "form-control form-control-lg",
+                           placeholder: "Search host by name or contact number (min 3 characters)",
+                           id: "host-search-input" %>
+        <button type="button" class="btn btn-outline-secondary <%= 'hidden' unless @record.parent_record_id.present? %>" id="clear-host-selection-btn">Clear Selection</button>
+      </div>
+
+      <div id="host-search-results" class="mb-2 list-group">
+        <%# Search results will be injected here by JavaScript %>
+      </div>
+
+      <div id="selected-host-info" class="alert alert-success py-2 px-3 mb-2 <%= 'hidden' unless @record.parent_record_id.present? %> d-flex align-items-center justify-content-between">
+        <% if @record.parent_record_id.present? && @record.host.present? %>
+          <strong>Selected Host:</strong> <%= @record.host.name %> (<%= @record.host.contact_number %>)
+        <% end %>
+      </div>
+
+      <%# Hidden field to store the selected parent_record_id %>
+      <%= form.hidden_field :parent_record_id,
+                            id: "record_parent_record_id",
+                            data: {
+                              parent_record_name: @record.host&.name,
+                              parent_record_contact: @record.host&.contact_number
+                            } %>
+      <% @record.errors[:parent_record_id].each do |err| %>
+        <div class="text-danger"><%= err %></div>
+      <% end %>
+    </div>
+    <%# --- End Guest Functionality Fields --- %>
+
   </div>
 
   <div class="mt-5 d-flex gap-3">
@@ -266,6 +314,33 @@
         }
         // --- End custom validation for webcam photo ---
 
+        // --- Custom validation for parent_record_id if is_guest is checked ---
+        const isGuestCheckbox = document.getElementById('record_is_guest');
+        const parentRecordIdField = document.getElementById('record_parent_record_id');
+        const hostSelectionContainer = document.getElementById('host-selection-container');
+
+        if (isGuestCheckbox && isGuestCheckbox.checked && parentRecordIdField && parentRecordIdField.value === "") {
+          event.preventDefault();
+          event.stopPropagation();
+          // Find or create a specific invalid feedback for parent_record_id if needed, or highlight the container
+          hostSelectionContainer.classList.add('is-invalid-border'); // Add a class for visual feedback
+          const existingFeedback = hostSelectionContainer.querySelector('.text-danger');
+          if (!existingFeedback) {
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.classList.add('text-danger');
+            feedbackDiv.textContent = "Please select a host for the guest.";
+            hostSelectionContainer.appendChild(feedbackDiv);
+          }
+          hostSelectionContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else if (hostSelectionContainer) {
+          hostSelectionContainer.classList.remove('is-invalid-border');
+          const existingFeedback = hostSelectionContainer.querySelector('.text-danger');
+          if (existingFeedback && existingFeedback.textContent === "Please select a host for the guest.") {
+            existingFeedback.remove();
+          }
+        }
+        // --- End custom validation for parent_record_id ---
+
         // Bootstrap's client-side validation
         if (!form.checkValidity()) {
           event.preventDefault();
@@ -288,14 +363,14 @@
       if (firstErrorElement) {
         // Find the input field associated with this error.
         // It's usually the sibling of the label or a child of the immediate parent div.
-        const parentColumn = firstErrorElement.closest('.col-md-6, .col-12');
+        const parentColumn = firstErrorElement.closest('.col-md-6, .col-12, .host-selection-container'); // Include host-selection-container
         if (parentColumn) {
           const inputField = parentColumn.querySelector('.form-control, .form-select');
           if (inputField) {
             inputField.focus(); // Focus on the field
             inputField.scrollIntoView({ behavior: "smooth", block: "center" });
           } else {
-            // Fallback if no specific input field found in the column (e.g., error for webcam area)
+            // Fallback if no specific input field found in the column (e.g., error for webcam area or host selection)
             firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
           }
         }
@@ -317,14 +392,19 @@
           if (videoElement) {
             videoElement.srcObject = stream;
             // Add event listener to remove webcam error when photo is captured
-            captureButton.addEventListener('click', () => {
-              if (photoDataField.value !== "") { // Only remove if a photo was actually captured
-                if (webcamInvalidFeedback) {
-                  webcamInvalidFeedback.style.display = 'none';
-                  webcamInvalidFeedback.classList.remove('d-block');
-                }
-              }
-            });
+            if (captureButton) { // Ensure captureButton exists before adding listener
+              captureButton.addEventListener('click', () => {
+                // Wait briefly for the image data to be set
+                setTimeout(() => {
+                  if (photoDataField.value !== "") { // Only remove if a photo was actually captured
+                    if (webcamInvalidFeedback) {
+                      webcamInvalidFeedback.style.display = 'none';
+                      webcamInvalidFeedback.classList.remove('d-block');
+                    }
+                  }
+                }, 100); // Small delay to allow imageDataURL to populate
+              });
+            }
           }
         })
         .catch(error => {
@@ -380,5 +460,119 @@
         }
       }
     };
+
+    // --- Guest Functionality JavaScript ---
+    const isGuestCheckbox = document.getElementById('record_is_guest');
+    const hostSelectionContainer = document.getElementById('host-selection-container');
+    const hostSearchInput = document.getElementById('host-search-input');
+    const hostSearchResults = document.getElementById('host-search-results');
+    const selectedHostInfo = document.getElementById('selected-host-info');
+    const recordParentRecordId = document.getElementById('record_parent_record_id');
+    const clearHostSelectionBtn = document.getElementById('clear-host-selection-btn');
+
+    function toggleHostSelection() {
+      if (isGuestCheckbox.checked) {
+        hostSelectionContainer.classList.remove('hidden');
+        // If a host was already selected (e.g., on form re-render with errors), show it
+        if (recordParentRecordId.value && recordParentRecordId.dataset.parentRecordName) {
+            selectedHostInfo.classList.remove('hidden');
+            selectedHostInfo.innerHTML = `<strong>Selected Host:</strong> ${recordParentRecordId.dataset.parentRecordName} (${recordParentRecordId.dataset.parentRecordContact}) <i class="bi bi-check-circle-fill text-success ms-2"></i>`;
+            clearHostSelectionBtn.classList.remove('hidden');
+        } else {
+            // Ensure fields are reset if re-checked without previous selection
+            selectedHostInfo.classList.add('hidden');
+            selectedHostInfo.innerHTML = '';
+            recordParentRecordId.value = '';
+            hostSearchInput.value = '';
+            clearHostSelectionBtn.classList.add('hidden');
+        }
+      } else {
+        hostSelectionContainer.classList.add('hidden');
+        selectedHostInfo.classList.add('hidden');
+        selectedHostInfo.innerHTML = '';
+        recordParentRecordId.value = '';
+        hostSearchInput.value = '';
+        hostSearchResults.innerHTML = ''; // Clear search results too
+        clearHostSelectionBtn.classList.add('hidden');
+      }
+    }
+
+    // Initial call to set visibility based on current @record.is_guest? value
+    toggleHostSelection();
+
+    isGuestCheckbox.addEventListener('change', toggleHostSelection);
+
+    let searchTimeout;
+    hostSearchInput.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      const query = hostSearchInput.value.trim();
+
+      if (query.length >= 3) {
+        searchTimeout = setTimeout(() => {
+          fetch(`/records/search_records?q[name_or_contact_number_cont]=${query}`)
+            .then(response => response.json())
+            .then(data => {
+              hostSearchResults.innerHTML = ''; // Clear previous results
+              if (data.length > 0) {
+                data.forEach(record => {
+                  const listItem = document.createElement('a');
+                  listItem.href = '#'; // Prevent actual navigation
+                  listItem.classList.add('list-group-item', 'list-group-item-action');
+                  listItem.innerHTML = `<strong>${record.name}</strong> (Contact: ${record.contact_number})`;
+                  listItem.dataset.id = record.id;
+                  listItem.dataset.name = record.name;
+                  listItem.dataset.contact = record.contact_number;
+                  listItem.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    recordParentRecordId.value = record.id;
+                    recordParentRecordId.dataset.parentRecordName = record.name;
+                    recordParentRecordId.dataset.parentRecordContact = record.contact_number;
+                    selectedHostInfo.classList.remove('hidden');
+                    selectedHostInfo.innerHTML = `<strong>Selected Host:</strong> ${record.name} (${record.contact_number}) <i class="bi bi-check-circle-fill text-success ms-2"></i>`;
+                    hostSearchResults.innerHTML = ''; // Clear results after selection
+                    clearHostSelectionBtn.classList.remove('hidden'); // Show clear button
+                    hostSelectionContainer.classList.remove('is-invalid-border'); // Remove error border if any
+                    const existingFeedback = hostSelectionContainer.querySelector('.text-danger');
+                    if (existingFeedback && existingFeedback.textContent === "Please select a host for the guest.") {
+                      existingFeedback.remove();
+                    }
+                  });
+                  hostSearchResults.appendChild(listItem);
+                });
+              } else {
+                hostSearchResults.innerHTML = '<div class="alert alert-warning mb-0">No hosts found.</div>';
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching host records:', error);
+              hostSearchResults.innerHTML = '<div class="alert alert-danger mb-0">Error searching for hosts.</div>';
+            });
+        }, 300); // Debounce search
+      } else {
+        hostSearchResults.innerHTML = ''; // Clear results if query too short
+      }
+    });
+
+    clearHostSelectionBtn.addEventListener('click', () => {
+      recordParentRecordId.value = '';
+      recordParentRecordId.dataset.parentRecordName = '';
+      recordParentRecordId.dataset.parentRecordContact = '';
+      selectedHostInfo.classList.add('hidden');
+      selectedHostInfo.innerHTML = '';
+      hostSearchInput.value = '';
+      hostSearchResults.innerHTML = '';
+      clearHostSelectionBtn.classList.add('hidden');
+    });
+
+    // Handle initial state if form is re-rendered with errors and is_guest was checked
+    if (isGuestCheckbox.checked && recordParentRecordId.value === "") {
+        // This means is_guest is true but no host was selected or valid
+        hostSelectionContainer.classList.add('is-invalid-border'); // Visually indicate error
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.classList.add('text-danger', 'mt-2');
+        feedbackDiv.textContent = "Please select a host for the guest.";
+        hostSelectionContainer.appendChild(feedbackDiv);
+    }
+
   });
 </script>

@@ -1,10 +1,195 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+/* app/assets/stylesheets/application.scss */
+
+/* Base styles for a clean, modern look */
+body {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--color-body-bg);
+  color: var(--color-body-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.content-area {
+  padding: 2rem;
+  flex-grow: 1;
+}
+
+.alert {
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+/* --- General UI Components (using CSS variables) --- */
+.card {
+  border: 1px solid var(--color-card-border);
+  background-color: var(--color-card-bg);
+  border-radius: 0.75rem;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.8rem 1.8rem rgba(0, 0, 0, 0.15), 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Form Elements */
+.form-control, .form-select {
+  border-radius: 0.4rem;
+  border-color: var(--color-card-border);
+  padding: 0.6rem 1rem;
+  background-color: var(--color-card-bg);
+  color: var(--color-body-text);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.form-control::placeholder {
+  color: var(--color-secondary);
+  opacity: 0.7;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.25rem rgba(70, 130, 180, 0.25);
+}
+
+/* Buttons */
+.btn {
+  border-radius: 0.4rem;
+  transition: all 0.2s ease;
+}
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.btn-outline-primary {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.btn-outline-primary:hover {
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  transform: translateY(-1px);
+}
+.btn-accent {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+.btn-accent:hover {
+  filter: brightness(1.1);
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+  padding: 0.4em 0.7em;
+  border-radius: 0.35rem;
+  opacity: 0.9;
+}
+
+/* Sidebar specific styles */
+.sidebar-header {
+  border-bottom: 2px solid var(--color-border) !important;
+  padding-bottom: 1.5rem;
+}
+.nav-link {
+  color: var(--color-text) !important;
+  padding: 0.8rem 1rem;
+  border-radius: 0.4rem;
+  transition: background-color 0.15s ease-in-out, transform 0.1s ease-out;
+}
+.nav-link:hover {
+  background-color: var(--color-link-hover);
+  transform: translateX(3px);
+}
+.nav-link.active {
+  background-color: var(--color-active-link) !important;
+  color: var(--color-text) !important;
+  font-weight: 600;
+}
+.nav-link i {
+  font-size: 1.1rem;
+}
+.dropdown-menu {
+  border: none !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  background-color: var(--color-dropdown-bg) !important;
+}
+.dropdown-item {
+  padding: 0.7rem 1.2rem;
+  transition: background-color 0.1s ease-in-out;
+  color: var(--color-text) !important;
+}
+.dropdown-item:hover {
+  background-color: var(--color-dropdown-hover) !important;
+}
+.dropdown-divider {
+  border-top-color: var(--color-border) !important;
+}
+/* Admin catchphrase input within dropdown */
+.admin-catchphrase-input {
+    background-color: var(--color-dropdown-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: 0.2rem;
+}
+.admin-catchphrase-input::placeholder {
+    color: var(--color-secondary);
+    opacity: 0.7;
+}
+
+/* --- Custom Utility Classes (OVERRIDE Bootstrap defaults to use theme variables) --- */
+/* Text colors */
+.text-primary { color: var(--color-primary) !important; }
+.text-secondary { color: var(--color-secondary) !important; }
+.text-accent { color: var(--color-accent) !important; }
+.text-body-text { color: var(--color-body-text) !important; }
+.text-text-color { color: var(--color-text) !important; }
+.text-info { color: var(--color-info) !important; }
+.text-success { color: var(--color-success) !important; }
+.text-danger { color: var(--color-danger) !important; }
+.text-warning { color: var(--color-warning) !important; }
+.text-dark { color: var(--color-body-text) !important; }
+.text-muted { color: var(--color-secondary) !important; }
+
+/* Background colors */
+.bg-primary { background-color: var(--color-primary) !important; }
+.bg-secondary { background-color: var(--color-secondary) !important; }
+.bg-accent { background-color: var(--color-accent) !important; }
+.bg-body-bg { background-color: var(--color-body-bg) !important; }
+.bg-card-bg { background-color: var(--color-card-bg) !important; }
+.bg-info { background-color: var(--color-info) !important; }
+.bg-success { background-color: var(--color-success) !important; }
+.bg-danger { background-color: var(--color-danger) !important; }
+.bg-warning { background-color: var(--color-warning) !important; }
+.bg-dropdown-hover { background-color: var(--color-dropdown-hover) !important; }
+
+/* Custom background for the placeholder image div */
+.bg-card-placeholder {
+  background-color: var(--color-card-border) !important;
+  color: var(--color-secondary) !important;
+}
+.bg-light { background-color: var(--color-card-bg) !important; }
+.text-light { color: var(--color-body-text) !important; }
+
+/* New CSS for Navbar Specifics */
+.border-border { border-color: var(--color-border) !important; }
+
+.collapse-icon {
+  transition: transform 0.3s ease;
+}
+.collapse-icon.bi-chevron-up {
+  transform: rotate(180deg);
+}
+
+.admin-access-box {
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+}
