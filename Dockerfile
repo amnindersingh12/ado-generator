@@ -9,7 +9,12 @@ WORKDIR /rails
 # Install required base packages and dependencies
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-    curl libjemalloc2 libvips sqlite3 build-essential git libyaml-dev pkg-config && \
+    curl libjemalloc2 libvips sqlite3 build-essential git libyaml-dev pkg-config \
+    # --- ADDITIONS BELOW ---
+    nodejs \
+    npm \
+    # --- ADDITIONS ABOVE ---
+    && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set environment variables for Rails production
@@ -52,6 +57,7 @@ RUN groupadd --system --gid 1000 rails && \
 USER 1000:1000
 
 # Entry point for database setup (if needed)
+# Ensure this script (bin/docker-entrypoint) correctly handles `db:migrate` etc.
 ENTRYPOINT ["/bin/bash", "/rails/bin/docker-entrypoint"]
 
 # Expose port 3000
