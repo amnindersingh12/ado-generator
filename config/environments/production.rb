@@ -93,15 +93,8 @@ Rails.application.configure do
   config.hosts << /\h+/ # For docker container IDs
 
   # Force SSL but exclude internal requests
-  config.force_ssl = true
-  config.ssl_options = {
-    redirect: {
-      exclude: lambda { |request|
-        request.path == '/up' ||
-          request.headers['X-Forwarded-Proto'] == 'https'
-      }
-    }
-  }
+  config.force_ssl = false
+  config.action_controller.allow_forgery_protection = false
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }

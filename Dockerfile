@@ -1,19 +1,23 @@
 # syntax=docker/dockerfile:1
-# Make sure RUBY_VERSION matches the Ruby version in .ruby-version
+
+# Stage 1: Base image with core Ruby and minimal runtime dependencies
 ARG RUBY_VERSION=3.2.7
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 # Set working directory for the Rails app
 WORKDIR /rails
 
-# Install required base packages and dependencies
+# Install core runtime packages
+# - curl: For making HTTP requests (e.g., health checks, external APIs)
+# - libjemalloc2: For memory optimization in Ruby
+# - libvips: Common image processing library for Active Storage variants
+# - sqlite3: If you decide to stick with SQLite for simple cases
+# - git: Might be needed for some gems that depend on git
+# - libyaml-dev: Required for psych gem (YAML parser)
+# - pkg-config: Often a dependency for compiling other native extensions
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-    curl libjemalloc2 libvips sqlite3 build-essential git libyaml-dev pkg-config \
-    # --- ADDITIONS BELOW ---
-    nodejs \
-    npm \
-    # --- ADDITIONS ABOVE ---
+    curl libjemalloc2 libvips sqlite3 git libyaml-dev pkg-config \
     && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
@@ -21,47 +25,62 @@ RUN apt-get update -qq && \
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development" \
-    SECRET_KEY_BASE_DUMMY=1
+    BUNDLE_WITHOUT="development"
 
-# Install application gems, precompile boot files, and cleanup
+# Stage 2: Build image (for installing gems and precompiling assets)
 FROM base AS build
 
-# Install the required gems and clean up
+# Install build-time packages (needed only for compiling Ruby gems)
+# - build-essential: Compilers (gcc, g++, make) for native gem extensions
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Copy Gemfile and Gemfile.lock first to leverage Docker cache
 COPY Gemfile Gemfile.lock ./
+
+# Install application gems
+# rm -rf commands reduce image size by cleaning up build artifacts
+# bootsnap precompile improves Rails boot time
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
-# Copy application code
+# Copy the rest of the application code
 COPY . .
 
-# Precompile bootsnap and assets for faster boot times
+# Precompile bootsnap cache for app/ lib/ for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
-# Precompiling assets for production
-RUN ./bin/rails assets:precompile
+# Precompile assets for production
+# SECRET_KEY_BASE_DUMMY allows asset precompilation without a real master key
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
-# Final image for the app (runtime stage)
+# Stage 3: Final image (runtime)
 FROM base
-
-# Copy the gems and application code from the build stage
-COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
-COPY --from=build /rails /rails
 
 # Create a non-root user for security reasons
 RUN groupadd --system --gid 1000 rails && \
-    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
+    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
 
+# Copy the bundled gems and application code from the build stage
+COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
+COPY --chown=rails:rails --from=build /rails /rails
+
+# Set the user for subsequent commands
 USER 1000:1000
 
-# Entry point for database setup (if needed)
-# Ensure this script (bin/docker-entrypoint) correctly handles `db:migrate` etc.
-ENTRYPOINT ["/bin/bash", "/rails/bin/docker-entrypoint"]
+# Copy and set permissions for the custom entrypoint script
+COPY --chown=rails:rails bin/docker-entrypoint /rails/bin/docker-entrypoint
+RUN chmod +x /rails/bin/docker-entrypoint
 
-# Expose port 3000
+# Define the entry point for the container
+ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+
+# Expose port 3000 where the Rails server will run
 EXPOSE 3000
 
-# Command to start the server, can be overridden at runtime
-CMD ["./bin/thrust", "./bin/rails", "server"]
+# Default command to start the Rails server
+CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
