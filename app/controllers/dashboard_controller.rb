@@ -3,9 +3,9 @@ require 'csv'
 class DashboardController < ApplicationController
   def index
     @total_records = Record.count
-    @total_check_ins = Attendance.where.not(in_time: nil).count
-    @total_check_outs = Attendance.where.not(out_time: nil).count
-    @pending_check_outs = Attendance.where(out_time: nil).count
+    @total_check_ins = Attendance.where.not(in_time: nil).where.not(out_time: nil).count
+    @total_check_outs = Attendance.where.not(out_time: nil).where.not(in_time: nil).count
+    @pending_check_outs = Attendance.where(out_time: nil).where.not(in_time: nil).count
 
     timeframe = params[:timeframe] || 'week' # Default to week
 

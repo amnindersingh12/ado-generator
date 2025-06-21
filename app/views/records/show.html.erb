@@ -34,7 +34,7 @@
           <% if @record.photo.attached? %>
           
             <div class="id-photo-preview mb-4">
-              <%= enlargeable_image_tag(@record.photo, thumb_size: "100%", label: "Main Profile Photo") %>
+              <%= enlargeable_image_tag(@record.photo, thumb_size: "300px", label: "Main Profile Photo") %>
             </div>
           <% else %>
             <div class="alert alert-light bg-light-subtle text-center p-5 rounded-4 border border-secondary w-100">
@@ -96,7 +96,7 @@
               <strong>ID Photo:</strong>
               <% if @record.government_id_photo.attached? %>
                 <div class="id-photo-preview mt-3">
-                  <%= enlargeable_image_tag(@record.government_id_photo, thumb_size: '250px', label: 'Govt. ID Photo') %>
+                  <%= enlargeable_image_tag(@record.government_id_photo, thumb_size: '30Monthly Attendance Summary0px', label: 'Govt. ID Photo') %>
                 </div>
               <% else %>
                 <div class="alert alert-light bg-light-subtle text-center p-4 rounded-4 border border-secondary w-100 my-3">

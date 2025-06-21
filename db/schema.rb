@@ -61,7 +61,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_131312) do
     t.string "state"
     t.datetime "date_of_birth"
     t.string "father_name"
-    t.integer "government_id_number"
+    t.string "government_id_number"
     t.boolean "is_guest", default: false
     t.integer "records_id"
     t.integer "parent_record_id"
