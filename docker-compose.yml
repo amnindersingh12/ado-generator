@@ -1,29 +1,19 @@
+version: '3.8'
+
 services:
   web:
-    build: . # Build the Docker image using the Dockerfile in the current directory
+    build: .
+    command: bundle exec rails s -b '0.0.0.0'
     ports:
-      - "3000:3000" # Map host port 3000 to container port 3000
-    volumes:
-      - ./config/master.key:/app/config/master.key:ro
-      - "storage:/rails/storage" # Persist the Rails storage directory (e.g., for Active Storage files or SQLite DB)
-    env_file:
-      - .env # Load environment variables from the .env file in the current directory
+      - "3000:3000"
+    env_file: 
+      - .env
     environment:
-      - RAILS_ENV=production        # Set Rails environment to production
-      - RAILS_MAX_THREADS=5         # Set maximum threads for Puma/Rails (adjust as needed)
-      - DATABASE_URL=sqlite3:///rails/db/production.sqlite3 # SQLite DB path relative to container's /rails
-    
-    # By default, this will use the CMD from the Dockerfile: ["./bin/thrust", "./bin/rails", "server"]
-    # If you want to override the CMD from the Dockerfile (e.g., to NOT use 'thrust' for this compose setup),
-    # uncomment the line below:
-    # command: ["./bin/rails", "server", "-b", "0.0.0.0"]
-
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/up"] # Assuming you have a /up or /healthz endpoint
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+      - RAILS_ENV=development
+      - RAILS_LOG_TO_STDOUT=true
+    volumes:
+      - .:/myapp
+      - bundle_data:/usr/local/bundle
 
 volumes:
-  storage: # This named volume will persist the contents of /rails/storage across container restarts
+  bundle_data:
