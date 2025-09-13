@@ -44,4 +44,9 @@ telegram_config.json
 *.session
 *.session-journal
 
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
  
