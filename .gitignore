@@ -39,4 +39,9 @@
 
 /public/assets
 
+# Telegram configuration and session files
+telegram_config.json
+*.session
+*.session-journal
+
  
