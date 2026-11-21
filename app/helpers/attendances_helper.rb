@@ -65,9 +65,7 @@ module AttendancesHelper
   end
 
   def time_spent(attendance)
-    unless attendance.in_time && attendance.out_time
-      return 'Incomplete attendance'
-    end
+    return 'Incomplete attendance' unless attendance.in_time && attendance.out_time
 
     time_diff = (attendance.out_time - attendance.in_time).abs
 
@@ -89,8 +87,4 @@ module AttendancesHelper
 
     "#{hours}h #{minutes}m"
   end
-
-
-
-
 end

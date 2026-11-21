@@ -131,7 +131,7 @@
         },
         plugins: {
           legend: {
-            display: <%= controls.nil? ? true : controls %>,
+            display: <%= controls.nil? || controls %>,
             position: 'bottom',
             labels: {
               color: bodyTextColor,

@@ -106,7 +106,7 @@
         },
         plugins: {
           legend: {
-            display: <%= controls.nil? ? true : controls %>, // Use the 'controls' prop for legend display
+            display: <%= controls.nil? || controls %>, // Use the 'controls' prop for legend display
             labels: {
               color: bodyTextColor, // Legend text uses theme text color
             },

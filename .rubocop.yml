@@ -1,10 +1,12 @@
+inherit_from: .rubocop_todo.yml
+
 # .rubocop.yml
 plugins:
   - rubocop-rails
   - rubocop-erb
 
 AllCops:
-  TargetRubyVersion: 3.2
+  TargetRubyVersion: 3.4
   NewCops: enable
   DisplayCopNames: true
 
@@ -37,3 +39,15 @@ Metrics/MethodLength:
 
 Metrics/ClassLength:
   Max: 100
+
+inherit_mode:
+  merge:
+    - Exclude
+
+# ERB templates can't carry a magic comment
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - '**/*.erb'
+
+Style/Documentation:
+  Enabled: false

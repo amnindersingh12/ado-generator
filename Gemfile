@@ -3,7 +3,8 @@ gem "htmlbeautifier"
 gem "erb-formatter"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "hotwire-spark"
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.1", ">= 8.1.4.1"
+gem "csv"
 gem "devise"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
@@ -71,7 +72,7 @@ gem 'dotenv'
 
 gem "faker"
 
-gem "rubocop", "~> 1.77"
+gem "rubocop", "~> 1.81"
 
 gem "rufo", "~> 0.18.1"
 
