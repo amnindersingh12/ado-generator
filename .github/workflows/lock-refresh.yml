@@ -16,7 +16,7 @@ jobs:
       - name: Re-resolve Gemfile.lock and install
         run: |
           bundle config set frozen false
-          bundle lock --update rails brakeman csv --add-platform x86_64-linux
+          bundle lock --update rails brakeman --add-platform x86_64-linux
           bundle install --jobs 4
       - name: Safe autocorrect + baseline remaining style offenses
         run: |
