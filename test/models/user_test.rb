@@ -3,7 +3,11 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  test 'new users default to the user role' do
+    assert_predicate User.new(email: 'new@example.com', password: 'password123'), :user?
+  end
+
+  test 'fixtures load with roles' do
+    assert_predicate users(:admin), :admin?
+  end
 end
