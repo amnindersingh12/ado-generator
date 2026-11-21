@@ -43,10 +43,10 @@ class AttendancesController < ApplicationController
     if params[:id].present?
       @attendance = @record.attendances.find(params[:id])
       unless @attendance.user == current_user
-        redirect_to record_path(@record), alert: "You are not authorized to modify this attendance."
+        redirect_to record_path(@record), alert: 'You are not authorized to modify this attendance.'
         return
       end
-      new_purpose = @attendance.purpose.present? ? @attendance.purpose : attendance_params[:purpose]
+      new_purpose = @attendance.purpose.presence || attendance_params[:purpose]
     else
       @attendance = @record.attendances.build(user: current_user)
       new_purpose = attendance_params[:purpose]
@@ -57,7 +57,7 @@ class AttendancesController < ApplicationController
 
     # Validate that at least one time or purpose is being set for a new record
     if @attendance.new_record? && in_time_to_set.blank? && out_time_to_set.blank? && new_purpose.blank?
-      @attendance.errors.add(:base, "An attendance record must have a purpose and at least one time set.")
+      @attendance.errors.add(:base, 'An attendance record must have a purpose and at least one time set.')
       @form_action = :create_new_attendance
       render 'attendances/flexible_form', status: :unprocessable_entity
       return
@@ -128,14 +128,13 @@ class AttendancesController < ApplicationController
     # 3. That started before the month and ended after the month (spanning across)
     # 4. That started before or within the month and are still pending (out_time is nil)
     @all_monthly_attendances = Attendance.includes(:record, :user)
-                                     .where("(in_time >= ? AND in_time <= ?) OR (out_time >= ? AND out_time <= ?) OR (in_time < ? AND out_time > ?) OR (in_time <= ? AND out_time IS NULL)",
-                                            start_date.beginning_of_day, end_date.end_of_day,
-                                            start_date.beginning_of_day, end_date.end_of_day,
-                                            start_date.beginning_of_day, end_date.end_of_day,
-                                            end_date.end_of_day # Check-ins up to end of month that are pending
-                                           )
-                                     .order(:in_time)
-
+                                         .where('(in_time >= ? AND in_time <= ?) OR (out_time >= ? AND out_time <= ?) OR (in_time < ? AND out_time > ?) OR (in_time <= ? AND out_time IS NULL)',
+                                                start_date.beginning_of_day, end_date.end_of_day,
+                                                start_date.beginning_of_day, end_date.end_of_day,
+                                                start_date.beginning_of_day, end_date.end_of_day,
+                                                end_date.end_of_day # Check-ins up to end of month that are pending
+                                         )
+                                         .order(:in_time)
 
     @monthly_summary = {
       total_check_ins: @all_monthly_attendances.where.not(in_time: nil).count,
@@ -159,9 +158,9 @@ class AttendancesController < ApplicationController
       # Filter for attendances active on this specific day
       attendances_active_on_day = @all_monthly_attendances.select do |a|
         (a.in_time && a.in_time.to_date == date) || # Checked in today
-        (a.out_time && a.out_time.to_date == date) || # Checked out today
-        (a.in_time && a.out_time && a.in_time.to_date < date && a.out_time.to_date > date) || # Spanned over today
-        (a.in_time && a.out_time.nil? && a.in_time.to_date <= date) # Checked in on or before today and still pending
+          (a.out_time && a.out_time.to_date == date) || # Checked out today
+          (a.in_time && a.out_time && a.in_time.to_date < date && a.out_time.to_date > date) || # Spanned over today
+          (a.in_time && a.out_time.nil? && a.in_time.to_date <= date) # Checked in on or before today and still pending
       end
 
       check_ins = attendances_active_on_day.count { |a| a.in_time&.to_date == date }
@@ -184,12 +183,10 @@ class AttendancesController < ApplicationController
       }
     end
 
-
     # --- Record Activity ---
     # Only consider attendances that have both in_time and out_time within the month for time calculations
     records_with_full_visits = @all_monthly_attendances.where.not(in_time: nil, out_time: nil)
-                                                      .select { |a| a.in_time >= start_date.beginning_of_day && a.out_time <= end_date.end_of_day }
-
+                                                       .select { |a| a.in_time >= start_date.beginning_of_day && a.out_time <= end_date.end_of_day }
 
     # Calculate total time spent per record
     total_time_per_record = records_with_full_visits.group_by(&:record_id).transform_values do |attendances_for_record|
@@ -223,20 +220,19 @@ class AttendancesController < ApplicationController
 
       # Top records by time spent (e.g., top 5)
       @monthly_summary[:record_activity][:top_time_spent] = total_time_per_record
-        .sort_by { |_record_id, data| -data[:total_time_seconds] } # Sort descending
-        .first(5) # Take top 5
-        .map do |record_id, data|
-          { record: Record.find_by(id: record_id), total_time_seconds: data[:total_time_seconds] }
-        end
+                                                            .sort_by { |_record_id, data| -data[:total_time_seconds] } # Sort descending
+                                                            .first(5) # Take top 5
+                                                            .map do |record_id, data|
+        { record: Record.find_by(id: record_id), total_time_seconds: data[:total_time_seconds] }
+      end
     end
 
     # Most Frequent Records
     record_frequency = @all_monthly_attendances.group(:record_id).count
     @monthly_summary[:record_activity][:frequent] = record_frequency
-      .sort_by { |_record_id, count| -count } # Sort descending
-      .first(5) # Top 5 frequent records
-      .map { |record_id, frequency| { record: Record.find_by(id: record_id), frequency: frequency } }
-
+                                                    .sort_by { |_record_id, count| -count } # Sort descending
+                                                    .first(5) # Top 5 frequent records
+                                                    .map { |record_id, frequency| { record: Record.find_by(id: record_id), frequency: frequency } }
 
     # --- User Activity Summary ---
     user_data = {}
@@ -251,17 +247,15 @@ class AttendancesController < ApplicationController
     end
     @monthly_summary[:user_activity] = user_data.transform_values { |data| data.merge(records_managed: data[:records_managed].size) }
 
-
     # --- Purpose Breakdown ---
     @monthly_summary[:purpose_breakdown] = @all_monthly_attendances.group(:purpose).count.sort_by { |_purpose, count| -count }.first(5).to_h # Top 5 purposes
-
 
     # --- Currently Checked-In Records (Pending Check-Out) ---
     # This specifically looks for records that are currently open (out_time is nil)
     # and whose in_time is within or before the selected month.
     @monthly_summary[:pending_checkouts] = @all_monthly_attendances
-      .select { |a| a.out_time.nil? && a.in_time.present? && a.in_time <= end_date.end_of_day }
-      .sort_by(&:in_time)
+                                           .select { |a| a.out_time.nil? && a.in_time.present? && a.in_time <= end_date.end_of_day }
+                                           .sort_by(&:in_time)
 
     respond_to do |format|
       format.html # Renders monthly_summary.html.erb
@@ -276,17 +270,16 @@ class AttendancesController < ApplicationController
     end
   end
 
-
   private
 
   def ensure_same_user_permission
-    if params[:id].present?
-      @attendance = Attendance.find(params[:id])
-      unless @attendance.user == current_user
-        redirect_to record_path(@record), alert: 'You are not authorized to modify this attendance.'
-        return
-      end
-    end
+    return unless params[:id].present?
+
+    @attendance = Attendance.find(params[:id])
+    return if @attendance.user == current_user
+
+    redirect_to record_path(@record), alert: 'You are not authorized to modify this attendance.'
+    nil
   end
 
   def set_record

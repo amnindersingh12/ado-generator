@@ -12,7 +12,7 @@
   <%= form_with url: history_record_attendances_path(@record), method: :get, local: true, class: "row g-3 mb-5 p-4 bg-light rounded-4 shadow-sm" do |f| %>
     <div class="col-md-4">
       <%= f.label :from, "From Date", class: "form-label fw-semibold text-muted" %>
-      <%= f.date_field :from, value: params[:from], class: "form-control form-control-lg rounded-3 border-0 shadow-sm" %>
+      <%= f.date_field :from, value: params[:from], class: 'form-control form-control-lg rounded-3 border-0 shadow-sm' %>
     </div>
     <div class="col-md-4">
       <%= f.label :to, 'To Date', class: 'form-label fw-semibold text-muted' %>

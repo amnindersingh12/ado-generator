@@ -133,7 +133,7 @@
               <ul class="list-group list-group-flush border rounded-3 hover-effect-list-item">
                 <% @record.guests.each do |guest| %>
                   <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 border-0 border-bottom">
-                    <span class="fw-medium"><%= link_to guest.name, record_path(guest), class: "text-decoration-none text-body" %></span>
+                    <span class="fw-medium"><%= link_to guest.name, record_path(guest), class: 'text-decoration-none text-body' %></span>
                     <span class="badge bg-secondary rounded-pill">Guest</span>
                   </li>
                 <% end %>

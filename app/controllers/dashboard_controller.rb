@@ -35,8 +35,7 @@ class DashboardController < ApplicationController
     @daily_check_in_values = @daily_attendance_data.values.map { |v| v[:in] }
     @daily_check_out_values = @daily_attendance_data.values.map { |v| v[:out] }
 
-
-      # Data for the peak check-in/out times (last 24 hours)
+    # Data for the peak check-in/out times (last 24 hours)
     @peak_time_data_in = {}
     @peak_time_data_out = {}
     current_time_local = Time.zone.now.floor(1.hour) # Use Time.zone.now for time zone awareness
@@ -45,7 +44,7 @@ class DashboardController < ApplicationController
       hour_local = current_time_local - i.hours
       formatted_time = hour_local.strftime('%H:%M')
       start_of_hour = hour_local.beginning_of_hour.utc # Convert to UTC for database query if stored in UTC
-      end_of_hour = hour_local.end_of_hour.utc       # Convert to UTC for database query if stored in UTC
+      end_of_hour = hour_local.end_of_hour.utc # Convert to UTC for database query if stored in UTC
 
       @peak_time_data_in[formatted_time] = Attendance.where('in_time BETWEEN ? AND ?', start_of_hour, end_of_hour).count
       @peak_time_data_out[formatted_time] = Attendance.where('out_time BETWEEN ? AND ?', start_of_hour, end_of_hour).count
@@ -53,8 +52,6 @@ class DashboardController < ApplicationController
     @peak_time_labels = @peak_time_data_in.keys.reverse
     @peak_time_in_values = @peak_time_data_in.values.reverse
     @peak_time_out_values = @peak_time_data_out.values.reverse
-
-
 
     # --- POPULATING NEW INSTANCE VARIABLES FOR CSV ---
 

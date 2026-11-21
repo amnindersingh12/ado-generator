@@ -154,7 +154,7 @@
       </div>
       <div class="col-md-8 col-lg-9 text-end mt-3 mt-md-0">
         <%= link_to 'Download Data (CSV)', dashboard_index_path(format: :csv, timeframe: params[:timeframe]), class: 'btn btn-outline-success btn-sm me-2' %>
-        <%= link_to "Download PDF Report", dashboard_index_path(format: :pdf, timeframe: params[:timeframe]), class: "btn btn-outline-success btn-sm", target: "_blank" %>
+        <%= link_to 'Download PDF Report', dashboard_index_path(format: :pdf, timeframe: params[:timeframe]), class: 'btn btn-outline-success btn-sm', target: '_blank', rel: 'noopener' %>
       </div>
     </div>
   </div>

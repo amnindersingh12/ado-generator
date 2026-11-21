@@ -148,7 +148,7 @@
           <p><strong>Father's Name:</strong> <%= @record.father_name.presence || 'N/A' %></p>
           <p><strong>Contact:</strong> <%= @record.contact_number.presence || 'N/A' %></p>
           <p><strong>Address:</strong> <%= [@record.address, @record.city, @record.state, @record.pincode].compact.join(', ').presence || 'N/A' %></p>
-          <p><strong>Email:</strong> <%= @record.email.presence || "N/A" %></p>
+          <p><strong>Email:</strong> <%= @record.email.presence || 'N/A' %></p>
           <p><strong>Govt. ID:</strong> <%= @record.government_id_number.presence || 'N/A' %></p>
         </div>
       </div>

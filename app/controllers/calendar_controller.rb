@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CalendarController < ApplicationController
-
   before_action :authenticate_user!
   before_action :set_page_title
 
@@ -62,10 +61,10 @@ class CalendarController < ApplicationController
 
     # Use in_time and out_time instead of created_at
     @attendances = Attendance
-                      .includes(:record, :user)
-                      .where('(in_time BETWEEN ? AND ?) OR (out_time BETWEEN ? AND ?)',
-                             date.beginning_of_day, date.end_of_day,
-                             date.beginning_of_day, date.end_of_day)
+                   .includes(:record, :user)
+                   .where('(in_time BETWEEN ? AND ?) OR (out_time BETWEEN ? AND ?)',
+                          date.beginning_of_day, date.end_of_day,
+                          date.beginning_of_day, date.end_of_day)
 
     @attendances_by_record = @attendances.group_by(&:record_id)
 
@@ -120,9 +119,9 @@ class CalendarController < ApplicationController
 
   def calculate_record_activity(attendances)
     record_times = attendances.where.not(in_time: nil, out_time: nil).group_by(&:record)
-                               .transform_values do |atts|
-                                 atts.sum { |a| (a.out_time && a.in_time) ? (a.out_time - a.in_time).abs : 0 }
-                               end
+                              .transform_values do |atts|
+      atts.sum { |a| a.out_time && a.in_time ? (a.out_time - a.in_time).abs : 0 }
+    end
 
     most_time_record = record_times.max_by { |_record, total_time| total_time }
     least_time_record = record_times.min_by { |_record, total_time| total_time }

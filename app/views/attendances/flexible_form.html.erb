@@ -57,7 +57,7 @@
 
             <div class="mb-3 form-check">
               <%= form.check_box :set_out_time, { class: "form-check-input", checked: @attendance.out_time.present?, disabled: @attendance.out_time.present? } %>
-              <%= form.label :set_out_time, "Set Out Time Now", class: "form-check-label" %>
+              <%= form.label :set_out_time, 'Set Out Time Now', class: 'form-check-label' %>
               <% if @attendance.out_time.present? %>
                 <small class="text-muted ms-2">(Already set: <%= l @attendance.out_time, format: :long_datetime %>)</small>
               <% end %>

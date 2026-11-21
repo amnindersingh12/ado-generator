@@ -11,9 +11,7 @@ class RecordsController < ApplicationController
     @q = Record.where(is_guest: false).ransack(params[:q]) # Only search for non-guest records as potential hosts
     @records = @q.result(distinct: true).limit(10) # Limit results for performance
     # Exclude the current record itself from being chosen as a host if editing
-    if params[:exclude_id].present?
-      @records = @records.where.not(id: params[:exclude_id])
-    end
+    @records = @records.where.not(id: params[:exclude_id]) if params[:exclude_id].present?
     render json: @records.select(:id, :name, :contact_number) # Only send necessary data
   end
 
@@ -22,8 +20,8 @@ class RecordsController < ApplicationController
     filter_by_date(params[:created_at]) if params[:created_at].present?
 
     @records = Record.search_by_query(params[:query])
-      .includes(:photo_attachment, :government_id_photo_attachment, :host, :guests) # Keep includes for performance if you display these
-      .order(created_at: :desc)
+                     .includes(:photo_attachment, :government_id_photo_attachment, :host, :guests) # Keep includes for performance if you display these
+                     .order(created_at: :desc)
 
     calculate_attendance_statistics
     @record_not_found = @records.empty? if params[:q].present?
@@ -69,7 +67,7 @@ class RecordsController < ApplicationController
   def update
     # Prepare params before update based on checkbox state
     update_params = record_params
-    if update_params[:is_guest] == "0" # Checkbox is unchecked (string "0" from form)
+    if update_params[:is_guest] == '0' # Checkbox is unchecked (string "0" from form)
       update_params[:parent_record_id] = nil # Clear parent_record_id
     end
 
@@ -95,7 +93,7 @@ class RecordsController < ApplicationController
     params.require(:record).permit(
       :government_id_photo, :name, :photo, :contact_number, :address, :pincode,
       :city, :state, :date_of_birth, :father_name, :government_id_number,
-      :user_id, :email, :is_guest, :parent_record_id, :host_id, :guest_ids => []
+      :user_id, :email, :is_guest, :parent_record_id, :host_id, guest_ids: []
     )
   end
 

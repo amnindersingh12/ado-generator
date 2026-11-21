@@ -7,11 +7,10 @@ class AdminRolesController < ApplicationController
   def update
     phrase = params[:catchphrase].to_s.strip.downcase
 
-
-    if phrase ==  ENV["ADMIN_PROMOTE_PHRASE"]
+    if phrase == ENV['ADMIN_PROMOTE_PHRASE']
       current_user.admin!
-      redirect_to root_path, notice: "You are now an admin."
-    elsif phrase == ENV["ADMIN_DEMOTE_PHRASE"]
+      redirect_to root_path, notice: 'You are now an admin.'
+    elsif phrase == ENV['ADMIN_DEMOTE_PHRASE']
 
       current_user.user!
       redirect_to root_path, alert: 'Admin role removed.'
