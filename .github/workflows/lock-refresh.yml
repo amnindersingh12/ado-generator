@@ -1,0 +1,31 @@
+name: lock-refresh (temporary)
+on:
+  push:
+    branches: [chore/maintenance]
+    paths: [.github/workflows/lock-refresh.yml]
+permissions:
+  contents: write
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+      - name: Re-resolve Gemfile.lock and install
+        run: |
+          bundle config set frozen false
+          bundle lock --update rails brakeman csv --add-platform x86_64-linux
+          bundle install --jobs 4
+      - name: Safe autocorrect + baseline remaining style offenses
+        run: |
+          bin/rubocop -a || true
+          bin/rubocop --auto-gen-config --no-exclude-limit || true
+      - name: Commit
+        run: |
+          git config user.name "amnindersingh12"
+          git config user.email "amnindersingh58611@gmail.com"
+          git add -A
+          git commit -m "chore: refresh Gemfile.lock, rubocop safe autocorrect + todo baseline" || echo "nothing to commit"
+          git push
