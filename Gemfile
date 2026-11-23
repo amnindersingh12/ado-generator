@@ -74,7 +74,7 @@ gem "faker"
 
 gem "rubocop", "~> 1.81"
 
-gem "rufo", "~> 0.18.1"
+gem "rufo", "~> 0.18.2"
 
 gem "simple_calendar", "~> 3.1"
 
