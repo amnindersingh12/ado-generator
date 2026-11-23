@@ -340,7 +340,7 @@ GEM
       ffi (~> 1.12)
       logger
     rubyzip (3.2.1)
-    rufo (0.18.1)
+    rufo (0.18.2)
     securerandom (0.4.1)
     selenium-webdriver (4.38.0)
       base64 (~> 0.2)
@@ -442,7 +442,7 @@ DEPENDENCIES
   rubocop (~> 1.81)
   rubocop-erb
   rubocop-rails-omakase
-  rufo (~> 0.18.1)
+  rufo (~> 0.18.2)
   selenium-webdriver
   simple_calendar (~> 3.1)
   solid_cable
